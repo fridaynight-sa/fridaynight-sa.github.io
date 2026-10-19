@@ -147,7 +147,7 @@
   }
 
   /* ---------------- views ---------------- */
-  const short = t => String(t).replace(/^مين فينا\s*/, "").replace(/؟$/, "");
+  const short = t => String(t).replace(/^(مين فينا|من)\s+/, "").replace(/؟$/, "");
   function standings(deltas) {
     const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0));
     return `<table><thead><tr><th>اللاعب</th>${deltas ? `<th class="n">هالجولة</th>` : ""}<th class="n">النقاط</th></tr></thead><tbody>${ids.map(id => `<tr><td>${esc(nameOf(id))}${id === ME.pid ? " (أنت)" : ""}</td>${deltas ? `<td class="n ${deltas[id] ? "plus" : ""}">${deltas[id] ? "+" + deltas[id] : "0"}</td>` : ""}<td class="n">${S.scores[id] || 0}</td></tr>`).join("")}</tbody></table>`;
