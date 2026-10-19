@@ -18,11 +18,15 @@
     draw: { dir: "draw/", label: "🎨 ارسم وخمّن" },
   };
   let STROKES = {}, board = null, frame = "";
+  // سهرة كاملة: the TV follows the night from game to game
+  let NIGHT = null, NS = null, nsub = null;
+  const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw" };
+  const NNAME = { seenjeem: "🎬 سين جيم", outside: "🤫 برا السالفة", sedq: "🤥 صدق ولا كذب", mf: "👀 مين فينا؟", draw: "🎨 ارسم وخمّن" };
 
   function qrImg(text) { try { const d = document.createElement("div"); new QRCode(d, { text, width: 260, height: 260, colorDark: "#2b1745", colorLight: "#ffffff" }); const c = d.querySelector("canvas"); return c ? `<img class="qr" src="${c.toDataURL()}" alt="">` : ""; } catch (e) { return ""; } }
   function sideHTML() {
-    const join = base + GAMES[game].dir + "#" + code;
-    return `<aside class="card side center"><span class="lbl">ادخلوا من جوالاتكم</span><div class="code">${esc(code)}</div>${qrImg(join)}<p class="note" dir="ltr">${esc(join.replace(/^https?:\/\//, "").replace(/#.*/, ""))}</p></aside>`;
+    const join = NIGHT ? base + "night/#" + NIGHT : base + GAMES[game].dir + "#" + code;
+    return `<aside class="card side center"><span class="lbl">${NIGHT ? "🌙 رمز السهرة" : "ادخلوا من جوالاتكم"}</span><div class="code">${esc(NIGHT || code)}</div>${qrImg(join)}<p class="note" dir="ltr">${esc(join.replace(/^https?:\/\//, "").replace(/#.*/, ""))}</p></aside>`;
   }
   const nameOf = id => (P[id] && P[id].name) || (S && S.names && S.names[id]) || "؟";
   const plist = (ids, doneFn) => `<ul class="plist bigplist">${ids.map(id => `<li class="${doneFn && doneFn(id) ? "done" : ""}">${esc(nameOf(id))}</li>`).join("")}</ul>`;
@@ -125,16 +129,51 @@
     if (game === "draw" && S.phase === "reveal") FA.once(k + "rv" + S.tid, () => { FA.play("reveal"); FA.slam("الكلمة كانت: " + (S.word || ""), null, "#ff7a1a"); });
     if (S.phase === "end" && game !== "bs") FA.once(k + "end" + (S.game || ""), top);
   }
+  function stopGame() { subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
+  function watchNight(c) {
+    NIGHT = c; NS = null;
+    const r = db.ref("night/" + c + "/state"), h = sn => { NS = dec(sn.val()); nightStep(); };
+    r.on("value", h); nsub = () => r.off("value", h);
+    history.replaceState(null, "", "#" + c);
+  }
+  function nightStep() {
+    const cur = NS && NS.phase !== "end" && NS.cur, g = cur && NGAME[cur.g];
+    if (g && cur.room) { if (game !== g || code !== cur.room) { stopGame(); watch(g, cur.room); } return; }
+    stopGame(); renderNight();
+  }
+  const games = n => n === 1 ? "لعبة وحدة" : n === 2 ? "لعبتين" : n + (n <= 10 ? " ألعاب" : " لعبة");
+  function renderNight() {
+    chip.hidden = false; chip.innerHTML = `🌙 سهرة · <b dir="ltr">${esc(NIGHT)}</b>`; newBtn.hidden = false;
+    if (!NS) { app.innerHTML = `<div class="card center"><p class="big-msg">السهرة انتهت أو انمسحت.</p></div>`; return; }
+    const names = NS.names || {}, tot = NS.totals || {}, pl = NS.played || [];
+    const rows = Object.keys(names).map(id => [names[id], tot[id] || 0, id]).sort((a, b) => b[1] - a[1]);
+    const last = pl.length ? pl[pl.length - 1].pts : {};
+    const table = `<table><thead><tr><th>اللاعب</th>${pl.length ? `<th class="n">آخر لعبة</th>` : ""}<th class="n">النقاط</th></tr></thead><tbody>${rows.map(([n, t, id]) => `<tr><td>${esc(n)}</td>${pl.length ? `<td class="n ${last[id] ? "plus" : ""}">${last[id] ? "+" + last[id] : "0"}</td>` : ""}<td class="n">${t}</td></tr>`).join("")}</tbody></table>`;
+    let main;
+    if (NS.phase === "end") {
+      const top = rows.filter(r => r[1] === (rows[0] || [])[1] && r[1] > 0);
+      if (self.FA && top.length) FA.once("tvn-end-" + NIGHT + "-" + (NS.at || 0) + "-" + pl.length, () => { FA.confetti(); FA.winner(top.map(r => r[0]).join(" و"), rows.map(r => [r[0], r[1]]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); });
+      main = `<div class="card center"><p class="tvtitle" style="font-size:64px;margin:0">👑</p><p class="tvtitle">${top.length > 1 ? "أبطال الليلة" : "بطل الليلة"}: ${esc(top.map(r => r[0]).join(" و") || "—")}</p><p class="tvsub">${games(pl.length)}</p></div><div class="card">${table}</div>`;
+    } else {
+      if (self.FA && pl.length) FA.once("tvn-res-" + NIGHT + "-" + pl.length, () => { FA.play("party"); FA.slam("🏆 ترتيب السهرة", "بعد " + games(pl.length), "#ffb21e"); });
+      const cur = NS.cur;
+      const now = cur ? `<p class="tvsub">${cur.g === "seenjeem" ? (cur.room ? `🎬 سين جيم شغالة: اعرضوها من سين جيم برمز <b dir="ltr">${esc(cur.room)}</b>` : "🎬 ننتظر صاحب السهرة يفتح غرفة سين جيم…") : `ننتظر ${esc(NNAME[cur.g] || "")}…`}</p>${cur.g === "seenjeem" && cur.room ? `<button type="button" class="btn" id="tvSJ">اعرض سين جيم</button>` : ""}`
+        : `<p class="tvsub">ننتظر صاحب السهرة يختار ${pl.length ? "اللعبة الجاية" : "أول لعبة"}…</p>`;
+      main = `<div class="card"><p class="tvtitle">🌙 سهرة كاملة</p>${now}${pl.length ? "" : `<ul class="plist bigplist">${rows.map(r => `<li>${esc(r[0])}</li>`).join("")}</ul>`}</div>${pl.length ? `<div class="card"><p class="tvsub">🏆 ترتيب السهرة بعد ${games(pl.length)}</p>${table}</div>` : ""}`;
+    }
+    app.innerHTML = `<div class="tvgrid"><div>${main}</div><aside class="card side center"><span class="lbl">🌙 رمز السهرة</span><div class="code">${esc(NIGHT)}</div>${qrImg(base + "night/#" + NIGHT)}<p class="note">ادخلوا السهرة مرة وحدة، والشاشة تمشي معكم</p></aside></div>`;
+    const sj = document.getElementById("tvSJ"); if (sj) sj.onclick = () => connect(NS.cur.room, { textContent: "" });
+  }
   function watch(g, c) {
     game = g; code = c; S = null; P = {};
-    chip.hidden = false; chip.innerHTML = `${GAMES[g].label} · <b dir="ltr">${esc(c)}</b>`; newBtn.hidden = false;
+    chip.hidden = false; chip.innerHTML = `${GAMES[g].label} · <b dir="ltr">${esc(c)}</b>${NIGHT ? ` · 🌙 <b dir="ltr">${esc(NIGHT)}</b>` : ""}`; newBtn.hidden = false;
     const r = db.ref(g + "/" + c);
     const on = (ref, cb) => { const h = s => cb(s.val()); ref.on("value", h); subs.push(() => ref.off("value", h)); };
     on(r.child("state"), v => { S = dec(v); render(); });
     on(r.child("players"), v => { P = {}; Object.entries(v || {}).forEach(([k, x]) => { const d = dec(x); if (d) P[k] = d; }); render(); });
     STROKES = {}; frame = "";
     if (g === "draw") on(r.child("strokes"), v => { STROKES = v || {}; if (board) board.set(DrawBoard.parse(STROKES, dec)); });
-    history.replaceState(null, "", "#" + c);
+    if (!NIGHT) history.replaceState(null, "", "#" + c);
     try { document.documentElement.requestFullscreen && 0; } catch (e) {}
   }
   async function connect(c, msgEl) {
@@ -148,22 +187,23 @@
     msgEl.textContent = "يدوّر على الغرفة…";
     try {
       // the same code can exist in more than one game: show the newest room
-      const keys = Object.keys(GAMES), snaps = await Promise.all(keys.map(g => db.ref(g + "/" + c + "/state").get().catch(() => null)));
+      const keys = Object.keys(GAMES).concat("night"), snaps = await Promise.all(keys.map(g => db.ref(g + "/" + c + "/state").get().catch(() => null)));
       let best = null, bt = 0;
       snaps.forEach((sn, i) => { if (sn && sn.exists()) { const t = (dec(sn.val()) || {}).at || 1; if (t > bt) { bt = t; best = keys[i]; } } });
       if (!best) { msgEl.textContent = "ما لقيت غرفة بهالرمز."; return; }
-      watch(best, c);
+      if (best === "night") watchNight(c); else watch(best, c);
     } catch (e) { msgEl.textContent = "ما قدرت أتصل. تأكد من النت."; }
   }
   function home(msg) {
     subs.forEach(f => f()); subs = []; game = null; clearInterval(tick); chip.hidden = true; newBtn.hidden = true;
+    if (nsub) nsub(); nsub = null; NIGHT = null; NS = null;
     document.body.classList.remove("catbg");
     history.replaceState(null, "", location.pathname);
     app.innerHTML = `<div class="card joinbox center"><p class="tvtitle">📺 الشاشة تعرض، والجوالات تلعب</p>
       <p class="note">افتحوا غرفة من الجوال في أي لعبة، واكتبوا رمزها هنا.</p>
       <input id="tvCode" class="inp codein" maxlength="5" autocomplete="off" placeholder="ABCD">
       <button type="button" class="btn" id="tvGo">اعرض الغرفة</button><p class="err" id="tvMsg">${esc(msg || "")}</p>
-      <p class="note">تشتغل مع: 🎬 سين جيم · ${Object.values(GAMES).map(g => g.label).join(" · ")}</p></div>`;
+      <p class="note">تشتغل مع: 🎬 سين جيم · ${Object.values(GAMES).map(g => g.label).join(" · ")} · 🌙 السهرة الكاملة</p></div>`;
     const inp = document.getElementById("tvCode"), go = () => connect(inp.value, document.getElementById("tvMsg"));
     document.getElementById("tvGo").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go(); }; inp.focus();
   }

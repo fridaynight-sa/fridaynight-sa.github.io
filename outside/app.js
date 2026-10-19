@@ -260,8 +260,9 @@
 
   async function createRoom(name) {
     let code = genCode();
-    for (let i = 0; i < 5; i++) { const s = await db.ref("bs/" + code + "/state").get(); if (!s.exists()) break; code = genCode(); }
-    ME = { pid: "p" + rid(8), name, code }; LS.set(MKEY, ME);
+    if (self.FNN && FNN.room) code = FNN.room;   // سهرة: the night already picked this room's code
+    else for (let i = 0; i < 5; i++) { const s = await db.ref("bs/" + code + "/state").get(); if (!s.exists()) break; code = genCode(); }
+    ME = { pid: (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     S = { v: 1, host: ME.pid, phase: "lobby", round: 0, cat: "random", outs: 1, scores: {}, used: {}, names: {}, at: Date.now() };
     S.hk = await myKey();
     await ref("state").set(enc(S));
@@ -272,7 +273,7 @@
     const s = await db.ref("bs/" + code + "/state").get();
     if (!s.exists()) throw new Error("nocode");
     const same = ME && ME.code === code ? ME.pid : null;
-    ME = { pid: same || "p" + rid(8), name, code }; LS.set(MKEY, ME);
+    ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const st = dec(s.val());
     const cur = (await db.ref("bs/" + code + "/players/" + ME.pid).get()).val();
@@ -522,7 +523,9 @@
   fetch("words.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     CATS = d.categories.filter(c => c.words && c.words.length >= 6);
     const h = (location.hash || "").replace("#", "").toUpperCase();
-    if (/^[A-Z]{4}$/.test(h)) {
+    // سهرة: the night's host opens this room (or comes back to it)
+    if (self.FNN && FNN.host && FNN.room === h && db) db.ref("bs/" + h + "/state").get().then(s => s.exists() ? joinRoom(h, FNN.name) : createRoom(FNN.name)).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
+    else if (/^[A-Z]{4}$/.test(h)) {
       if (ME && ME.code === h && ME.name && db) { joinRoom(h, ME.name).catch(() => renderForm("join", h, "ما لقيت غرفة بهالرمز.")); }
       else renderForm("join", h);
     } else if (ME && ME.code && db) {

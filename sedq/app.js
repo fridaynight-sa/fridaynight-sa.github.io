@@ -127,8 +127,9 @@
   const genCode = () => { const L = "ABCDEFGHJKLMNPQRSTUVWXYZ"; return Array.from({ length: 4 }, () => L[rint(L.length)]).join(""); };
   async function createRoom(name) {
     let code = genCode();
-    for (let i = 0; i < 5; i++) { const s = await db.ref("sq/" + code + "/state").get(); if (!s.exists()) break; code = genCode(); }
-    ME = { pid: "p" + rid(8), name, code }; LS.set(MKEY, ME);
+    if (self.FNN && FNN.room) code = FNN.room;   // سهرة: the night already picked this room's code
+    else for (let i = 0; i < 5; i++) { const s = await db.ref("sq/" + code + "/state").get(); if (!s.exists()) break; code = genCode(); }
+    ME = { pid: (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     S = { v: 2, host: ME.pid, hk: await myKey(), phase: "lobby", rounds: 8, scores: {}, used: [], names: {}, at: Date.now() };
     await ref("state").set(enc(S));
     await writeMe({ name, at: Date.now(), cats: [], key: await myKey() });
@@ -138,7 +139,7 @@
     const s = await db.ref("sq/" + code + "/state").get();
     if (!s.exists()) throw new Error("nocode");
     const same = ME && ME.code === code ? ME.pid : null;
-    ME = { pid: same || "p" + rid(8), name, code }; LS.set(MKEY, ME);
+    ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("sq/" + code + "/players/" + ME.pid).get()).val()) || {};
     await db.ref("sq/" + code + "/players/" + ME.pid).set(enc(Object.assign({ cats: [] }, cur, { name, key: await myKey(), at: cur.at || Date.now() })));
@@ -390,7 +391,9 @@
   fetch("questions.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     CATS = d.categories;
     const h = (location.hash || "").replace("#", "").toUpperCase();
-    if (/^[A-Z]{4}$/.test(h)) {
+    // سهرة: the night's host opens this room (or comes back to it)
+    if (self.FNN && FNN.host && FNN.room === h && db) db.ref("sq/" + h + "/state").get().then(s => s.exists() ? joinRoom(h, FNN.name) : createRoom(FNN.name)).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
+    else if (/^[A-Z]{4}$/.test(h)) {
       if (ME && ME.code === h && ME.name && db) joinRoom(h, ME.name).catch(() => renderForm("join", h, "ما لقيت غرفة بهالرمز."));
       else renderForm("join", h);
     } else if (ME && ME.code && db) joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });

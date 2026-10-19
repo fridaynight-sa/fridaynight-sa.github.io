@@ -7,7 +7,7 @@
 /* old سين جيم links (site/#AB123) now live under seenjeem/ */
 (function () { function go() { var h = (location.hash || "").replace("#", ""); if (/^[A-Za-z]{2}[0-9]{3}$/.test(h)) location.replace("seenjeem/#" + h.toUpperCase()); } go(); addEventListener("hashchange", go); })();
 </script>
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png"><link rel="shortcut icon" href="favicon.ico"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="theme-color" content="#fff6e9">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png"><link rel="shortcut icon" href="favicon.ico"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="site.webmanifest"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Friday Night"><meta name="theme-color" content="#fff6e9">
 <title>Friday Night · ألعاب الشلة</title>
 <meta name="description" content="ألعاب جماعية للجمعة: سين جيم، برا السالفة، صدق ولا كذب، مين فينا، ارسم وخمّن. كل واحد يلعب من جواله.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,6 +85,24 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 .tv:hover{transform:translateY(-3px)}
 .tv .ic{width:56px;height:56px;border-radius:16px;background:var(--gold);font-size:30px;border:2px solid #fff}
 .tv h3{margin:0;font-family:var(--f-display);font-size:20px}.tv p{margin:2px 0 0;opacity:.85}.tv .arrow{margin-inline-start:auto;font-size:22px;font-weight:800}
+/* سهرة كاملة */
+.tv.night{position:relative;margin-top:22px;background:linear-gradient(120deg,#7c3aed,#f03e7a);box-shadow:6px 6px 0 var(--ink);--c:#7c3aed}
+.tv.night .ic{background:#2b1745;border-color:#ffb21e;animation:wiggle 3s infinite}
+.tv.night h3{font-size:22px}
+.tv.night .new{top:-12px;left:14px;background:var(--gold);color:var(--ink)}
+/* install as an app */
+.inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 12px;box-shadow:5px 5px 0 var(--gold);animation:rise .5s both}
+body.has-inst .fx-mute{bottom:calc(86px + env(safe-area-inset-bottom,0px))!important}
+.inst img{width:42px;height:42px;border-radius:11px;background:#fff;flex:none}
+.inst b{flex:1;font-size:14px;line-height:1.3}.inst b small{display:block;opacity:.75;font-weight:700}
+.inst .ok{background:var(--gold);color:var(--ink);border:0;border-radius:12px;padding:8px 14px;font-weight:800;font-size:15px;cursor:pointer}
+.inst .x{background:none;border:0;color:#fff;opacity:.7;font-size:20px;padding:4px 6px;cursor:pointer}
+.isheet{position:fixed;inset:0;z-index:60;background:rgba(43,23,69,.55);display:flex;align-items:flex-end}
+.isheet>div{background:#fff;width:100%;max-width:560px;margin:0 auto;border:3px solid var(--ink);border-bottom:0;border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));animation:rise .35s both}
+.isheet h3{margin:0 0 6px;font-family:var(--f-display);font-size:20px}
+.isheet ol{margin:0;padding-inline-start:22px;font-weight:700;line-height:2}
+.isheet .k{display:inline-block;border:2px solid var(--ink);border-radius:8px;padding:0 6px;background:var(--bg)}
+.isheet button{display:block;width:100%;margin-top:14px;background:var(--purple);color:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:14px;padding:11px;font-weight:800;font-size:16px;cursor:pointer}
 
 /* steps */
 .steps{display:grid;gap:12px;grid-template-columns:1fr;counter-reset:s;padding:0;margin:0}
@@ -118,6 +136,13 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     <div class="row"><input id="code" maxlength="5" placeholder="ABCD" aria-describedby="jmsg"><button type="submit" id="jgo">ادخل</button></div>
     <p class="msg" id="jmsg" role="status"></p>
   </form>
+
+  <a class="tv night" href="night/">
+    <span class="new">جديد</span>
+    <span class="ic">🌙</span>
+    <div><h3>سهرة كاملة</h3><p>رمز واحد لكل الليلة: تنتقلون بين الألعاب مع بعض، والنقاط تتجمع لين بطل الليلة 👑</p></div>
+    <span class="arrow">←</span>
+  </a>
 
   <h2 class="sec">اختاروا لعبة</h2>
   <div class="games">
@@ -171,6 +196,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
 <script src="fnfx.js"></script>
+<script src="fninstall.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
@@ -179,7 +205,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
    AB123 → سين جيم. 4 letters → whichever game has a room with that code (newest wins). */
 (function () {
   "use strict";
-  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/" };
+  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/", night: "night/" };
   const form = document.getElementById("join"), inp = document.getElementById("code"), msg = document.getElementById("jmsg"), go = document.getElementById("jgo");
   const say = (t, err) => { msg.textContent = t; msg.classList.toggle("err", !!err); if (err && self.FX) FX.play("wrong", 60); };
   let db = null;
@@ -226,7 +252,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     const w = document.createElement("div"); w.className = "wipe";
     w.style.setProperty("--c", getComputedStyle(el).getPropertyValue("--c") || "#2b1745");
     w.style.setProperty("--x", e.clientX + "px"); w.style.setProperty("--y", e.clientY + "px");
-    w.innerHTML = `<div class="wipein">${img ? `<img src="${img.getAttribute("src")}" alt="">` : `<span style="font-size:90px">📺</span>`}<b>${name}</b></div>`;
+    w.innerHTML = `<div class="wipein">${img ? `<img src="${img.getAttribute("src")}" alt="">` : `<span style="font-size:90px">${el.querySelector(".ic").textContent}</span>`}<b>${name}</b></div>`;
     document.body.appendChild(w);
     setTimeout(() => { location.href = href; }, 650);
   }));

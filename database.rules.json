@@ -106,6 +106,21 @@
           }
         }
       }
+    },
+    "night": {
+      "$code": {
+        ".read": true,
+        "state": {
+          ".write": true,
+          ".validate": "$code.matches(/^[A-Z]{4}$/) && (!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 30000)"
+        },
+        "players": {
+          "$nid": {
+            ".write": true,
+            ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 500"
+          }
+        }
+      }
     }
   }
 }
