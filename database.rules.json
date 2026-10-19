@@ -4,7 +4,7 @@
       "$code": {
         ".read": true,
         ".write": true,
-        ".validate": "$code.matches(/^[A-Z]{2}[0-9]{3}$/) && (!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 200000)"
+        ".validate": "$code.matches(/^([A-Z]{4}|[A-Z]{2}[0-9]{3})$/) && (!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 200000)"
       }
     },
     "presence": {

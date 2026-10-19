@@ -265,6 +265,7 @@
     ME = { pid: (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     S = { v: 1, host: ME.pid, phase: "lobby", round: 0, cat: "random", outs: 1, scores: {}, used: {}, names: {}, at: Date.now() };
     S.hk = await myKey();
+    if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
     await writeMe({ name, at: Date.now(), key: await myKey() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
@@ -523,8 +524,8 @@
   fetch("words.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
     CATS = d.categories.filter(c => c.words && c.words.length >= 6);
     const h = (location.hash || "").replace("#", "").toUpperCase();
-    // سهرة: the night's host opens this room (or comes back to it)
-    if (self.FNN && FNN.host && FNN.room === h && db) db.ref("bs/" + h + "/state").get().then(s => s.exists() ? joinRoom(h, FNN.name) : createRoom(FNN.name)).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
+    // سهرة: the night's host opens this game's room (or comes back to it after a reload)
+    if (self.FNN && FNN.host && FNN.room === h && db) db.ref("bs/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
     else if (/^[A-Z]{4}$/.test(h)) {
       if (ME && ME.code === h && ME.name && db) { joinRoom(h, ME.name).catch(() => renderForm("join", h, "ما لقيت غرفة بهالرمز.")); }
       else renderForm("join", h);

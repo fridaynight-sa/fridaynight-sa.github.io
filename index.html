@@ -85,11 +85,6 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 .tv:hover{transform:translateY(-3px)}
 .tv .ic{width:56px;height:56px;border-radius:16px;background:var(--gold);font-size:30px;border:2px solid #fff}
 .tv h3{margin:0;font-family:var(--f-display);font-size:20px}.tv p{margin:2px 0 0;opacity:.85}.tv .arrow{margin-inline-start:auto;font-size:22px;font-weight:800}
-/* سهرة كاملة */
-.tv.night{position:relative;margin-top:22px;background:linear-gradient(120deg,#7c3aed,#f03e7a);box-shadow:6px 6px 0 var(--ink);--c:#7c3aed}
-.tv.night .ic{background:#2b1745;border-color:#ffb21e;animation:wiggle 3s infinite}
-.tv.night h3{font-size:22px}
-.tv.night .new{top:-12px;left:14px;background:var(--gold);color:var(--ink)}
 /* install as an app */
 .inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 12px;box-shadow:5px 5px 0 var(--gold);animation:rise .5s both}
 body.has-inst .fx-mute{bottom:calc(86px + env(safe-area-inset-bottom,0px))!important}
@@ -136,13 +131,6 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     <div class="row"><input id="code" maxlength="5" placeholder="ABCD" aria-describedby="jmsg"><button type="submit" id="jgo">ادخل</button></div>
     <p class="msg" id="jmsg" role="status"></p>
   </form>
-
-  <a class="tv night" href="night/">
-    <span class="new">جديد</span>
-    <span class="ic">🌙</span>
-    <div><h3>سهرة كاملة</h3><p>رمز واحد لكل الليلة: تنتقلون بين الألعاب مع بعض، والنقاط تتجمع لين بطل الليلة 👑</p></div>
-    <span class="arrow">←</span>
-  </a>
 
   <h2 class="sec">اختاروا لعبة</h2>
   <div class="games">
@@ -202,10 +190,11 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 <script src="firebase-config.js"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
-   AB123 → سين جيم. 4 letters → whichever game has a room with that code (newest wins). */
+   4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
+   Old سين جيم codes (AB123) still work. */
 (function () {
   "use strict";
-  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/", night: "night/" };
+  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/", rooms: "seenjeem/" };
   const form = document.getElementById("join"), inp = document.getElementById("code"), msg = document.getElementById("jmsg"), go = document.getElementById("jgo");
   const say = (t, err) => { msg.textContent = t; msg.classList.toggle("err", !!err); if (err && self.FX) FX.play("wrong", 60); };
   let db = null;
@@ -216,14 +205,17 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     e.preventDefault();
     const c = inp.value.trim().toUpperCase();
     if (/^[A-Z]{2}[0-9]{3}$/.test(c)) { location.href = "seenjeem/#" + c; return; }
-    if (!/^[A-Z]{4}$/.test(c)) { say("الرمز 4 حروف إنجليزية، أو حرفين و3 أرقام لسين جيم.", true); return; }
+    if (!/^[A-Z]{4}$/.test(c)) { say("الرمز 4 حروف إنجليزية.", true); return; }
     if (!db) { say("ما قدرت أتصل. تأكد من النت وحدّث الصفحة.", true); return; }
     go.disabled = true; say("يدوّر على الغرفة…");
     try {
+      // a سهرة with this code: go straight to the game it is on now
+      const ns = await db.ref("night/" + c + "/state").get().catch(() => null), nt = ns && ns.exists() && dec(ns.val());
+      if (nt && nt.cur && nt.cur.g) { location.href = nt.cur.g + "/#" + c; return; }
       const keys = Object.keys(GAMES);
-      const snaps = await Promise.all(keys.map(g => db.ref(g + "/" + c + "/state").get().catch(() => null)));
+      const snaps = await Promise.all(keys.map(g => db.ref(g === "rooms" ? "rooms/" + c : g + "/" + c + "/state").get().catch(() => null)));
       let best = null, bt = 0;
-      snaps.forEach((s, i) => { if (s && s.exists()) { const t = (dec(s.val()) || {}).at || 1; if (t > bt) { bt = t; best = keys[i]; } } });
+      snaps.forEach((s, i) => { if (s && s.exists()) { const v = s.val() || {}, t = (dec(v) || {}).at || v.t || 1; if (t > bt) { bt = t; best = keys[i]; } } });
       if (!best) { say("ما لقيت غرفة بهالرمز. تأكد منه مع صاحبك.", true); go.disabled = false; return; }
       location.href = GAMES[best] + "#" + c;
     } catch (err) { say("ما قدرت أتصل. تأكد من النت.", true); go.disabled = false; }

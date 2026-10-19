@@ -389,7 +389,7 @@ body.tv .media img.up{max-height:60vh}
   <section id="remote" hidden>
     <div class="card join" id="rJoin">
       <h2>ادخل غرفة</h2>
-      <div class="field"><label for="jCode">رمز الغرفة</label><input id="jCode" class="codein" maxlength="5" dir="ltr" autocomplete="off" placeholder="AB123"></div>
+      <div class="field"><label for="jCode">رمز الغرفة</label><input id="jCode" class="codein" maxlength="5" dir="ltr" autocomplete="off" placeholder="ABCD"></div>
       <div class="field"><span class="lbl">أدخل كـ</span><div class="seg"><button type="button" data-role="player">لاعب</button><button type="button" data-role="display">شاشة عرض</button></div></div>
       <div class="field" id="jNameF"><label for="jName">اسمك</label><input id="jName" maxlength="20" placeholder="مثلاً: فيصل"></div>
       <button type="button" class="btn" id="jGo">دخول</button>
@@ -828,12 +828,12 @@ async function deleteCat(id){
    named room sj-<code>: name, team, buzz, pick. */
 const ART_URL=location.origin+location.pathname;
 let ROOM=null,USER=null,EDIT=false,HR=null,HPEERS=[],BUZZ=[],PICKSEEN={};
-const genCode=()=>{const L="ABCDEFGHJKLMNPQRSTUVWXYZ";return L[Math.floor(Math.random()*L.length)]+L[Math.floor(Math.random()*L.length)]+String(Math.floor(Math.random()*900)+100)};
+const genCode=()=>{const L="ABCDEFGHJKLMNPQRSTUVWXYZ";return Array.from({length:4},()=>L[Math.floor(Math.random()*L.length)]).join("")};
 const roomName=c=>"sj-"+c.toLowerCase();
-const okCode=c=>/^[A-Z]{2}[0-9]{3}$/.test(c);
+const okCode=c=>/^([A-Z]{4}|[A-Z]{2}[0-9]{3})$/.test(c);
 function pubMedia(m){if(!m)return null;if(m.t==="image"||m.t==="video")return{t:m.t,id:m.id};if(m.t==="yt")return{t:"yt",v:m.v,s:m.s,e:m.e};if(m.t==="quote")return{t:"quote",text:m.text};if(m.t==="emoji")return{t:"emoji",v:m.v};if(m.t==="card")return{t:"card",title:m.title,e:m.e||""};return null}
 function pub(){
-  return {v:1,code:S.room.code,gameName:S.gameName||"",phase:S.phase==="setup"?"lobby":S.phase,
+  return {v:1,nt:S.room.nt??null,code:S.room.code,gameName:S.gameName||"",phase:S.phase==="setup"?"lobby":S.phase,
     teams:S.teams.map(t=>({name:t.name,score:t.score,dbl:!!t.dbl})),turn:S.turn,
     leader:LEADER,dblOn:!!S.dblOn,hl:S.hist.length,view:hostTV()?"tv":"ctl",
     cats:S.cats.map((c,ci)=>({name:c.name,icon:c.icon||null,motif:c.motif||null,cells:c.qs.map((q,qi)=>{const u=S.used[ci+"-"+qi];return{p:q.p,ok:hasQ(q),u:u===undefined?null:u}})})),
@@ -945,8 +945,8 @@ function renderPeersUI(){
 }
 async function openRoom(){
   if(!DB||!ROOM){$("startMsg").textContent="الغرف تحتاج إعداد Firebase أول (ملف firebase-config.js).";return}
-  const code=genCode();
-  S.room={code,view:"ctl"};S.phase="lobby";S.flash=null;BUZZ=[];LEADER=null;CMDSEEN={};PEEK=null;
+  const code=(self.FNN&&FNN.room)||genCode();
+  S.room={code,view:"ctl",nt:self.FNN?FNN.n:null};S.phase="lobby";S.flash=null;BUZZ=[];LEADER=null;CMDSEEN={};PEEK=null;
   save();render();await hostJoin();sync();
 }
 async function closeRoom(){
@@ -977,7 +977,7 @@ const rsave=()=>{try{localStorage.setItem(RKEY,JSON.stringify({code:R.code,name:
 async function rJoin(){
   const code=$("jCode").value.trim().toUpperCase().replace(/\s/g,""),name=$("jName").value.trim();
   const msg=$("jMsg");
-  if(!okCode(code)){msg.textContent="الرمز حرفين وبعدهم ثلاث أرقام، مثل AB123.";return}
+  if(!okCode(code)){msg.textContent="الرمز 4 حروف إنجليزية، مثل ABCD.";return}
   if(R.role==="player"&&!name){msg.textContent="اكتب اسمك عشان يعرفونك.";$("jName").focus();return}
   if(!DB){msg.textContent=dbState==="loading"?"لحظة، جاري الاتصال…":"ما قدرت أتصل. تأكد من النت وحدّث الصفحة.";return}
   R.code=code;R.name=name;msg.textContent="يدخل…";rsave();

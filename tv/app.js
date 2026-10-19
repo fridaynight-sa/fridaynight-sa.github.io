@@ -162,7 +162,7 @@
       main = `<div class="card"><p class="tvtitle">🌙 سهرة كاملة</p>${now}${pl.length ? "" : `<ul class="plist bigplist">${rows.map(r => `<li>${esc(r[0])}</li>`).join("")}</ul>`}</div>${pl.length ? `<div class="card"><p class="tvsub">🏆 ترتيب السهرة بعد ${games(pl.length)}</p>${table}</div>` : ""}`;
     }
     app.innerHTML = `<div class="tvgrid"><div>${main}</div><aside class="card side center"><span class="lbl">🌙 رمز السهرة</span><div class="code">${esc(NIGHT)}</div>${qrImg(base + "night/#" + NIGHT)}<p class="note">ادخلوا السهرة مرة وحدة، والشاشة تمشي معكم</p></aside></div>`;
-    const sj = document.getElementById("tvSJ"); if (sj) sj.onclick = () => connect(NS.cur.room, { textContent: "" });
+    const sj = document.getElementById("tvSJ"); if (sj) sj.onclick = () => openSJ(NS.cur.room);
   }
   function watch(g, c) {
     game = g; code = c; S = null; P = {};
@@ -176,22 +176,28 @@
     if (!NIGHT) history.replaceState(null, "", "#" + c);
     try { document.documentElement.requestFullscreen && 0; } catch (e) {}
   }
+  // سين جيم: open its own display screen
+  function openSJ(c) {
+    try { localStorage.setItem("seenjeem-remote-v1", JSON.stringify({ code: c, name: "", role: "display", team: null })); } catch (e) {}
+    location.href = base + "seenjeem/#" + c;
+  }
   async function connect(c, msgEl) {
     c = c.trim().toUpperCase();
-    if (/^[A-Z]{2}[0-9]{3}$/.test(c)) { // سين جيم: open its own display screen
-      try { localStorage.setItem("seenjeem-remote-v1", JSON.stringify({ code: c, name: "", role: "display", team: null })); } catch (e) {}
-      location.href = base + "seenjeem/#" + c; return;
-    }
-    if (!/^[A-Z]{4}$/.test(c)) { msgEl.textContent = "اكتب رمز الغرفة: 4 حروف، أو حرفين و3 أرقام لسين جيم."; return; }
+    if (/^[A-Z]{2}[0-9]{3}$/.test(c)) { openSJ(c); return; }   // old سين جيم codes
+    if (!/^[A-Z]{4}$/.test(c)) { msgEl.textContent = "اكتب رمز الغرفة: 4 حروف."; return; }
     if (!db) { msgEl.textContent = "ما قدرت أتصل. حدّث الصفحة."; return; }
     msgEl.textContent = "يدوّر على الغرفة…";
     try {
       // the same code can exist in more than one game: show the newest room
-      const keys = Object.keys(GAMES).concat("night"), snaps = await Promise.all(keys.map(g => db.ref(g + "/" + c + "/state").get().catch(() => null)));
+      // a سهرة with this code: the TV follows it from game to game
+      const ns = await db.ref("night/" + c + "/state").get().catch(() => null);
+      if (ns && ns.exists()) { watchNight(c); return; }
+      const keys = Object.keys(GAMES).concat("rooms"), snaps = await Promise.all(keys.map(g => db.ref(g === "rooms" ? "rooms/" + c : g + "/" + c + "/state").get().catch(() => null)));
       let best = null, bt = 0;
-      snaps.forEach((sn, i) => { if (sn && sn.exists()) { const t = (dec(sn.val()) || {}).at || 1; if (t > bt) { bt = t; best = keys[i]; } } });
+      snaps.forEach((sn, i) => { if (sn && sn.exists()) { const v = sn.val() || {}, t = (dec(v) || {}).at || v.t || 1; if (t > bt) { bt = t; best = keys[i]; } } });
       if (!best) { msgEl.textContent = "ما لقيت غرفة بهالرمز."; return; }
-      if (best === "night") watchNight(c); else watch(best, c);
+      if (best === "rooms") { openSJ(c); return; }
+      watch(best, c);
     } catch (e) { msgEl.textContent = "ما قدرت أتصل. تأكد من النت."; }
   }
   function home(msg) {
