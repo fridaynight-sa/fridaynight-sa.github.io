@@ -48,6 +48,9 @@
 - `database.rules.json`: قواعد قاعدة البيانات. **أي تعديل عليها لازم ينلصق في Firebase** (Realtime Database ← Rules ← Publish)
 - `scripts/localize_tmdb.py`: ينزّل صور TMDB داخل `img/` (يشتغل تلقائي على GitHub Actions)
 
+## قبل كل نشر
+- `python3 scripts/stamp.py` يحط رقم نسخة جديد على ملفات الموقع (`app.js?v=…`) عشان الجوالات ما تشغّل نسخة قديمة محفوظة.
+
 ## إعداد Firebase (مرة وحدة)
 1. console.firebase.google.com ← Create project (بدون Google Analytics).
 2. Build ← Realtime Database ← Create database ← Start in **locked mode**.
