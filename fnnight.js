@@ -28,6 +28,9 @@
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const rid = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => b.toString(16).padStart(2, "0")).join("");
   const sameName = (a, b) => String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+  // Firebase refuses writes to night/ until the new rules (database.rules.json) are published
+  const denied = e => /permission/i.test(String((e && (e.code || e.message)) || ""));
+  const RULES_MSG = "Firebase رفض يحفظ السهرة: لازم تنلصق قواعد Firebase الجديدة (ملف database.rules.json) وتضغط Publish.";
   const games = n => n === 1 ? "لعبة وحدة" : n === 2 ? "لعبتين" : n + (n <= 10 ? " ألعاب" : " لعبة");
 
   // scores {id: n} -> night points {id: p}. Equal scores share the place (5,5 then 2 …).
@@ -140,7 +143,7 @@
     .fn-ng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
     .fn-ng button{position:relative;background:#fff;border:2px solid #2b1745;border-radius:14px;box-shadow:2px 2px 0 var(--c);padding:6px 4px;font:800 14px Tajawal,system-ui,sans-serif;color:#2b1745;cursor:pointer}
     .fn-ng img{width:50px;height:50px;object-fit:contain;display:block;margin:0 auto}
-    .fn-ng button:disabled{opacity:.45;cursor:default}.fn-ng button:disabled::after{content:"الحين";position:absolute;top:4px;inset-inline-start:4px;font-size:10px;background:#12a874;color:#fff;border-radius:6px;padding:0 5px}
+    .fn-ng button:disabled{opacity:.45;cursor:default}.fn-ng button.here::after{content:"الحين";position:absolute;top:4px;inset-inline-start:4px;font-size:10px;background:#12a874;color:#fff;border-radius:6px;padding:0 5px}
     .fn-nr{display:grid;gap:6px;margin:8px 0;text-align:start}
     .fn-nr div{display:flex;justify-content:space-between;align-items:center;border:2px solid #2b1745;border-radius:12px;padding:5px 12px;font-weight:800;background:#fff}
     .fn-nr div:first-child{background:#ffe08a}.fn-nr b{font-size:18px}.fn-nr em{font-style:normal;color:#12a874;font-size:13px;margin-inline-start:6px}
@@ -184,7 +187,7 @@
   function sheetSwitch() {
     const pl = NS ? (NS.played || []).length : 0;
     const o = overlay(`<h3>🔄 وين نروح؟</h3><p>الكل ينتقل معك بنفس الرمز <b dir="ltr">${esc(C.code)}</b>، ونقاط ${esc(G.name)} تنحفظ في ترتيب السهرة</p>
-      <div class="fn-ng">${ORDER.map(k => `<button type="button" data-g="${k}" style="--c:${GAMES[k].color}" ${k === g ? "disabled" : ""}><img src="${icon(k)}" alt="">${esc(GAMES[k].name)}</button>`).join("")}</div>
+      <div class="fn-ng">${ORDER.map(k => `<button type="button" data-g="${k}" style="--c:${GAMES[k].color}" ${k === g ? 'class="here" disabled' : ""}><img src="${icon(k)}" alt="">${esc(GAMES[k].name)}</button>`).join("")}</div>
       ${NS ? `<button type="button" class="bt" data-a="end">🏁 خلصنا السهرة — مين بطل الليلة؟</button>` : ""}
       ${NS && pl ? `<details style="margin-top:8px;text-align:start"><summary style="font-weight:800;cursor:pointer">🏆 ترتيب السهرة</summary>${rankHTML(NS, true)}</details>` : ""}
       <button type="button" class="bt" data-a="x">إلغاء</button>`);
@@ -193,7 +196,7 @@
       if (b.dataset.g || b.dataset.a === "end") {
         o.querySelectorAll("button").forEach(x => x.disabled = true);
         try { await (b.dataset.g ? doSwitch(b.dataset.g) : doEnd()); }
-        catch (err) { console.error(err); alert("ما قدرت أتصل. تأكد من النت وجرّب مرة ثانية."); }
+        catch (err) { console.error(err); alert(denied(err) ? RULES_MSG : "ما قدرت أتصل. تأكد من النت وجرّب مرة ثانية."); }
         o.remove();
       }
     };
