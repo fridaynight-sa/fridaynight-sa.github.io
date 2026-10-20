@@ -38,8 +38,14 @@
   const maxOuts = n => Math.max(1, Math.floor((n - 1) / 2));
   // outsider pick: pure random, every player has the exact same chance every round
   // (no history rules, so nobody can guess who it is)
-  function pickOuts(ids, k) {
-    return shuffle(ids).slice(0, k);
+  // Random, but streaks that look like an order (the same person again, or the next one in the list)
+  // are made rare: such a pick is drawn again once, so it can still happen and nobody can predict it.
+  function pickOuts(ids, k, hist) {
+    const last = ((hist && hist.last) || []).filter(id => ids.includes(id));
+    const looks = id => last.includes(id) || (ids.length > 3 && last.some(o => ids[(ids.indexOf(o) + 1) % ids.length] === id));
+    let outs = shuffle(ids).slice(0, k);
+    if (last.length && outs.every(looks)) outs = shuffle(ids).slice(0, k);
+    return outs;
   }
   function addOutHist(hist, outs) {
     const h = { c: Object.assign({}, (hist && hist.c) || {}), last: outs.slice() };
