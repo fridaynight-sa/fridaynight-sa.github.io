@@ -56,6 +56,7 @@
   let S = null, P = {}, HID = null, subs = [], view = "home", lastStep = null, stepStart = 0, tick = null, myPick = null;
   let ADEC = {}, decSeq = 0, hidSeq = 0;
   const SEEN = {};                               // host: when each answer first arrived (ms after the question)
+  const FIRST = {};                              // host: each player's first answer to each question is the one that counts
   const myKey = () => FNC.pub();
   const isHost = () => S && ME && S.host === ME.pid;
   const ref = p => db.ref("df/" + ME.code + (p ? "/" + p : ""));
@@ -85,7 +86,7 @@
       const k = S.q.id + ":" + id;
       if (SEEN[k] == null) SEEN[k] = Date.now() - stepStart;      // the host's clock decides how fast it was
       const t = await FNC.open(e.ans.s);
-      if (t && typeof t.o === "number") out[id] = { q: e.ans.q, o: t.o, ms: SEEN[k] };
+      if (t && typeof t.o === "number") { if (!FIRST[k]) FIRST[k] = { q: e.ans.q, o: t.o, ms: SEEN[k] }; out[id] = FIRST[k]; }
     }));
     if (n !== decSeq) return;
     ADEC = out; hostTick();
@@ -332,7 +333,10 @@
   }, 1000);
   if (self.FNW) FNW.onVisible(() => hostTick());
   fetch("questions.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    QS = d.questions.filter(q => q && q.question && Array.isArray(q.options) && q.options.length === 4 && q.answer >= 0 && q.answer < 4);
+    // the right option is not written plainly in questions.json (so nobody reads it there mid-game): k hides it
+    const code = id => [...String(id)].reduce((n, c) => n + c.codePointAt(0), 0) * 7;
+    QS = d.questions.map(q => (q && q.k != null && q.answer == null ? Object.assign({}, q, { answer: (((q.k - code(q.id)) % 4) + 4) % 4 }) : q))
+      .filter(q => q && q.question && Array.isArray(q.options) && q.options.length === 4 && q.answer >= 0 && q.answer < 4);
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("df/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));

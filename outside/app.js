@@ -337,7 +337,9 @@
   const hostVotes = (order, round) => { const v = votesOf(order, round); Object.keys(v).forEach(k => { if (typeof v[k] !== "string") delete v[k]; }); return v; };
   const votesReady = (order, round) => order.every(id => !(P[id] && P[id].vote && P[id].vote.r === round) || (VDEC[id] && VDEC[id].r === round));
   // what player id may know this round
-  const secretFor = (id, H, withOptions) => ({ round: H.round, cat: H.cat, out: H.outs.includes(id), word: H.outs.includes(id) ? (withOptions ? H.spyWord || null : H.spyWord) : H.word, options: withOptions && H.outs.includes(id) ? H.options : undefined });
+  // (in a round where the outsider doesn't know — الجاسوس or «ما يعرف» — not even his phone is told until the reveal)
+  const blindCat = c => isSpy(c) || !!(c && c.hidden);
+  const secretFor = (id, H, withOptions) => ({ round: H.round, cat: H.cat, out: H.outs.includes(id) && (withOptions || !blindCat(H.cat)), word: H.outs.includes(id) ? (withOptions ? H.spyWord || null : H.spyWord) : H.word, options: withOptions && H.outs.includes(id) ? H.options : undefined });
   async function writeSecret(id, H, withOptions) { await ref("secret/" + id).set(enc(await FNC.seal(P[id].key, secretFor(id, H, withOptions)))); }
   async function saveHidden(H) { HID = H; await ref("hidden").set(enc(await FNC.seal(await myKey(), H))); }
   function guessesOf(outs, round) { const g = {}; outs.forEach(id => { const e = P[id]; if (e && e.guess && e.guess.r === round) g[id] = e.guess.w; }); return g; }
