@@ -16,12 +16,13 @@
     bs: { dir: "outside/", label: "🤫 برا السالفة" },
     mf: { dir: "mf/", label: "👀 مين فينا؟" },
     draw: { dir: "draw/", label: "🎨 ارسم وخمّن" },
+    df: { dir: "dafour/", label: "🤓 الدافور" },
   };
   let STROKES = {}, board = null, frame = "";
   // سهرة كاملة: the TV follows the night from game to game
   let NIGHT = null, NS = null, nsub = null;
-  const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw" };
-  const NNAME = { seenjeem: "🎬 سين جيم", outside: "🤫 برا السالفة", sedq: "🤥 صدق ولا كذب", mf: "👀 مين فينا؟", draw: "🎨 ارسم وخمّن" };
+  const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw", dafour: "df" };
+  const NNAME = { seenjeem: "🎬 سين جيم", outside: "🤫 برا السالفة", sedq: "🤥 صدق ولا كذب", mf: "👀 مين فينا؟", draw: "🎨 ارسم وخمّن", dafour: "🤓 الدافور" };
 
   function qrImg(text) { try { const d = document.createElement("div"); new QRCode(d, { text, width: 260, height: 260, colorDark: "#2b1745", colorLight: "#ffffff" }); const c = d.querySelector("canvas"); return c ? `<img class="qr" src="${c.toDataURL()}" alt="">` : ""; } catch (e) { return ""; } }
   function sideHTML() {
@@ -82,6 +83,18 @@
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">الألقاب 👑</p><ul class="pairs tvpairs">${(S.titles || []).map(t => `<li>${esc(t.w.map(nameOf).join(" و"))} <i>${esc(String(t.q).replace(/^(مين فينا|من)\s+/, "").replace(/؟$/, ""))}</i></li>`).join("")}</ul></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
     return "";
   }
+  /* ---------- الدافور ---------- */
+  function renderDF() {
+    const order = S.order || [], L = ["أ", "ب", "ج", "د"];
+    const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${S.q.diff ? " · " + esc(S.q.diff) : ""}</p>` : "";
+    const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
+    const opts = r => `<div class="tvopts">${(S.q.opts || []).map((t, i) => { const who = r ? Object.keys(r.picks || {}).filter(id => r.picks[id] === i) : []; return `<div class="${r ? (i === r.correct ? "ok" : "dim") : ""}"><b>${L[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(nameOf).map(esc).join("، ")}</small>` : ""}</div>`; }).join("")}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🤓 الدافور</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "q") return `<div class="card">${head}${q}${timer(20)}${opts(null)}${plist(order, id => P[id] && P[id].ans && S.q && P[id].ans.q === S.q.id)}</div>`;
+    if (S.phase === "reveal") { const r = S.reveal || {}; return `<div class="card">${head}${q}${opts(r)}${r.fastest ? `<p class="tvsub">⚡ أسرع جواب صح: ${esc(nameOf(r.fastest))}</p>` : `<p class="tvsub">ما أحد جاوب صح 😅</p>`}${r.note ? `<p class="tvsub">💡 ${esc(r.note)}</p>` : ""}</div><div class="card"><h2>الترتيب</h2>${scoreTable(r.deltas)}</div>`; }
+    if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">دافور الشلة 🤓: ${esc(ids.length ? nameOf(ids[0]) : "")}</p></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
+    return "";
+  }
   /* ---------- برا السالفة ---------- */
   function renderBS() {
     const order = S.order || [], spy = S.catInfo && S.catInfo.mode === "spy";
@@ -110,7 +123,7 @@
     if (game === "draw" && S.phase === "draw" && frame === key && document.getElementById("tvcv")) { document.getElementById("tvside").innerHTML = drawSide(); return; }
     const bg = game === "bs" && S.catInfo && S.catInfo.image && S.phase !== "lobby" ? "../outside/" + S.catInfo.image : null;
     document.body.classList.toggle("catbg", !!bg); document.body.style.setProperty("--catbg", bg ? `url("${bg}")` : "none");
-    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : renderBS();
+    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
     moments();
@@ -126,6 +139,7 @@
     if (game === "bs" && S.phase === "results") FA.once(k + "res" + S.round, () => { FA.play("party"); FA.confetti(); });
     if (game === "sq" && S.phase === "reveal" && S.reveal && S.q) FA.once(k + "rv" + S.q.id, () => { const t = (S.opts || []).find(o => o.id === S.reveal.truth); FA.play("reveal", 0); FA.slam("الجواب الصحيح: " + (t ? t.text : ""), null, "#12a874"); });
     if (game === "mf" && S.phase === "reveal" && S.reveal && S.q) FA.once(k + "rv" + S.q.id, () => { if (S.reveal.winners && S.reveal.winners.length) { FA.play("party"); FA.confetti(); FA.slam("👑 " + names(S.reveal.winners), null, "#ffb21e"); } });
+    if (game === "df" && S.phase === "reveal" && S.reveal && S.q) FA.once(k + "rv" + S.q.id, () => { FA.play("reveal"); FA.slam("الجواب: " + ((S.q.opts || [])[S.reveal.correct] || ""), null, "#12a874"); });
     if (game === "draw" && S.phase === "reveal") FA.once(k + "rv" + S.tid, () => { FA.play("reveal"); FA.slam("الكلمة كانت: " + (S.word || ""), null, "#ff7a1a"); });
     if (S.phase === "end" && game !== "bs") FA.once(k + "end" + (S.game || ""), top);
   }

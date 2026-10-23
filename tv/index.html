@@ -147,6 +147,10 @@ body{font-size:20px}
 .tvpairs li{font-size:26px;padding:14px 18px}
 .tvtitle{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,3.4vw,44px);text-align:center;margin:0 0 12px}
 .tvsub{text-align:center;color:var(--muted);font-weight:800;font-size:22px;margin:0 0 14px}
+.tvopts{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:14px;margin:6px 0 16px}
+.tvopts div{display:flex;flex-direction:column;align-items:center;gap:4px;background:#fff;border:3px solid var(--ink);border-radius:20px;padding:16px;font-weight:800;font-size:28px;text-align:center}
+.tvopts b{font-size:16px;color:var(--muted)}.tvopts small{font-size:16px}
+.tvopts .ok{background:#12a874;color:#fff;border-color:#0b7a54}.tvopts .ok b{color:#fff}.tvopts .dim{opacity:.45}
 .joinbox{display:flex;flex-direction:column;gap:12px;max-width:520px;margin:30px auto}
 .tbar{height:12px;background:var(--soft);border-radius:999px;overflow:hidden;margin:4px 0 16px}
 .tbar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s linear}
@@ -168,7 +172,7 @@ body{font-size:20px}
 </head>
 <body style="--game:#7c3aed">
 <div class="wrap">
-  <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../" aria-label="الصفحة الرئيسية"><img src="../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../seenjeem/">🎬 سين جيم</a><a href="../outside/">🤫 برا السالفة</a><a href="../sedq/">🤥 صدق ولا كذب</a><a href="../mf/">👀 مين فينا؟</a><a href="../draw/">🎨 ارسم وخمّن</a><a href="../tv/" class="on" aria-current="page">📺 شاشة العرض</a></nav>
+  <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../" aria-label="الصفحة الرئيسية"><img src="../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../seenjeem/">🎬 سين جيم</a><a href="../outside/">🤫 برا السالفة</a><a href="../sedq/">🤥 صدق ولا كذب</a><a href="../mf/">👀 مين فينا؟</a><a href="../draw/">🎨 ارسم وخمّن</a><a href="../dafour/">🤓 الدافور</a><a href="../tv/" class="on" aria-current="page">📺 شاشة العرض</a></nav>
   <header>
     <div class="brand"><span class="logo"><img src="../icons/tv.png" alt=""></span><span>شاشة العرض</span></div>
     <span class="hdr-r"><span class="chip" id="hdrChip" hidden></span><button type="button" class="ghost" id="newBtn" hidden>🔄 غرفة ثانية</button></span>

@@ -17,8 +17,9 @@
     sedq: { name: "صدق ولا كذب", icon: "sedq", color: "#12a874", path: "sq", mk: "sq-me-v1" },
     mf: { name: "مين فينا؟", icon: "mf", color: "#ff7a1a", path: "mf", mk: "mf-me-v1" },
     draw: { name: "ارسم وخمّن", icon: "draw", color: "#1c7ed6", path: "draw", mk: "draw-me-v1" },
+    dafour: { name: "الدافور", icon: "dafour", color: "#0b7285", path: "df", mk: "df-me-v1" },
   };
-  const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw"];
+  const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour"];
   const MEDAL = ["🥇", "🥈", "🥉"];
   const SJ_KEY = "seenjeem-series-v8", SJ_RKEY = "seenjeem-remote-v1";
   const BUSY_MS = 3 * 3600e3;                     // a room someone else used in the last 3 hours is not ours to reuse
@@ -75,7 +76,7 @@
   self.FNIGHT = { LSK, GAMES, ORDER, MEDAL, place, placeTeams, addResult, ranking, rankOf, medalsText, games };
 
   /* ================= on a game page ================= */
-  const gm = location.pathname.match(/\/(seenjeem|outside|sedq|mf|draw)\/(index\.html)?$/);
+  const gm = location.pathname.match(/\/(seenjeem|outside|sedq|mf|draw|dafour)\/(index\.html)?$/);
   if (!gm) return;
   const g = gm[1], G = GAMES[g];
   const qs = new URLSearchParams(location.search);
