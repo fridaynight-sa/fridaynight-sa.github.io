@@ -145,6 +145,11 @@ body{font-size:20px}
 .tvopts small{font-family:var(--f-body);font-size:18px;color:var(--muted);font-weight:700}
 .bigplist li{font-size:22px;padding:8px 18px}
 .tvpairs li{font-size:26px;padding:14px 18px}
+.gic{width:1.25em;height:1.25em;object-fit:contain;vertical-align:-.25em;margin-inline-end:.3em;border-radius:22%}
+.chip .gic{width:20px;height:20px;vertical-align:-5px}
+.tvgames{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px}
+.tvgames span{display:inline-flex;align-items:center;background:var(--soft);border-radius:999px;padding:5px 12px 5px 14px;font-weight:800;font-size:15px}
+.tvgames .gic{width:28px;height:28px;vertical-align:middle}
 .tvtitle{font-family:var(--f-display);font-weight:800;font-size:clamp(28px,3.4vw,44px);text-align:center;margin:0 0 12px}
 .tvsub{text-align:center;color:var(--muted);font-weight:800;font-size:22px;margin:0 0 14px}
 /* الدافور's four options (its own names, so صدق ولا كذب's .tvopts stay as they were) */
@@ -172,7 +177,7 @@ body.fs .gamesbar{display:none}
 .gamesbar a.site img{vertical-align:-5px;margin-inline-end:4px}
 @media (min-width:820px){.gamesbar{justify-content:center!important;margin-inline:0;padding-inline:0}}
 </style>
-<link rel="stylesheet" href="../fntheme.css?v=202610232007">
+<link rel="stylesheet" href="../fntheme.css?v=202610232013">
 </head>
 <body style="--game:#7c3aed">
 <div class="wrap">
@@ -186,11 +191,11 @@ body.fs .gamesbar{display:none}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610232007"></script>
-<script src="../draw/board.js?v=202610232007"></script>
-<script src="../fnfx.js?v=202610232007"></script>
-<script src="../fnanim.js?v=202610232007"></script>
-<script src="app.js?v=202610232007"></script>
+<script src="../firebase-config.js?v=202610232013"></script>
+<script src="../draw/board.js?v=202610232013"></script>
+<script src="../fnfx.js?v=202610232013"></script>
+<script src="../fnanim.js?v=202610232013"></script>
+<script src="app.js?v=202610232013"></script>
 <script>try{document.querySelector(".gamesbar .on").scrollIntoView({inline:"center",block:"nearest"})}catch(e){}</script>
 </body>
 </html>

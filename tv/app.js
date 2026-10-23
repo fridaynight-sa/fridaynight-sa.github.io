@@ -12,17 +12,20 @@
   let game = null, code = "", S = null, P = {}, CATS = [], MFCATS = [], subs = [], stepStart = 0, lastStep = "", tick = null;
   // 4-letter room codes: one entry per game (db path → folder + label)
   const GAMES = {
-    sq: { dir: "sedq/", label: "🤥 صدق ولا كذب" },
-    bs: { dir: "outside/", label: "🤫 برا السالفة" },
-    mf: { dir: "mf/", label: "👀 مين فينا؟" },
-    draw: { dir: "draw/", label: "🎨 ارسم وخمّن" },
-    df: { dir: "dafour/", label: "🤓 الدافور" },
+    sq: { dir: "sedq/", label: "صدق ولا كذب", icon: "sedq" },
+    bs: { dir: "outside/", label: "برا السالفة", icon: "outside" },
+    mf: { dir: "mf/", label: "مين فينا؟", icon: "mf" },
+    draw: { dir: "draw/", label: "ارسم وخمّن", icon: "draw" },
+    df: { dir: "dafour/", label: "الدافور", icon: "dafour" },
   };
+  // each game's own picture (icons/) instead of an emoji
+  const gic = (name, cls) => `<img class="${cls || "gic"}" src="../icons/${name}.png" alt="">`;
+  const gname = k => GAMES[k] ? gic(GAMES[k].icon) + esc(GAMES[k].label) : "";
   let STROKES = {}, board = null, frame = "";
   // سهرة كاملة: the TV follows the night from game to game
   let NIGHT = null, NS = null, nsub = null;
   const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw", dafour: "df" };
-  const NNAME = { seenjeem: "🎬 سين جيم", outside: "🤫 برا السالفة", sedq: "🤥 صدق ولا كذب", mf: "👀 مين فينا؟", draw: "🎨 ارسم وخمّن", dafour: "🤓 الدافور" };
+  const NNAME = { seenjeem: "سين جيم", outside: "برا السالفة", sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور" };
 
   function qrImg(text) { try { const d = document.createElement("div"); new QRCode(d, { text, width: 260, height: 260, colorDark: "#2b1745", colorLight: "#ffffff" }); const c = d.querySelector("canvas"); return c ? `<img class="qr" src="${c.toDataURL()}" alt="">` : ""; } catch (e) { return ""; } }
   function sideHTML() {
@@ -42,7 +45,7 @@
     const img = S.q && S.q.img ? `<img class="tvimg" src="${esc(S.q.img)}" alt="" onerror="this.remove()">` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
     const order = S.order || [];
-    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🤥 صدق ولا كذب</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("sq")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "write") return `<div class="card">${head}${img}${q}${timer(60)}<p class="tvsub">✍️ كل واحد يكتب كذبة من جواله…</p>${plist(order, id => { const x = P[id] && P[id].lie; return x && x.q === S.q.id && !(S.redo || []).includes(id + ":" + x.n); })}</div>`;
     if (S.phase === "pick") return `<div class="card">${head}${img}${q}${timer(30)}<div class="tvopts">${(S.opts || []).map(o => `<div>${esc(o.text)}</div>`).join("")}</div><p class="tvsub mt">👆 اختاروا الجواب الصحيح من جوالاتكم</p>${plist(order, id => P[id] && P[id].pick && P[id].pick.q === S.q.id)}</div>`;
     if (S.phase === "reveal") {
@@ -65,7 +68,7 @@
   const hintHTML = h => (h || []).map(c => c === " " ? `<i class="sp"></i>` : `<i>${esc(c)}</i>`).join("");
   function renderDraw() {
     const head = S.drawer ? `<p class="tvsub">الدور ${S.turn + 1} من ${S.total} · ✏️ الرسّام: <b>${esc(nameOf(S.drawer))}</b></p>` : "";
-    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🎨 ارسم وخمّن</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("draw")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "choose") return `<div class="card">${head}<p class="tvtitle">✏️ ${esc(nameOf(S.drawer))} يختار كلمة…</p></div><div class="card"><h2>الترتيب</h2>${scoreTable()}</div>`;
     if (S.phase === "draw") return `<div class="card">${head}${timer(80)}<div id="tvside">${drawSide()}</div><canvas id="tvcv" class="board"></canvas></div>`;
     if (S.phase === "reveal") { const d = Object.assign({}, S.correct || {}); d[S.drawer] = (d[S.drawer] || 0) + (S.dpts || 0); return `<div class="card">${head}<p class="tvtitle">الكلمة كانت <span class="word">${esc(S.word || "")}</span></p><canvas id="tvcv" class="board"></canvas></div><div class="card"><h2>الترتيب</h2>${scoreTable(d)}</div>`; }
@@ -77,7 +80,7 @@
     const order = S.order || [], cat = S.q && MFCATS.find(c => c.id === S.q.cat);
     const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${cat ? " · " + esc(cat.emoji + " " + cat.name) : ""}</p>` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
-    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">👀 مين فينا؟</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("mf")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "vote") return `<div class="card">${head}${q}${timer(30)}<p class="tvsub">🗳️ صوّتوا من جوالاتكم… التصويت سري</p>${plist(order, id => P[id] && P[id].vote && S.q && P[id].vote.q === S.q.id)}</div>`;
     if (S.phase === "reveal") { const r = S.reveal || { counts: {}, winners: [] }; return `<div class="card">${head}${q}<p class="tvtitle">${r.winners.length ? "👑 " + esc(r.winners.map(nameOf).join(" و")) : r.tie ? "تعادل كامل 🤝 ما أحد ياخذ اللقب" : "ما أحد صوّت"}</p>${bars(order, r.counts, r.winners, "win")}</div><div class="card"><h2>الترتيب</h2>${scoreTable(r.deltas)}</div>`; }
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">الألقاب 👑</p><ul class="pairs tvpairs">${(S.titles || []).map(t => `<li>${esc(t.w.map(nameOf).join(" و"))} <i>${esc(String(t.q).replace(/^(مين فينا|من)\s+/, "").replace(/؟$/, ""))}</i></li>`).join("")}</ul></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
@@ -89,7 +92,7 @@
     const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${S.q.diff ? " · " + esc(S.q.diff) : ""}</p>` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
     const opts = r => `<div class="dfopts">${(S.q.opts || []).map((t, i) => { const who = r ? Object.keys(r.picks || {}).filter(id => r.picks[id] === i) : []; return `<div class="${r ? (i === r.correct ? "ok" : "dim") : ""}"><b>${L[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(nameOf).map(esc).join("، ")}</small>` : ""}</div>`; }).join("")}</div>`;
-    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🤓 الدافور</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("df")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "q") return `<div class="card">${head}${q}${timer(20)}${opts(null)}${plist(order, id => P[id] && P[id].ans && S.q && P[id].ans.q === S.q.id)}</div>`;
     if (S.phase === "reveal") { const r = S.reveal || {}; return `<div class="card">${head}${q}${opts(r)}${r.fastest ? `<p class="tvsub">⚡ أسرع جواب صح: ${esc(nameOf(r.fastest))}</p>` : `<p class="tvsub">ما أحد جاوب صح 😅</p>`}${r.note ? `<p class="tvsub">💡 ${esc(r.note)}</p>` : ""}</div><div class="card"><h2>الترتيب</h2>${scoreTable(r.deltas)}</div>`; }
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">دافور الشلة 🤓: ${esc(ids.length ? nameOf(ids[0]) : "")}</p></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
@@ -99,7 +102,7 @@
   function renderBS() {
     const order = S.order || [], spy = S.catInfo && S.catInfo.mode === "spy";
     const outName = spy ? "الجاسوس" : "اللي برا السالفة";
-    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🤫 برا السالفة</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("bs")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     const cat = S.catInfo ? `<p class="tvsub">الجولة ${S.round} · ${esc(S.catInfo.emoji + " " + S.catInfo.name)}</p>` : "";
     if (S.phase === "roles") return `<div class="card">${cat}<p class="tvtitle">👀 كل واحد يشوف دوره في جواله</p>${plist(order, id => P[id] && P[id].seen === S.round)}</div>`;
     if (S.phase === "ask") return `<div class="card">${cat}<p class="tvtitle">🗣️ جولة الأسئلة</p><ul class="pairs tvpairs">${(S.pairs || []).map(([a, b]) => `<li>${esc(nameOf(a))} <i>يسأل</i> ${esc(nameOf(b))}</li>`).join("")}</ul></div>`;
@@ -177,7 +180,7 @@
     } else {
       if (self.FA && pl.length) FA.once("tvn-res-" + NIGHT + "-" + pl.length, () => { FA.play("party"); FA.slam("🏆 ترتيب السهرة", "بعد " + games(pl.length), "#ffb21e"); });
       const cur = NS.cur;
-      const now = cur ? `<p class="tvsub">${cur.g === "seenjeem" ? (cur.room ? `🎬 سين جيم شغالة: اعرضوها من سين جيم برمز <b dir="ltr">${esc(cur.room)}</b>` : "🎬 ننتظر صاحب السهرة يفتح غرفة سين جيم…") : `ننتظر ${esc(NNAME[cur.g] || "")}…`}</p>${cur.g === "seenjeem" && cur.room ? `<button type="button" class="btn" id="tvSJ">اعرض سين جيم</button>` : ""}`
+      const now = cur ? `<p class="tvsub">${cur.g === "seenjeem" ? (cur.room ? `${gic("seenjeem")}سين جيم شغالة: اعرضوها من سين جيم برمز <b dir="ltr">${esc(cur.room)}</b>` : gic("seenjeem") + "ننتظر صاحب السهرة يفتح غرفة سين جيم…") : `ننتظر ${NNAME[cur.g] ? gic(cur.g) + esc(NNAME[cur.g]) : ""}…`}</p>${cur.g === "seenjeem" && cur.room ? `<button type="button" class="btn" id="tvSJ">اعرض سين جيم</button>` : ""}`
         : `<p class="tvsub">ننتظر صاحب السهرة يختار ${pl.length ? "اللعبة الجاية" : "أول لعبة"}…</p>`;
       main = `<div class="card"><p class="tvtitle">🌙 سهرة كاملة</p>${now}${pl.length ? "" : `<ul class="plist bigplist">${rows.map(r => `<li>${esc(r[0])}</li>`).join("")}</ul>`}</div>${pl.length ? `<div class="card"><p class="tvsub">🏆 ترتيب السهرة بعد ${games(pl.length)}</p>${table}</div>` : ""}`;
     }
@@ -186,7 +189,7 @@
   }
   function watch(g, c) {
     game = g; code = c; S = null; P = {};
-    chip.hidden = false; chip.innerHTML = `${GAMES[g].label} · <b dir="ltr">${esc(c)}</b>${NIGHT ? ` · 🌙 <b dir="ltr">${esc(NIGHT)}</b>` : ""}`; newBtn.hidden = false;
+    chip.hidden = false; chip.innerHTML = `${gname(g)} · <b dir="ltr">${esc(c)}</b>${NIGHT ? ` · 🌙 <b dir="ltr">${esc(NIGHT)}</b>` : ""}`; newBtn.hidden = false;
     const r = db.ref(g + "/" + c);
     const on = (ref, cb) => { const h = s => cb(s.val()); ref.on("value", h); subs.push(() => ref.off("value", h)); };
     on(r.child("state"), v => { S = dec(v); render(); });
@@ -224,11 +227,11 @@
     if (nsub) nsub(); nsub = null; NIGHT = null; NS = null;
     document.body.classList.remove("catbg");
     history.replaceState(null, "", location.pathname);
-    app.innerHTML = `<div class="card joinbox center"><p class="tvtitle">📺 الشاشة تعرض، والجوالات تلعب</p>
+    app.innerHTML = `<div class="card joinbox center"><p class="tvtitle">${gic("tv")}الشاشة تعرض، والجوالات تلعب</p>
       <p class="note">افتحوا غرفة من الجوال في أي لعبة، واكتبوا رمزها هنا.</p>
       <input id="tvCode" class="inp codein" maxlength="5" autocomplete="off" placeholder="ABCD">
       <button type="button" class="btn" id="tvGo">اعرض الغرفة</button><p class="err" id="tvMsg">${esc(msg || "")}</p>
-      <p class="note">تشتغل مع: 🎬 سين جيم · ${Object.values(GAMES).map(g => g.label).join(" · ")} · 🌙 السهرة الكاملة</p></div>`;
+      <p class="note">تشتغل مع:</p><div class="tvgames"><span>${gic("seenjeem")}سين جيم</span>${Object.keys(GAMES).map(k => `<span>${gname(k)}</span>`).join("")}</div></div>`;
     const inp = document.getElementById("tvCode"), go = () => connect(inp.value, document.getElementById("tvMsg"));
     document.getElementById("tvGo").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go(); }; inp.focus();
   }
