@@ -1,10 +1,11 @@
 /* Friday Night — «سهرة»: switch game from inside any game, everybody follows, points add up.
    In any room, its host sees «🔄 بدّل اللعبة». Picking a game turns the room into a night (same code):
      night/<CODE>/state   written by the night's host only:
-       {host, phase: "lobby"|"end", cur: {g, room, n}, seq, played: [{g, pts}], totals, names, at}
+       {host, phase: "lobby"|"end", cur: {g, room, n}, seq, played: [{g, rank: {id: 1|2|3…}}], names, at}
    The next game's room gets the same CODE; each room remembers its step in the night (state.nt / rooms pub nt).
-   Everybody's phone moves once the new room is ready. After each game every player gets night points by
-   place (PTS), so all games weigh the same; in سين جيم every member gets the place of their team.
+   Everybody's phone moves once the new room is ready. Only a game that was played to its end counts.
+   The night is ranked like a medal table: most 🥇 first, then 🥈, then 🥉, so two wins always beat one,
+   and every game weighs the same whatever its own points are. In سين جيم every member gets their team's place.
    Inside a night a player's id in each room is their night id, so scores map back directly.
    Loaded on every game page before the game's own script. Outside a room it does nothing. */
 (function () {
@@ -18,7 +19,7 @@
     draw: { name: "ارسم وخمّن", icon: "draw", color: "#1c7ed6", path: "draw", mk: "draw-me-v1" },
   };
   const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw"];
-  const PTS = [5, 3, 2];                          // 1st, 2nd, 3rd; everybody else who played gets 1
+  const MEDAL = ["🥇", "🥈", "🥉"];
   const SJ_KEY = "seenjeem-series-v8", SJ_RKEY = "seenjeem-remote-v1";
   const BUSY_MS = 3 * 3600e3;                     // a room someone else used in the last 3 hours is not ours to reuse
 
@@ -33,10 +34,10 @@
   const RULES_MSG = "Firebase رفض يحفظ السهرة: لازم تنلصق قواعد Firebase الجديدة (ملف database.rules.json) وتضغط Publish.";
   const games = n => n === 1 ? "لعبة وحدة" : n === 2 ? "لعبتين" : n + (n <= 10 ? " ألعاب" : " لعبة");
 
-  // scores {id: n} -> night points {id: p}. Equal scores share the place (5,5 then 2 …).
+  // scores {id: n} -> place {id: 1, 2, 3 …}. Equal scores share the place (1, 1, 3 …).
   function place(scores) {
     const ids = Object.keys(scores || {}), out = {};
-    ids.forEach(id => { const better = ids.filter(o => (+scores[o] || 0) > (+scores[id] || 0)).length; out[id] = PTS[better] || 1; });
+    ids.forEach(id => { out[id] = 1 + ids.filter(o => (+scores[o] || 0) > (+scores[id] || 0)).length; });
     return out;
   }
   // members {nid: teamIndex | -1 (didn't play)}
@@ -46,13 +47,22 @@
     Object.entries(members || {}).forEach(([nid, t]) => { if (t >= 0 && tp[t] != null) out[nid] = tp[t]; });
     return out;
   }
-  function addResult(st, g, pts) {
-    const totals = Object.assign({}, st.totals);
-    Object.entries(pts).forEach(([id, p]) => totals[id] = (totals[id] || 0) + p);
-    const played = (st.played || []).concat(Object.keys(pts).length ? [{ g, pts, at: Date.now() }] : []);
-    return Object.assign({}, st, { totals, played });
+  function addResult(st, g, rank) {
+    const played = (st.played || []).concat(Object.keys(rank).length ? [{ g, rank, at: Date.now() }] : []);
+    return Object.assign({}, st, { played });
   }
-  const ranking = st => { const names = st.names || {}, t = st.totals || {}; return Object.keys(names).map(id => [id, names[id], t[id] || 0]).sort((a, b) => b[2] - a[2]); };
+  // (nights saved before the medal table kept 5/3/2/1 points per game)
+  const rankOf = x => x.rank || Object.fromEntries(Object.entries(x.pts || {}).map(([id, p]) => [id, { 5: 1, 3: 2, 2: 3 }[p] || 4]));
+  // rows [id, name, [gold, silver, bronze], games played], best first
+  function ranking(st) {
+    const names = st.names || {}, m = {};
+    Object.keys(names).forEach(id => m[id] = [0, 0, 0, 0]);
+    (st.played || []).forEach(x => Object.entries(rankOf(x)).forEach(([id, r]) => { if (!m[id]) m[id] = [0, 0, 0, 0]; if (r <= 3) m[id][r - 1]++; m[id][3]++; }));
+    const cmp = (a, b) => b[2][0] - a[2][0] || b[2][1] - a[2][1] || b[2][2] - a[2][2];
+    return Object.keys(m).filter(id => names[id]).map(id => [id, names[id], m[id].slice(0, 3), m[id][3]]).sort(cmp);
+  }
+  const sameMedals = (a, b) => a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+  const medalsText = v => v.some(Boolean) ? v.map((n, i) => n ? MEDAL[i] + (n > 1 ? "×" + n : "") : "").filter(Boolean).join(" ") : "—";
 
   let DB = null;
   function db() {
@@ -62,7 +72,7 @@
     try { if (!firebase.apps.length) firebase.initializeApp(C); DB = firebase.database(); } catch (e) { console.error(e); }
     return DB;
   }
-  self.FNIGHT = { LSK, GAMES, ORDER, PTS, place, placeTeams, addResult, ranking, games };
+  self.FNIGHT = { LSK, GAMES, ORDER, MEDAL, place, placeTeams, addResult, ranking, rankOf, medalsText, games };
 
   /* ================= on a game page ================= */
   const gm = location.pathname.match(/\/(seenjeem|outside|sedq|mf|draw)\/(index\.html)?$/);
@@ -172,21 +182,21 @@
     document.body.appendChild(o); return o;
   }
   function rankHTML(st, delta) {
-    const rows = ranking(st), last = delta && (st.played || []).length ? st.played[st.played.length - 1].pts : null;
-    const at = t => rows.filter(r => r[2] > t).length, medal = ["🥇", "🥈", "🥉"], me = myNid();
-    return `${(st.played || []).length ? `<div class="fn-np">${st.played.map(x => `<img src="${icon(x.g)}" alt="${esc(GAMES[x.g].name)}">`).join("")}</div>` : ""}
-      <div class="fn-nr">${rows.map(([id, n, t]) => `<div><span>${t && medal[at(t)] ? medal[at(t)] : at(t) + 1 + "."} ${esc(n)}${id === me ? " (أنت)" : ""}</span><span><b>${t}</b>${last && last[id] ? `<em>+${last[id]}</em>` : ""}</span></div>`).join("")}</div>`;
+    const rows = ranking(st), pl = st.played || [], last = delta && pl.length ? rankOf(pl[pl.length - 1]) : null, me = myNid();
+    const at = v => rows.filter(r => !sameMedals(r[2], v) && (r[2][0] - v[0] || r[2][1] - v[1] || r[2][2] - v[2]) > 0).length;   // shared place for equal medals
+    return `${pl.length ? `<div class="fn-np">${pl.map(x => `<img src="${icon(x.g)}" alt="${esc(GAMES[x.g].name)}">`).join("")}</div>` : ""}
+      <div class="fn-nr">${rows.map(([id, n, v]) => `<div><span>${at(v) + 1}. ${esc(n)}${id === me ? " (أنت)" : ""}</span><span><b>${medalsText(v)}</b>${last && last[id] && last[id] <= 3 ? `<em>+${MEDAL[last[id] - 1]}</em>` : ""}</span></div>`).join("")}</div>`;
   }
   function sheetRank() {
     if (!NS) return;
     const pl = (NS.played || []).length;
-    overlay(`<h3>🏆 ترتيب السهرة</h3><p>${pl ? "بعد " + games(pl) : "ما خلصنا ولا لعبة للحين"}</p>${rankHTML(NS, true)}<p>بعد كل لعبة: الأول ٥، الثاني ٣، الثالث ٢، والباقي ١</p><button type="button" class="bt" data-a="x">تمام</button>`, true);
+    overlay(`<h3>🏆 ترتيب السهرة</h3><p>${pl ? "بعد " + games(pl) : "ما خلصنا ولا لعبة للحين"}</p>${rankHTML(NS, true)}<p>كل لعبة تخلص: الأول 🥇، الثاني 🥈، الثالث 🥉. الترتيب بعدد 🥇، وإذا تعادلوا فبعدد 🥈 ثم 🥉. واللعبة اللي ما تخلص ما تنحسب.</p><button type="button" class="bt" data-a="x">تمام</button>`, true);
   }
 
   /* ---------------- host: switch game ---------------- */
   function sheetSwitch() {
     const pl = NS ? (NS.played || []).length : 0;
-    const o = overlay(`<h3>🔄 وين نروح؟</h3><p>الكل ينتقل معك بنفس الرمز <b dir="ltr">${esc(C.code)}</b>، ونقاط ${esc(G.name)} تنحفظ في ترتيب السهرة</p>
+    const o = overlay(`<h3>🔄 وين نروح؟</h3><p>الكل ينتقل معك بنفس الرمز <b dir="ltr">${esc(C.code)}</b>. إذا ${esc(G.name)} خلصت، تنحسب ميدالياتها في ترتيب السهرة</p>
       <div class="fn-ng">${ORDER.map(k => `<button type="button" data-g="${k}" style="--c:${GAMES[k].color}" ${k === g ? 'class="here" disabled' : ""}><img src="${icon(k)}" alt="">${esc(GAMES[k].name)}</button>`).join("")}</div>
       ${NS ? `<button type="button" class="bt" data-a="end">🏁 خلصنا السهرة — مين بطل الليلة؟</button>` : ""}
       ${NS && pl ? `<details style="margin-top:8px;text-align:start"><summary style="font-weight:800;cursor:pointer">🏆 ترتيب السهرة</summary>${rankHTML(NS, true)}</details>` : ""}
@@ -196,7 +206,7 @@
       if (b.dataset.g || b.dataset.a === "end") {
         o.querySelectorAll("button").forEach(x => x.disabled = true);
         try { await (b.dataset.g ? doSwitch(b.dataset.g) : doEnd()); }
-        catch (err) { console.error(err); alert(denied(err) ? RULES_MSG : "ما قدرت أتصل. تأكد من النت وجرّب مرة ثانية."); }
+        catch (err) { if (err !== CANCEL) { console.error(err); alert(denied(err) ? RULES_MSG : "ما قدرت أتصل. تأكد من النت وجرّب مرة ثانية."); } }
         o.remove();
       }
     };
@@ -222,13 +232,16 @@
       LS.set(LSK, { code: C.code, nid: host, name });
       (await sjPlayers(C.code)).forEach(p => { if (!Object.values(names).some(n => sameName(n, p.name))) names["n" + rid(8)] = p.name; });
     }
-    return { v: 2, host, phase: "lobby", cur: { g, room: C.code, n: hereN() || 0 }, seq: hereN() || 0, played: [], totals: {}, names, at: Date.now() };
+    return { v: 3, host, phase: "lobby", cur: { g, room: C.code, n: hereN() || 0 }, seq: hereN() || 0, played: [], names, at: Date.now() };
   }
   async function sjPlayers(code) {
     const pv = (await db().ref("presence/sj-" + code.toLowerCase()).get()).val() || {};
     return Object.values(pv).map(dec).filter(p => p && p.role === "player" && p.name);
   }
-  // this game's points into the night (سين جيم asks the host who was in which team)
+  // a game started but not played to its end: switching away gives nobody anything (no locking in a lead)
+  const CANCEL = {};
+  function unfinished(msg) { if (!confirm("⚠️ " + msg + "\n\nإذا بدّلت الحين ما تنحسب لأحد. تبدّل؟")) throw CANCEL; }
+  // this game's places into the night (سين جيم asks the host who was in which team)
   async function withResult(st) {
     const d = db();
     if (G.mk) {
@@ -236,12 +249,17 @@
       if ((gs.nt || 0) !== ((st.cur && st.cur.n) || 0)) return st;                               // not this night's game
       const sc = gs.scores || {};
       if (!Object.keys(sc).length) return st;                                                   // never started
+      if (G.path === "bs") {
+        // برا السالفة has no end: it counts after as many rounds as players (at least 3)
+        const done = gs.phase === "results" ? gs.round || 0 : Math.max(0, (gs.round || 0) - 1), need = Math.max(3, (gs.order || Object.keys(sc)).length);
+        if (done < need) { if (done || gs.phase !== "lobby") unfinished(`لعبتوا ${done} من ${need} جولات، و${G.name} تنحسب بعد ${need} جولات (بعدد اللاعبين).`); return st; }
+      } else if (gs.phase !== "end") { if (gs.phase !== "lobby") unfinished(`${G.name} ما خلصت للحين، تنحسب لما تطلع «النتيجة النهائية».`); return st; }
       const names = Object.assign({}, st.names);
       Object.keys(sc).forEach(id => { if (!names[id]) names[id] = (gs.names && gs.names[id]) || "لاعب"; });
       return addResult(Object.assign(st, { names }), g, place(sc));
     }
     const S = LS.get(SJ_KEY, {}) || {}, teams = (S.teams || []).map(t => ({ name: t.name, score: +t.score || 0 }));
-    if (!teams.some(t => t.score)) return st;
+    if (S.phase !== "end") { if (Object.keys(S.used || {}).length) unfinished("سين جيم ما خلصت للحين، تنحسب لما تخلص كل الأسئلة."); return st; }
     const names = Object.assign({}, st.names), members = {};
     Object.keys(names).forEach(id => members[id] = -1);
     (await sjPlayers(C.code)).forEach(p => {
@@ -258,9 +276,9 @@
       const m = Object.assign({}, members);
       const tname = t => t >= 0 && teams[t] ? teams[t].name : "ما لعب";
       const draw = () => {
-        const o = overlay(`<h3>🎬 نقاط سين جيم</h3><p>${teams.map(t => `<b>${esc(t.name)}</b>: ${t.score}`).join(" · ")}</p><p>مين كان في أي فريق؟ اضغط على الاسم عشان تغيّره.</p>
+        const o = overlay(`<h3>🎬 ميداليات سين جيم</h3><p>${teams.map(t => `<b>${esc(t.name)}</b>: ${t.score}`).join(" · ")}</p><p>مين كان في أي فريق؟ اضغط على الاسم عشان تغيّره.</p>
           <div class="fn-tm">${Object.keys(st.names).map(id => `<button type="button" data-m="${id}" class="t${m[id] ?? -1}"><span>${esc(st.names[id])}</span><span>${esc(tname(m[id] ?? -1))}</span></button>`).join("")}</div>
-          <button type="button" class="bt go" data-a="ok">✅ احسب النقاط</button><button type="button" class="bt" data-a="skip">بدون نقاط</button>`, true);
+          <button type="button" class="bt go" data-a="ok">✅ احسب الميداليات</button><button type="button" class="bt" data-a="skip">بدون ميداليات</button>`, true);
         o.onclick = null;
         o.querySelector("div").onclick = e => {
           const b = e.target.closest("button"); if (!b) return;
@@ -283,7 +301,7 @@
     }
     let st = await nightNow();
     // after «بطل الليلة» a new game starts a new night (that last game was already counted)
-    if (st.phase === "end") st = Object.assign(st, { played: [], totals: {} });
+    if (st.phase === "end") st = Object.assign(st, { played: [] });
     else st = await withResult(st);
     const n = (st.seq || 0) + 1;
     st = Object.assign(st, { seq: n, phase: "lobby", cur: { g: t, room: code, n, at: Date.now() } });
@@ -314,8 +332,8 @@
     const pl = (NS.played || []).length, here = hereN(), cur = NS.cur || {};
     if (NS.phase === "end") {
       if (self.FA) FA.once("fnn-end-" + C.code + "-" + NS.seq, () => {
-        const rows = ranking(NS), top = rows.filter(r => r[2] === (rows[0] || [])[2] && r[2] > 0);
-        if (top.length) { FA.confetti(); FA.winner(top.map(r => r[1]).join(" و"), rows.map(r => [r[1], r[2]]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); }
+        const rows = ranking(NS), top = rows.length && rows[0][2].some(Boolean) ? rows.filter(r => sameMedals(r[2], rows[0][2])) : [];
+        if (top.length) { FA.confetti(); FA.winner(top.map(r => r[1]).join(" و"), rows.map(r => [r[1], medalsText(r[2])]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); }
       });
       return;
     }

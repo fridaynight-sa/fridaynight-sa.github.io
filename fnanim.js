@@ -63,7 +63,7 @@
     }
     const o = document.createElement("div"); o.className = "fn-win";
     o.innerHTML = `<div class="box"><div class="trophy">🏆</div><p>${esc(label || "الفوز لـ")}</p><h2>${esc(title)}</h2>
-      ${rows && rows.length ? `<div class="rows">${rows.slice(0, 5).map(([n, s]) => `<div><span>${esc(n)}</span><b data-to="${+s || 0}">0</b></div>`).join("")}</div>` : ""}
+      ${rows && rows.length ? `<div class="rows">${rows.slice(0, 5).map(([n, s]) => `<div><span>${esc(n)}</span>${typeof s === "string" ? `<b>${esc(s)}</b>` : `<b data-to="${+s || 0}">0</b>`}</div>`).join("")}</div>` : ""}
       <button type="button">يا سلام 🎉</button></div>`;
     document.body.appendChild(o);
     play("win", [80, 60, 80, 60, 200]);

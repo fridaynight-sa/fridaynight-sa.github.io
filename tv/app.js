@@ -145,14 +145,20 @@
   function renderNight() {
     chip.hidden = false; chip.innerHTML = `🌙 سهرة · <b dir="ltr">${esc(NIGHT)}</b>`; newBtn.hidden = false;
     if (!NS) { app.innerHTML = `<div class="card center"><p class="big-msg">السهرة انتهت أو انمسحت.</p></div>`; return; }
-    const names = NS.names || {}, tot = NS.totals || {}, pl = NS.played || [];
-    const rows = Object.keys(names).map(id => [names[id], tot[id] || 0, id]).sort((a, b) => b[1] - a[1]);
-    const last = pl.length ? pl[pl.length - 1].pts : {};
-    const table = `<table><thead><tr><th>اللاعب</th>${pl.length ? `<th class="n">آخر لعبة</th>` : ""}<th class="n">النقاط</th></tr></thead><tbody>${rows.map(([n, t, id]) => `<tr><td>${esc(n)}</td>${pl.length ? `<td class="n ${last[id] ? "plus" : ""}">${last[id] ? "+" + last[id] : "0"}</td>` : ""}<td class="n">${t}</td></tr>`).join("")}</tbody></table>`;
+    // medal table: most 🥇, then 🥈, then 🥉 (same as fnnight.js)
+    const names = NS.names || {}, pl = NS.played || [], M = ["🥇", "🥈", "🥉"], med = {};
+    const rankOf = x => x.rank || Object.fromEntries(Object.entries(x.pts || {}).map(([id, p]) => [id, { 5: 1, 3: 2, 2: 3 }[p] || 4]));
+    Object.keys(names).forEach(id => med[id] = [0, 0, 0]);
+    pl.forEach(x => Object.entries(rankOf(x)).forEach(([id, r]) => { if (med[id] && r <= 3) med[id][r - 1]++; }));
+    const rows = Object.keys(names).map(id => [names[id], med[id], id]).sort((a, b) => b[1][0] - a[1][0] || b[1][1] - a[1][1] || b[1][2] - a[1][2]);
+    const same = (a, b) => a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+    const last = pl.length ? rankOf(pl[pl.length - 1]) : {};
+    const cnt = (v, i) => v[i] || "·";
+    const table = `<table><thead><tr><th>اللاعب</th>${pl.length ? `<th class="n">آخر لعبة</th>` : ""}<th class="n">🥇</th><th class="n">🥈</th><th class="n">🥉</th></tr></thead><tbody>${rows.map(([n, v, id]) => `<tr><td>${esc(n)}</td>${pl.length ? `<td class="n ${last[id] && last[id] <= 3 ? "plus" : ""}">${last[id] && last[id] <= 3 ? M[last[id] - 1] : "·"}</td>` : ""}<td class="n">${cnt(v, 0)}</td><td class="n">${cnt(v, 1)}</td><td class="n">${cnt(v, 2)}</td></tr>`).join("")}</tbody></table>`;
     let main;
     if (NS.phase === "end") {
-      const top = rows.filter(r => r[1] === (rows[0] || [])[1] && r[1] > 0);
-      if (self.FA && top.length) FA.once("tvn-end-" + NIGHT + "-" + (NS.at || 0) + "-" + pl.length, () => { FA.confetti(); FA.winner(top.map(r => r[0]).join(" و"), rows.map(r => [r[0], r[1]]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); });
+      const top = rows.length && rows[0][1].some(Boolean) ? rows.filter(r => same(r[1], rows[0][1])) : [];
+      if (self.FA && top.length) FA.once("tvn-end-" + NIGHT + "-" + (NS.seq || 0), () => { FA.confetti(); FA.winner(top.map(r => r[0]).join(" و"), rows.map(r => [r[0], r[1].some(Boolean) ? r[1].map((k, i) => k ? M[i] + (k > 1 ? "×" + k : "") : "").filter(Boolean).join(" ") : "—"]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); }, true);
       main = `<div class="card center"><p class="tvtitle" style="font-size:64px;margin:0">👑</p><p class="tvtitle">${top.length > 1 ? "أبطال الليلة" : "بطل الليلة"}: ${esc(top.map(r => r[0]).join(" و") || "—")}</p><p class="tvsub">${games(pl.length)}</p></div><div class="card">${table}</div>`;
     } else {
       if (self.FA && pl.length) FA.once("tvn-res-" + NIGHT + "-" + pl.length, () => { FA.play("party"); FA.slam("🏆 ترتيب السهرة", "بعد " + games(pl.length), "#ffb21e"); });
