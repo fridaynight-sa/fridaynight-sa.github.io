@@ -34,7 +34,7 @@
   const SIZES = [5, 12, 26];
 
   /* ---------------- engine ---------------- */
-  const guessPts = left => 2 + Math.ceil(8 * Math.max(0, left) / DRAW_S); // 3…10
+  const guessPts = (left, total) => 2 + Math.ceil(8 * Math.max(0, left) / (total || DRAW_S)); // 3…10
   // the drawer gets the fastest guesser's points + 1 for every other right guess,
   // so drawing well always pays more than it gives the others
   const drawerPts = pts => { const v = Object.values(pts); return v.length ? Math.max(...v) + (v.length - 1) : 0; };
@@ -43,7 +43,9 @@
     order.slice(0, shown).forEach(i => { out[i] = ch[i]; });
     return out;
   }
-  const hintsAt = (el, letters) => letters < 3 ? 0 : el > DRAW_S * 0.7 ? Math.min(2, letters - 2) : el > DRAW_S * 0.4 ? 1 : 0;
+  const hintsAt = (el, letters, total) => { const T = total || DRAW_S; return letters < 3 ? 0 : el > T * 0.7 ? Math.min(2, letters - 2) : el > T * 0.4 ? 1 : 0; };
+  const DRAW_TIMES = [60, 80, 120];
+  const drawS = () => (S && DRAW_TIMES.includes(S.dt) ? S.dt : DRAW_S);   // the host picks it in the lobby
   function judge(word, guess) {
     const a = norm(guess), b = norm(word);
     if (!a) return "none";
@@ -112,7 +114,7 @@
     S = { v: 1, host: ME.pid, hk: await myKey(), phase: "lobby", rounds: 1, scores: {}, used: [], names: {}, at: Date.now() };
     if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
-    await writeMe({ name, at: Date.now(), key: await myKey() });
+    await writeMe({ name, at: Date.now(), key: await myKey(), sn: packSeen() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   async function joinRoom(code, name) {
@@ -126,18 +128,26 @@
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("draw/" + code + "/players/" + ME.pid).get()).val()) || {};
-    await db.ref("draw/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, cur, { name, key: await myKey(), at: cur.at || Date.now() })));
+    await db.ref("draw/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, cur, { name, key: await myKey(), sn: packSeen(), at: cur.at || Date.now() })));
     S = dec(s.val()); view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   function leaveRoom() { unsubscribe(); if (ME) { ME.code = null; LS.set(MKEY, ME); } S = null; P = {}; HID = null; STROKES = {}; board = null; frame = ""; history.replaceState(null, "", location.pathname); goHome(); }
 
   /* ---------------- host ---------------- */
   async function saveHidden(H) { HID = H; await ref("hidden").set(enc(await FNC.seal(await myKey(), H))); }
-  function pickWords(used) {
-    const all = WORDS.flatMap(c => c.words);
-    let pool = all.filter(w => !used.includes(w));
-    if (pool.length < 3) pool = all.slice();
-    return shuffle(pool).slice(0, 3);
+  // Every phone remembers the words it has seen drawn (any room, any night). The host offers words
+  // nobody in the room has seen; once everything was seen, the ones seen longest ago come back first.
+  const SEEN_KEY = "draw-seen-v1";
+  const seenList = () => { const v = LS.get(SEEN_KEY, []); return Array.isArray(v) ? v.filter(x => typeof x === "string") : []; };
+  function noteSeen(w) { if (!w) return; const l = seenList().filter(x => x !== w); l.push(w); LS.set(SEEN_KEY, l.slice(-1500)); }
+  // sent in the player's record: the latest seen words, up to 900 letters
+  function packSeen() { const l = seenList(); let out = [], n = 0; for (let i = l.length - 1; i >= 0 && n + l[i].length + 1 <= 900; i--) { out.unshift(l[i]); n += l[i].length + 1; } return out.join("|"); }
+  const unpackSeen = s => typeof s === "string" && s ? s.split("|").slice(0, 300) : [];
+  function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((k, p) => { w[k] = (w[k] || 0) + 1 + p / L; }); }); return w; }
+  function pickWords(used, w) {
+    w = w || {};
+    const all = [...new Set(WORDS.flatMap(c => c.words))];
+    return all.map(x => ({ x, s: (used.includes(x) ? 1000 : 0) + (w[x] || 0) + rnd() * 0.3 })).sort((a, b) => a.s - b.s).slice(0, 3).map(o => o.x);
   }
   async function hostStart() {
     const ids = pids();
@@ -157,7 +167,7 @@
       if (i + 1 < S.queue.length) return startTurn(i + 1);
       return writeState({ phase: "end" });
     }
-    const opts = pickWords(S.used || []), tid = rid(4);
+    const opts = pickWords(S.used || [], seenWeights([seenList()].concat((S.order || []).filter(id => id !== ME.pid && P[id]).map(id => unpackSeen(P[id].sn))))), tid = rid(4);
     await saveHidden({ tid, opts, word: null, hint: null, seen: {} });
     await ref("strokes").remove();
     await writeState({ phase: "choose", turn: i, drawer, tid, t0: Date.now(), offer: await FNC.seal(P[drawer].key, opts), dword: null, hint: null, correct: {}, chat: [], word: null, dpts: 0 });
@@ -188,17 +198,17 @@
           seen[id] = g.n;
           const text = await FNC.open(g.s); if (typeof text !== "string") continue;
           const j = judge(word, text);
-          if (j === "right") correct[id] = guessPts(DRAW_S - el);
+          if (j === "right") correct[id] = guessPts(drawS() - el, drawS());
           else if (j === "close") chat.push({ k: id + ":" + g.n, p: id, c: 1 });
           else if (j === "wrong") chat.push({ k: id + ":" + g.n, p: id, t: String(text).slice(0, 30) });
           ch = true;
         }
-        const shown = hintsAt(el, Array.from(word).filter(c => c !== " ").length);
+        const shown = hintsAt(el, Array.from(word).filter(c => c !== " ").length, drawS());
         const hint = hintFor(word, HID.hint || [], shown);
         const hintCh = JSON.stringify(hint) !== JSON.stringify(S.hint);
         if (ch) await saveHidden(Object.assign({}, HID, { seen }));
         const all = guessers().length && guessers().every(id => correct[id]);
-        if (all || el > DRAW_S + 1) { await hostReveal(correct); return; }
+        if (all || el > drawS() + 1) { await hostReveal(correct); return; }
         if (ch || hintCh) await writeState({ correct, chat: chat.slice(-14), hint });
       } else if (S.phase === "reveal") {
         if (el > REVEAL_S) await hostNext();
@@ -256,7 +266,7 @@
     return `<table><thead><tr><th>اللاعب</th>${deltas ? `<th class="n">هالدور</th>` : ""}<th class="n">النقاط</th></tr></thead><tbody>${ids.map(id => `<tr><td>${esc(nameOf(id))}${id === ME.pid ? " (أنت)" : ""}</td>${deltas ? `<td class="n ${deltas[id] ? "plus" : ""}">${deltas[id] ? "+" + deltas[id] : "0"}</td>` : ""}<td class="n">${S.scores[id] || 0}</td></tr>`).join("")}</tbody></table>`;
   }
   const hintHTML = h => h ? `<div class="hint" dir="rtl">${h.map(c => c === " " ? `<i class="sp"></i>` : `<i>${esc(c)}</i>`).join("")}</div>` : "";
-  const chatHTML = () => `<ul class="chat">${(S.chat || []).slice().reverse().map(m => `<li><b>${esc(nameOf(m.p))}:</b> ${m.c ? `<span class="close">🔥 قريب!</span>` : esc(m.t)}</li>`).join("")}</ul>`;
+  const chatHTML = () => `<ul class="chat">${(S.chat || []).filter(m => !m.c || m.p === ME.pid).slice().reverse().map(m => `<li><b>${esc(nameOf(m.p))}:</b> ${m.c ? `<span class="close">🔥 قريب! (لك بس)</span>` : esc(m.t)}</li>`).join("")}</ul>`;
   const playersHTML = () => `<ul class="plist">${(S.order || []).map(id => `<li class="${id === ME.pid ? "me" : ""} ${(S.correct || {})[id] ? "done" : ""}">${id === S.drawer ? "✏️ " : ""}${esc(nameOf(id))}</li>`).join("")}</ul>`;
   const turnHead = () => `<p class="note center">الدور ${S.turn + 1} من ${S.total} · الرسّام: <b>${esc(nameOf(S.drawer))}</b></p>`;
   const timerBar = () => `<div class="tbar"><i id="tb" style="width:100%"></i></div>`;
@@ -294,8 +304,9 @@
       const gm = document.getElementById("gmsg"); if (gm) gm.innerHTML = ok ? `<span class="big-msg">عرفتها! 🎉 <span class="word">+${ok}</span></span>` : "";
     }
     document.getElementById("side").innerHTML = `${chatHTML()}${playersHTML()}${isHost() ? `<button type="button" class="btn alt mt" data-act="hreveal">خلّص الدور</button>` : ""}`;
-    clearInterval(tick); startTimer(DRAW_S);
+    clearInterval(tick); startTimer(drawS());
   }
+  let lastSeenW = null;
   function render() {
     if (view !== "room") return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">جاري الاتصال…</p></div>`; frame = ""; return; }
@@ -317,6 +328,7 @@
           <p class="note">📺 للعرض على التلفزيون: <b dir="ltr">${esc(tvURL().replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>اللاعبين (${ids.length})</h2><ul class="plist">${ids.map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${id === S.host ? " 👑" : ""}${isHost() && id !== ME.pid && !waiting ? ` <button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}</ul></div>
         ${waiting ? "" : isHost() ? `<div class="card"><div class="field"><span class="lbl">كم مرة يرسم كل واحد؟</span><div class="seg">${[1, 2, 3].map(n => `<button type="button" data-rounds="${n}" class="${(S.rounds || 1) === n ? "on" : ""}">${n}</button>`).join("")}</div></div>
+          <div class="field"><span class="lbl">وقت الرسم</span><div class="seg">${DRAW_TIMES.map(n => `<button type="button" data-dt="${n}" class="${drawS() === n ? "on" : ""}">${n} ثانية</button>`).join("")}</div></div>
           <p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < MIN_P ? "disabled" : ""}>ابدأ اللعبة</button>${ids.length < MIN_P ? `<p class="note center">ننتظر لاعب ثاني على الأقل.</p>` : ""}</div>`
           : `<div class="card center"><p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ اللعبة…</p></div>`}
         ${leave}`;
@@ -331,6 +343,7 @@
       startTimer(CHOOSE_S); return;
     }
     if (S.phase === "reveal") {
+      if (S.word && lastSeenW !== S.tid) { lastSeenW = S.tid; noteSeen(S.word); }
       const d = Object.assign({}, S.correct || {}); d[S.drawer] = (d[S.drawer] || 0) + (S.dpts || 0);
       const n = Object.keys(S.correct || {}).length;
       if (self.FA) FA.once("dr-rv-" + S.tid, () => { FA.play("reveal", [60, 60]); FA.slam("الكلمة كانت: " + (S.word || ""), n ? `عرفها ${n} 🎉` : "محد عرفها 😅", n ? "#ff7a1a" : "#7c3aed"); });
@@ -372,6 +385,7 @@
       if (a === "leave") { leaveRoom(); return; }
       if (!isHost()) return;
       if (b.dataset.kick) { await ref("players/" + b.dataset.kick).remove(); return; }
+      if (b.dataset.dt) { await writeState({ dt: +b.dataset.dt }); return; }
       if (b.dataset.rounds) { await writeState({ rounds: +b.dataset.rounds }); return; }
       if (a === "hstart") { b.disabled = true; const m = await hostStart(); if (m) { document.getElementById("herr").textContent = m; b.disabled = false; } return; }
       if (a === "hreveal" && S.phase === "draw") { await hostReveal(); return; }
@@ -438,6 +452,7 @@
   // the host's phone drives the timers: keep its screen awake, catch up when it comes back,
   // and tell everyone else when the host is late to move on
   const LATE = { choose: CHOOSE_S, draw: DRAW_S, reveal: REVEAL_S };
+  Object.defineProperty(LATE, "draw", { get: drawS });
   setInterval(() => {
     if (!self.FNW) return;
     FNW.hold(view === "room" && isHost());
@@ -456,5 +471,5 @@
     } else if (ME && ME.code && db) joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
     else goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الكلمات. حدّث الصفحة.</p></div>`; });
-  self.DR = { judge, norm, hintFor, guessPts, drawerPts };
+  self.DR = { pickWords, seenList, packSeen, unpackSeen, seenWeights, judge, norm, hintFor, guessPts, drawerPts };
 })();

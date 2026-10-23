@@ -59,10 +59,11 @@
   }
   /* ---------- ارسم وخمّن ---------- */
   // the canvas stays on screen during a turn; only the text around it is refreshed
+  const drawT = () => ([60, 80, 120].includes(S && S.dt) ? S.dt : 80);   // the host's drawing time
   function drawSide() {
     const order = S.order || [], ok = S.correct || {};
-    const left = Math.max(0, Math.ceil(80 - (Date.now() - stepStart) / 1000));
-    return `<div class="tvtop"><span class="tvsecs" id="tvsecs">${left}</span><div class="hint" id="tvhint">${hintHTML(S.hint)}</div></div><ul class="chat">${(S.chat || []).slice().reverse().slice(0, 8).map(m => `<li><b>${esc(nameOf(m.p))}:</b> ${m.c ? "🔥 قريب!" : esc(m.t)}</li>`).join("")}</ul>
+    const left = Math.max(0, Math.ceil(drawT() - (Date.now() - stepStart) / 1000));
+    return `<div class="tvtop"><span class="tvsecs" id="tvsecs">${left}</span><div class="hint" id="tvhint">${hintHTML(S.hint)}</div></div><ul class="chat">${(S.chat || []).filter(m => !m.c).slice().reverse().slice(0, 8).map(m => `<li><b>${esc(nameOf(m.p))}:</b> ${esc(m.t)}</li>`).join("")}</ul>
       ${plist(order.filter(id => id !== S.drawer), id => ok[id])}`;
   }
   const hintHTML = h => (h || []).map(c => c === " " ? `<i class="sp"></i>` : `<i>${esc(c)}</i>`).join("");
@@ -70,7 +71,7 @@
     const head = S.drawer ? `<p class="tvsub">الدور ${S.turn + 1} من ${S.total} · ✏️ الرسّام: <b>${esc(nameOf(S.drawer))}</b></p>` : "";
     if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("draw")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "choose") return `<div class="card">${head}<p class="tvtitle">✏️ ${esc(nameOf(S.drawer))} يختار كلمة…</p></div><div class="card"><h2>الترتيب</h2>${scoreTable()}</div>`;
-    if (S.phase === "draw") return `<div class="card">${head}${timer(80)}<div id="tvside">${drawSide()}</div><canvas id="tvcv" class="board"></canvas></div>`;
+    if (S.phase === "draw") return `<div class="card">${head}${timer(drawT())}<div id="tvside">${drawSide()}</div><canvas id="tvcv" class="board"></canvas></div>`;
     if (S.phase === "reveal") { const d = Object.assign({}, S.correct || {}); d[S.drawer] = (d[S.drawer] || 0) + (S.dpts || 0); return `<div class="card">${head}<p class="tvtitle">الكلمة كانت <span class="word">${esc(S.word || "")}</span></p><canvas id="tvcv" class="board"></canvas></div><div class="card"><h2>الترتيب</h2>${scoreTable(d)}</div>`; }
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">النتيجة النهائية 🏆</p><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
     return "";
