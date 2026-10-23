@@ -153,7 +153,7 @@
     .fn-ng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
     .fn-ng button{position:relative;background:#fff;border:2px solid #2b1745;border-radius:14px;box-shadow:2px 2px 0 var(--c);padding:6px 4px;font:800 14px Tajawal,system-ui,sans-serif;color:#2b1745;cursor:pointer}
     .fn-ng img{width:50px;height:50px;object-fit:contain;display:block;margin:0 auto}
-    .fn-ng button:disabled{opacity:.45;cursor:default}.fn-ng button.here::after{content:"الحين";position:absolute;top:4px;inset-inline-start:4px;font-size:10px;background:#12a874;color:#fff;border-radius:6px;padding:0 5px}
+    .fn-ng button:last-child:nth-child(odd){grid-column:1/-1}.fn-ng button:disabled{opacity:.45;cursor:default}.fn-ng button.here::after{content:"الحين";position:absolute;top:4px;inset-inline-start:4px;font-size:10px;background:#12a874;color:#fff;border-radius:6px;padding:0 5px}
     .fn-nr{display:grid;gap:6px;margin:8px 0;text-align:start}
     .fn-nr div{display:flex;justify-content:space-between;align-items:center;border:2px solid #2b1745;border-radius:12px;padding:5px 12px;font-weight:800;background:#fff}
     .fn-nr div:first-child{background:#ffe08a}.fn-nr b{font-size:18px}.fn-nr em{font-style:normal;color:#12a874;font-size:13px;margin-inline-start:6px}
@@ -248,7 +248,7 @@
       const gs = dec((await d.ref(G.path + "/" + C.code + "/state").get()).val()) || {};
       if ((gs.nt || 0) !== ((st.cur && st.cur.n) || 0)) return st;                               // not this night's game
       const sc = gs.scores || {};
-      if (!Object.keys(sc).length) return st;                                                   // never started
+      if (!Object.keys(sc).length && (!gs.phase || gs.phase === "lobby")) return st;            // never started (برا السالفة fills scores only after its first round)
       if (G.path === "bs") {
         // برا السالفة has no end: it counts after as many rounds as players (at least 3)
         const done = gs.phase === "results" ? gs.round || 0 : Math.max(0, (gs.round || 0) - 1), need = Math.max(3, (gs.order || Object.keys(sc)).length);
@@ -333,8 +333,9 @@
     if (NS.phase === "end") {
       if (self.FA) FA.once("fnn-end-" + C.code + "-" + NS.seq, () => {
         const rows = ranking(NS), top = rows.length && rows[0][2].some(Boolean) ? rows.filter(r => sameMedals(r[2], rows[0][2])) : [];
+        if (!top.length) { overlay(`<h3>🏁 انتهت السهرة</h3><p>ما خلصتوا ولا لعبة عشان تنحسب، فما فيه بطل لليلة هذي.</p><button type="button" class="bt" data-a="x">تمام</button>`, true); return; }
         if (top.length) { FA.confetti(); FA.winner(top.map(r => r[1]).join(" و"), rows.map(r => [r[1], medalsText(r[2])]), top.length > 1 ? "أبطال الليلة 👑" : "بطل الليلة 👑"); }
-      });
+      }, true);   // (also right after a page opens: whoever arrives late still sees who won)
       return;
     }
     if (here === null) return;                       // still loading this room

@@ -119,6 +119,10 @@
     const s = await db.ref("draw/" + code + "/state").get();
     if (!s.exists()) throw new Error("nocode");
     const same = ME && ME.code === code ? ME.pid : null;
+    // two players with the same name make the rounds confusing: the name must be free in this room
+    const mine = same || (self.FNN && FNN.pid) || null, nm = x => String(x || "").trim().toLowerCase();
+    const others = (await db.ref("draw/" + code + "/players").get()).val() || {};
+    if (Object.entries(others).some(([id, x]) => id !== mine && nm((dec(x) || {}).name) === nm(name))) throw new Error("taken");
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("draw/" + code + "/players/" + ME.pid).get()).val()) || {};
@@ -414,7 +418,7 @@
           if (!/^[A-Z]{4}$/.test(code)) { err("الرمز 4 حروف إنجليزية."); b.disabled = false; return; }
           await joinRoom(code, name);
         }
-      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : "ما قدرت أتصل. تأكد من النت."); }
+      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : e.message === "taken" ? "الاسم مستخدم في الغرفة، اختار اسم ثاني." : "ما قدرت أتصل. تأكد من النت."); }
     }
   }
 

@@ -84,3 +84,8 @@ body.catbg .fn-bg{display:none}
 @keyframes fnbump{40%{transform:scale(1.35)}}
 @media (prefers-reduced-motion:reduce){.fn-bg span,.fn-slam,.fn-win .box,.fn-win .trophy,.mode,.btn{animation:none!important;transition:none!important}}
 .fx-mute{width:40px!important;height:40px!important;font-size:17px!important;opacity:.9}
+
+/* the games bar shows in full on wide screens (it scrolls sideways on phones only) */
+@media (min-width:700px){.gamesbar{width:100vw;margin-inline:calc(50% - 50vw)!important;padding-inline:16px!important;justify-content:center!important;overflow:visible!important;flex-wrap:wrap!important}}
+/* big moments (banners, confetti) never make the page scroll sideways */
+html{overflow-x:hidden}@supports (overflow:clip){html{overflow-x:clip}}

@@ -127,11 +127,20 @@
     PS = { step: "setup", names: saved.names || ["", "", ""], cat: saved.cat || "random", outs: saved.outs || 1, scores: {}, used: {}, oh: null, R: null, idx: 0, shown: false, votes: {}, guesses: {}, pick: null, res: null };
   }
   const passSave = () => LS.set(PKEY, { names: PS.names, cat: PS.cat, outs: PS.outs });
+  // the game in progress (round, scores, words used) survives leaving the page; «لعبة جديدة» clears it
+  const GKEY = "bs-pass-game-v1";
+  const passKeep = () => { if (PS && (PS.step !== "setup" || Object.keys(PS.scores || {}).length)) LS.set(GKEY, Object.assign({}, PS, { shown: false })); };
+  const passForget = () => { try { localStorage.removeItem(GKEY); } catch (e) {} };
+  function passResume() {
+    const g = LS.get(GKEY, null);
+    if (!g || !Array.isArray(g.names) || !g.step) return false;
+    PS = g; view = "pass"; renderPass(); return true;
+  }
   const pName = id => PS.names[+id] || "";
   function passIds() { return PS.names.map((n, i) => [n.trim(), String(i)]).filter(x => x[0]).map(x => x[1]); }
 
   function renderPass() {
-    chip.hidden = true;
+    chip.hidden = true; passKeep();
     const R = PS.R;
     { const c = PS.step === "setup" ? catById(PS.cat) : R && R.cat; pageBg(c && c.image); }
     if (PS.step === "setup") {
@@ -280,6 +289,10 @@
     const s = await db.ref("bs/" + code + "/state").get();
     if (!s.exists()) throw new Error("nocode");
     const same = ME && ME.code === code ? ME.pid : null;
+    // two players with the same name make the rounds confusing: the name must be free in this room
+    const mine = same || (self.FNN && FNN.pid) || null, nm = x => String(x || "").trim().toLowerCase();
+    const others = (await db.ref("bs/" + code + "/players").get()).val() || {};
+    if (Object.entries(others).some(([id, x]) => id !== mine && nm((dec(x) || {}).name) === nm(name))) throw new Error("taken");
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const st = dec(s.val());
@@ -458,7 +471,7 @@
   /* =================================================================
      HOME / JOIN screens
      ================================================================= */
-  function goHome() { view = "home"; chip.hidden = true; pageBg(null); renderHome(); }
+  function goHome() { if (view === "pass") passForget(); view = "home"; chip.hidden = true; pageBg(null); renderHome(); }
   function renderHome() {
     app.innerHTML = `<div class="hero"><h1>برا السالفة 🤫</h1><p>الكل يعرف الكلمة إلا واحد… اكشفوه قبل ما يعرفها!</p></div>
       <div class="modes">
@@ -496,7 +509,7 @@
           if (!/^[A-Z]{4}$/.test(code)) { err("الرمز 4 حروف إنجليزية."); b.disabled = false; return; }
           await joinRoom(code, name);
         }
-      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : "ما قدرت أتصل. تأكد من النت."); }
+      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : e.message === "taken" ? "الاسم مستخدم في الغرفة، اختار اسم ثاني." : "ما قدرت أتصل. تأكد من النت."); }
     }
   }
 
@@ -537,7 +550,7 @@
       else renderForm("join", h);
     } else if (ME && ME.code && db) {
       joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
-    } else goHome();
+    } else if (!passResume()) goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الكلمات. حدّث الصفحة.</p></div>`; });
 
   // test hook

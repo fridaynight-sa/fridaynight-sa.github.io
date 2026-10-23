@@ -49,12 +49,26 @@
     return l;
   }
   const lieKey = (lie, truth) => norm(shapeLie(lie, style(truth)));
-  const isTruth = (lie, truth) => lieKey(lie, truth) === norm(style(truth));
+  // a lie one or two letters away from the truth (a typo of it, "انواكشوط" for "نواكشوط") counts as the truth.
+  // Numbers stay exact: "1939" is a fine lie when the answer is "1938".
+  function lev(a, b) {
+    let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) { const cur = [i]; for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = cur; }
+    return prev[b.length];
+  }
+  const nearWord = (k, t) => k === t || (!/\p{N}/u.test(k + t) && Math.min(k.length, t.length) >= 5 && lev(k, t) <= (Math.max(k.length, t.length) > 8 ? 2 : 1));
+  // word by word when both have the same number of words: "المحيط الهادي" is a fine lie for "المحيط الهندي"
+  function near(a, b) {
+    const wa = style(a).split(/\s+/).map(norm).filter(Boolean), wb = style(b).split(/\s+/).map(norm).filter(Boolean);
+    if (wa.length > 1 && wa.length === wb.length) { const d = wa.map((w, i) => i).filter(i => wa[i] !== wb[i]); return !d.length || (d.length === 1 && nearWord(wa[d[0]], wb[d[0]])); }
+    return nearWord(norm(a), norm(b));
+  }
+  const isTruth = (lie, truth) => near(shapeLie(lie, style(truth)), style(truth));
   // lies: {pid: text}. returns options [{id,text}] and owners {optId: "truth" | [pids]}
   function buildOptions(truth, lies) {
     const T = style(truth);
     const groups = new Map(); // norm -> {text, pids}
-    Object.entries(lies).forEach(([pid, text]) => { const shown = shapeLie(text, T), k = norm(shown); if (!k || k === norm(T)) return; if (!groups.has(k)) groups.set(k, { text: shown, pids: [] }); groups.get(k).pids.push(pid); });
+    Object.entries(lies).forEach(([pid, text]) => { const shown = shapeLie(text, T), k = norm(shown); if (!k || near(shown, T)) return; if (!groups.has(k)) groups.set(k, { text: shown, pids: [] }); groups.get(k).pids.push(pid); });
     const items = [{ text: T, own: "truth" }].concat([...groups.values()].map(g => ({ text: g.text, own: g.pids })));
     const opts = [], owners = {};
     shuffle(items).forEach((it, i) => { const id = "o" + i; opts.push({ id, text: it.text }); owners[id] = it.own; });
@@ -140,6 +154,10 @@
     const s = await db.ref("sq/" + code + "/state").get();
     if (!s.exists()) throw new Error("nocode");
     const same = ME && ME.code === code ? ME.pid : null;
+    // two players with the same name make the rounds confusing: the name must be free in this room
+    const mine = same || (self.FNN && FNN.pid) || null, nm = x => String(x || "").trim().toLowerCase();
+    const others = (await db.ref("sq/" + code + "/players").get()).val() || {};
+    if (Object.entries(others).some(([id, x]) => id !== mine && nm((dec(x) || {}).name) === nm(name))) throw new Error("taken");
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("sq/" + code + "/players/" + ME.pid).get()).val()) || {};
@@ -362,7 +380,7 @@
           if (!/^[A-Z]{4}$/.test(code)) { err("الرمز 4 حروف إنجليزية."); b.disabled = false; return; }
           await joinRoom(code, name);
         }
-      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : "ما قدرت أتصل. تأكد من النت."); }
+      } catch (e) { b.disabled = false; err(e.message === "nocode" ? "ما لقيت غرفة بهالرمز." : e.message === "taken" ? "الاسم مستخدم في الغرفة، اختار اسم ثاني." : "ما قدرت أتصل. تأكد من النت."); }
     }
   }
 
@@ -400,5 +418,5 @@
     } else if (ME && ME.code && db) joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
     else goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الأسئلة. حدّث الصفحة.</p></div>`; });
-  self.SQ = { pickQuestions, buildOptions, scoreRound, norm, style, shapeLie, isTruth, get CATS() { return CATS; } };
+  self.SQ = { pickQuestions, buildOptions, scoreRound, norm, style, shapeLie, isTruth, lev, get CATS() { return CATS; } };
 })();
