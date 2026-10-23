@@ -84,7 +84,7 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 /* tv */
 .tv{display:flex;align-items:center;gap:14px;margin-top:18px;padding:18px 20px;border-radius:24px;background:var(--ink);color:#fff;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);transition:transform .2s}
 .tv:hover{transform:translateY(-3px)}
-.tv .ic{width:56px;height:56px;border-radius:16px;background:var(--gold);font-size:30px;border:2px solid #fff}
+.tv .ic{width:64px;height:64px;font-size:30px}.tv .ic img{width:100%;height:100%;object-fit:contain}
 .tv h3{margin:0;font-family:var(--f-display);font-size:20px}.tv p{margin:2px 0 0;opacity:.85}.tv .arrow{margin-inline-start:auto;font-size:22px;font-weight:800}
 /* install as an app */
 .inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 12px;box-shadow:5px 5px 0 var(--gold);animation:rise .5s both}
@@ -170,7 +170,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
   </div>
 
   <a class="tv" href="tv/">
-    <span class="ic">📺</span>
+    <span class="ic"><img src="icons/tv.png" alt=""></span>
     <div><h3>شاشة العرض</h3><p>افتحوها على التلفزيون واكتبوا رمز الغرفة، وتعرض اللعبة للكل.</p></div>
     <span class="arrow">←</span>
   </a>
@@ -184,11 +184,11 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610231044"></script>
-<script src="fninstall.js?v=202610231044"></script>
+<script src="fnfx.js?v=202610231047"></script>
+<script src="fninstall.js?v=202610231047"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610231044"></script>
+<script src="firebase-config.js?v=202610231047"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
