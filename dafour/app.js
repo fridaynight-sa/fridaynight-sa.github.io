@@ -130,21 +130,28 @@
 
   /* ---------------- host ---------------- */
   async function saveHidden(H) { HID = H; await ref("hidden").set(enc(await FNC.seal(await myKey(), H))); }
-  const pub = (i, game) => { const h = HID.qs[i]; return { id: game + "-" + i + "-" + rid(3), i, text: h.text, opts: h.opts, diff: h.diff }; };
+  // ♾️ (rounds 0): no end, the questions come in batches of INF_BATCH; HID.base = idx of the batch's first one
+  const INF_BATCH = 20;
+  const hq = i => HID.qs[i - (HID.base || 0)];
+  const pub = (i, game) => { const h = hq(i); return { id: game + "-" + i + "-" + rid(3), i, text: h.text, opts: h.opts, diff: h.diff }; };
   async function hostStart() {
     const ids = pids();
     if (ids.length < MIN_P) return `تحتاجون ${MIN_P} لاعبين على الأقل.`;
     const noKey = ids.filter(id => !P[id].key);
     if (noKey.length) return "لازم " + noKey.map(id => P[id].name).join(" و") + " يحدّث الصفحة.";
-    const used = (S.used || []).slice();
-    const qs = pickQuestions(S.rounds, used, seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn)))));
+    const inf = !S.rounds;
+    let used = (S.used || []).slice();
+    if (used.length + (inf ? INF_BATCH : S.rounds) > QS.length) used = [];   // everything was played in this room: the seen lists decide
+    const qs = pickQuestions(inf ? INF_BATCH : S.rounds, used, roomWeights(ids));
     const game = (S.game || 0) + 1;
-    await saveHidden({ game, qs: qs.map(q => Object.assign({ qid: q.id, text: q.question, diff: q.difficulty, note: q.note || "" }, deal(q))) });
+    await saveHidden({ game, base: 0, qs: hideQs(qs) });
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const scores = {}; ids.forEach(id => scores[id] = 0);
-    await writeState({ game, hk: await myKey(), phase: "q", idx: 0, total: qs.length, order: ids, names, scores, used: used.concat(qs.map(q => q.id)), q: pub(0, game), reveal: null, rightCount: {} });
+    await writeState({ game, hk: await myKey(), phase: "q", idx: 0, total: inf ? 0 : qs.length, inf, order: ids, names, scores, used: used.concat(qs.map(q => q.id)), q: pub(0, game), reveal: null, rightCount: {} });
     return "";
   }
+  const roomWeights = ids => seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn))));
+  const hideQs = qs => qs.map(q => Object.assign({ qid: q.id, text: q.question, diff: q.difficulty, note: q.note || "" }, deal(q)));
   const answersNow = () => { const o = {}; (S.order || []).forEach(id => { const e = ADEC[id]; if (e && S.q && e.q === S.q.id && answered(id)) o[id] = e; }); return o; };
   let ticking = false;
   async function hostTick() {
@@ -158,7 +165,7 @@
   }
   async function hostReveal() {
     if (S.phase !== "q" || !HID) return;
-    const h = HID.qs[S.idx], ans = answersNow(), r = scoreRound(S.order, ans, h.correct);
+    const h = hq(S.idx), ans = answersNow(), r = scoreRound(S.order, ans, h.correct);
     const scores = Object.assign({}, S.scores); Object.entries(r.deltas).forEach(([id, d]) => scores[id] = (scores[id] || 0) + d);
     const rightCount = Object.assign({}, S.rightCount); r.right.forEach(id => rightCount[id] = (rightCount[id] || 0) + 1);
     const picks = {}; Object.entries(ans).forEach(([id, a]) => picks[id] = a.o);
@@ -167,8 +174,20 @@
   }
   async function hostNext() {
     const i = S.idx + 1;
-    if (i >= S.total) { await writeState({ phase: "end" }); return; }
-    await writeState({ phase: "q", idx: i, q: pub(i, S.game), reveal: null });
+    if (!S.inf && i >= S.total) { await writeState({ phase: "end" }); return; }
+    let used = S.used || [];
+    if (S.inf && !hq(i)) {   // ♾️: this batch is done, the next one
+      if (used.length + INF_BATCH > QS.length) used = [];
+      const qs = pickQuestions(INF_BATCH, used, roomWeights(S.order || []));
+      await saveHidden({ game: S.game, base: i, qs: hideQs(qs) });
+      used = used.concat(qs.map(q => q.id));
+    }
+    await writeState({ phase: "q", idx: i, q: pub(i, S.game), reveal: null, used });
+  }
+  // ♾️: the host ends it whenever; the count is the questions that were answered
+  async function hostFinish() {
+    if (!S || (S.phase !== "q" && S.phase !== "reveal")) return;
+    await writeState({ phase: "end", total: S.phase === "reveal" ? S.idx + 1 : S.idx });
   }
 
   /* ---------------- views ---------------- */
@@ -197,6 +216,7 @@
       return `<button type="button" data-opt="${i}" class="${cls}" ${mode && (mode.reveal || mode.locked) ? "disabled" : ""}><b>${LETTERS[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(id => esc(nameOf(id))).join("، ")}</small>` : ""}</button>`;
     }).join("")}</div>`;
   }
+  const finishBtn = () => S.inf && isHost() ? `<button type="button" class="finish" data-act="hfinish">🏁 خلّصنا · اعرض النتيجة</button>` : "";
   let lastSeenQ = null;
   function render() {
     if (S && S.q && S.q.id !== lastSeenQ) { lastSeenQ = S.q.id; const q = QS.find(x => x.question === S.q.text); if (q) noteSeen(q.id); }
@@ -218,14 +238,14 @@
           <p class="note">خلّ البقية يصوّرون الباركود أو يدخلون الرمز.</p><button type="button" class="ghost mt" data-act="copy">انسخ رابط الدخول</button>
           <p class="note">📺 للعرض على التلفزيون: <b dir="ltr">${esc(tvURL().replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>اللاعبين (${ids.length})</h2><ul class="plist">${ids.map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${id === S.host ? " 👑" : ""}${isHost() && id !== ME.pid && !waiting ? ` <button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}</ul></div>
-        ${waiting ? "" : isHost() ? `<div class="card"><div class="field"><span class="lbl">عدد الأسئلة</span><div class="seg">${[10, 15, 20].map(n => `<button type="button" data-rounds="${n}" class="${S.rounds === n ? "on" : ""}">${n}</button>`).join("")}</div></div>
-          <p class="note">الأسئلة تبدأ سهلة وتصعب شوي شوي 🤓</p>
+        ${waiting ? "" : isHost() ? `<div class="card"><div class="field"><span class="lbl">مدة اللعبة</span><div class="seg">${[10, 20, 30, 50].map(n => `<button type="button" data-rounds="${n}" class="${S.rounds === n ? "on" : ""}">${n}</button>`).join("")}<button type="button" data-rounds="inf" class="inf ${!S.rounds ? "on" : ""}">♾️ ما توقف</button></div></div>
+          <p class="note">${S.rounds ? "الأسئلة تبدأ سهلة وتصعب شوي شوي 🤓" : "الأسئلة تكمل وحدة ورا الثانية لين تضغط «🏁 خلّصنا» 🤓"}</p>
           <p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < MIN_P ? "disabled" : ""}>ابدأ اللعبة</button>${ids.length < MIN_P ? `<p class="note center">ننتظر لاعب ثاني على الأقل.</p>` : ""}</div>`
           : `<div class="card center"><p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ اللعبة…</p></div>`}
         ${leave}`;
       return;
     }
-    const head = S.q ? `<p class="note center">السؤال ${S.idx + 1} من ${S.total}${S.q.diff ? ` · ${esc(S.q.diff)}` : ""}</p>` : "";
+    const head = S.q ? `<p class="note center">السؤال ${S.idx + 1} ${S.inf ? "· ♾️" : "من " + S.total}${S.q.diff ? ` · ${esc(S.q.diff)}` : ""}</p>` : "";
     const qtext = S.q ? `<p class="stmt">${esc(S.q.text)}</p>` : "";
     const order = S.order || [];
     if (S.phase === "q") {
@@ -234,7 +254,7 @@
         ${optsHTML(S.q.opts, me ? { locked: true } : null)}
         ${me ? `<p class="big-msg mt">جاوبت ✓</p><p class="note center">ننتظر الباقين… (${done.length}/${order.length})</p>` : `<p class="note center mt">اختار جوابك، وكل ما أسرع نقاطك أكثر ⚡</p>`}
         <ul class="plist mt">${order.map(id => `<li class="${id === ME.pid ? "me" : ""} ${done.includes(id) ? "done" : ""}">${esc(nameOf(id))}</li>`).join("")}</ul>
-        ${isHost() ? `<button type="button" class="btn alt mt" data-act="hreveal">اكشف الجواب الحين</button>` : ""}</div>`;
+        ${isHost() ? `<button type="button" class="btn alt mt" data-act="hreveal">اكشف الجواب الحين</button>` : ""}</div>${finishBtn()}`;
       startTimer(Q_S);
       return;
     }
@@ -248,7 +268,7 @@
         <p class="big-msg mt">${amRight ? `صح ✅ <span class="word">+${r.deltas[ME.pid]}</span>` : mine != null ? "غلط ❌" : "ما جاوبت ⏱️"}</p>
         ${r.fastest ? `<p class="note center">⚡ أسرع جواب صح: <b>${esc(nameOf(r.fastest))}</b></p>` : `<p class="note center">ما أحد جاوب صح 😅</p>`}
         ${r.note ? `<p class="fact">💡 ${esc(r.note)}</p>` : ""}</div>
-        <div class="card"><h2>الترتيب</h2>${standings(r.deltas)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${S.idx + 1 >= S.total ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>`;
+        <div class="card"><h2>الترتيب</h2>${standings(r.deltas)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${!S.inf && S.idx + 1 >= S.total ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>${finishBtn()}`;
       return;
     }
     if (S.phase === "end") {
@@ -271,9 +291,10 @@
       if (a === "leave") { leaveRoom(); return; }
       if (!isHost()) return;
       if (b.dataset.kick) { await ref("players/" + b.dataset.kick).remove(); return; }
-      if (b.dataset.rounds) { await writeState({ rounds: +b.dataset.rounds }); return; }
+      if (b.dataset.rounds) { await writeState({ rounds: b.dataset.rounds === "inf" ? 0 : +b.dataset.rounds }); return; }
       if (a === "hstart") { b.disabled = true; const m = await hostStart(); if (m) { document.getElementById("herr").textContent = m; b.disabled = false; } return; }
       if (a === "hreveal") { await hostReveal(); return; }
+      if (a === "hfinish") { if (confirm("تخلّصون اللعبة وتطلع النتيجة؟")) await hostFinish(); return; }
       if (a === "hnext") { b.disabled = true; await hostNext(); return; }
       if (a === "hlobby") { await writeState({ phase: "lobby", q: null, reveal: null }); return; }
     } catch (e) { console.error(e); alert("ما قدرت أتصل. تأكد من النت وجرّب مرة ثانية."); }

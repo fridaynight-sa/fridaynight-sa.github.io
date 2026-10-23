@@ -89,7 +89,7 @@
   /* ---------- الدافور ---------- */
   function renderDF() {
     const order = S.order || [], L = ["أ", "ب", "ج", "د"];
-    const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${S.q.diff ? " · " + esc(S.q.diff) : ""}</p>` : "";
+    const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} ${S.inf ? "· ♾️" : "من " + S.total}${S.q.diff ? " · " + esc(S.q.diff) : ""}</p>` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
     const opts = r => `<div class="dfopts">${(S.q.opts || []).map((t, i) => { const who = r ? Object.keys(r.picks || {}).filter(id => r.picks[id] === i) : []; return `<div class="${r ? (i === r.correct ? "ok" : "dim") : ""}"><b>${L[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(nameOf).map(esc).join("، ")}</small>` : ""}</div>`; }).join("")}</div>`;
     if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("df")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
