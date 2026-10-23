@@ -22,11 +22,20 @@
 
   /* ---------------- engine ---------------- */
   // n questions not played yet in this room, easy first and hard last
-  function pickQuestions(n, used) {
-    let pool = QS.filter(q => !used.includes(q.id));
-    if (pool.length < n) pool = QS.slice();
+  // Every phone remembers the questions it has seen (any room, any night). The host picks the ones
+  // nobody in the room has seen; once everything was seen, the ones seen longest ago come back first.
+  const SEEN_KEY = "df-seen-v1";
+  const seenList = () => { const v = LS.get(SEEN_KEY, []); return Array.isArray(v) ? v : []; };
+  function noteSeen(id) { if (!id) return; const l = seenList().filter(x => x !== id); l.push(id); LS.set(SEEN_KEY, l.slice(-2000)); }
+  // sent in the player's record: the last 400 seen, two letters each (q0123 → "3f")
+  const packSeen = () => seenList().filter(id => /^q\d{1,4}$/.test(id) && +id.slice(1) < 1296).slice(-400).map(id => (+id.slice(1)).toString(36).padStart(2, "0")).join("");
+  const unpackSeen = s => (typeof s === "string" ? s.match(/[0-9a-z]{2}/g) || [] : []).map(x => "q" + String(parseInt(x, 36)).padStart(4, "0"));
+  // lists ordered oldest → newest: seen at all counts 1, seen lately counts up to 2
+  function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((id, p) => { w[id] = (w[id] || 0) + 1 + p / L; }); }); return w; }
+  function pickQuestions(n, used, w) {
+    w = w || {};
     const lv = { "سهل": 0, "متوسط": 1, "صعب": 2 };
-    const picked = shuffle(pool).slice(0, n);
+    const picked = QS.map(q => ({ q, s: (used.includes(q.id) ? 1000 : 0) + (w[q.id] || 0) + rnd() * 0.3 })).sort((a, b) => a.s - b.s).slice(0, n).map(x => x.q);
     return picked.sort((a, b) => (lv[a.difficulty] ?? 1) - (lv[b.difficulty] ?? 1) || rnd() - .5);
   }
   // the options in a fresh random order; returns the texts and where the right one landed
@@ -100,7 +109,7 @@
     S = { v: 1, host: ME.pid, hk: await myKey(), phase: "lobby", rounds: 10, scores: {}, used: [], names: {}, at: Date.now() };
     if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
-    await writeMe({ name, at: Date.now(), key: await myKey() });
+    await writeMe({ name, at: Date.now(), key: await myKey(), sn: packSeen() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   async function joinRoom(code, name) {
@@ -114,7 +123,7 @@
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("df/" + code + "/players/" + ME.pid).get()).val()) || {};
-    await db.ref("df/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, cur, { name, key: await myKey(), at: cur.at || Date.now() })));
+    await db.ref("df/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, cur, { name, key: await myKey(), sn: packSeen(), at: cur.at || Date.now() })));
     S = dec(s.val()); view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   function leaveRoom() { unsubscribe(); if (ME) { ME.code = null; LS.set(MKEY, ME); } S = null; P = {}; ADEC = {}; HID = null; history.replaceState(null, "", location.pathname); goHome(); }
@@ -128,7 +137,7 @@
     const noKey = ids.filter(id => !P[id].key);
     if (noKey.length) return "لازم " + noKey.map(id => P[id].name).join(" و") + " يحدّث الصفحة.";
     const used = (S.used || []).slice();
-    const qs = pickQuestions(S.rounds, used);
+    const qs = pickQuestions(S.rounds, used, seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn)))));
     const game = (S.game || 0) + 1;
     await saveHidden({ game, qs: qs.map(q => Object.assign({ qid: q.id, text: q.question, diff: q.difficulty, note: q.note || "" }, deal(q))) });
     const names = {}; ids.forEach(id => names[id] = P[id].name);
@@ -188,7 +197,9 @@
       return `<button type="button" data-opt="${i}" class="${cls}" ${mode && (mode.reveal || mode.locked) ? "disabled" : ""}><b>${LETTERS[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(id => esc(nameOf(id))).join("، ")}</small>` : ""}</button>`;
     }).join("")}</div>`;
   }
+  let lastSeenQ = null;
   function render() {
+    if (S && S.q && S.q.id !== lastSeenQ) { lastSeenQ = S.q.id; const q = QS.find(x => x.question === S.q.text); if (q) noteSeen(q.id); }
     if (view !== "room") return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">جاري الاتصال…</p></div>`; return; }
     chip.hidden = false; chip.innerHTML = `الغرفة <b dir="ltr">${esc(ME.code)}</b> · ${esc(ME.name)}${isHost() ? " 👑" : ""}`;
@@ -346,5 +357,5 @@
     } else if (ME && ME.code && db) joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
     else goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الأسئلة. حدّث الصفحة.</p></div>`; });
-  self.DF = { pickQuestions, deal, scoreRound, get QS() { return QS; } };
+  self.DF = { pickQuestions, seenList, packSeen, unpackSeen, seenWeights, deal, scoreRound, get QS() { return QS; } };
 })();

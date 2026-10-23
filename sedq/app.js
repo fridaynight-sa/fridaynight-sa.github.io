@@ -11,7 +11,8 @@
   const app = document.getElementById("app");
   const chip = document.getElementById("hdrChip");
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const rint = n => Math.floor(Math.random() * n);
+  const rnd = () => crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296;
+  const rint = n => Math.floor(rnd() * n);
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rint(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const rid = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => b.toString(16).padStart(2, "0")).join("");
   const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
@@ -24,11 +25,32 @@
   const WRITE_S = 60, PICK_S = 30;
 
   /* ---------------- engine ---------------- */
-  function pickQuestions(catIds, n, used) {
+  // Every phone remembers the questions it has seen (any room, any night). The host picks the ones
+  // nobody in the room has seen; once everything was seen, the ones seen longest ago come back first.
+  const SEEN_KEY = "sq-seen-v1";
+  const seenList = () => { const v = LS.get(SEEN_KEY, []); return Array.isArray(v) ? v : []; };
+  function noteSeen(key) { if (!key) return; const l = seenList().filter(x => x !== key); l.push(key); LS.set(SEEN_KEY, l.slice(-2000)); }
+  // sent in the player's record: the last 300 seen, three letters each (category number + question number)
+  function packSeen() {
+    return seenList().map(k => { const [c, i] = String(k).split(":"), ci = CATS.findIndex(x => x.id === c); return ci >= 0 && ci < 36 && +i < 1296 ? ci.toString(36) + (+i).toString(36).padStart(2, "0") : ""; })
+      .filter(Boolean).slice(-300).join("");
+  }
+  const unpackSeen = s => (typeof s === "string" ? s.match(/[0-9a-z]{3}/g) || [] : []).map(x => { const c = CATS[parseInt(x[0], 36)]; return c ? c.id + ":" + parseInt(x.slice(1), 36) : ""; });
+  // lists ordered oldest → newest: seen at all counts 1, seen lately counts up to 2
+  function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((k, p) => { w[k] = (w[k] || 0) + 1 + p / L; }); }); return w; }
+  function pickQuestions(catIds, n, used, w) {
+    w = w || {};
     const all = id => catById(id).items.map((it, i) => ({ key: id + ":" + i, cat: id, ...it }));
-    const pools = catIds.map(id => { const p = shuffle(all(id).filter(q => !used.includes(q.key))); return p.length ? p : shuffle(all(id)); });
-    const out = []; let k = rint(pools.length), guard = 0;
-    while (out.length < n && guard++ < 2000) { const p = pools[k % pools.length]; if (p.length) out.push(p.shift()); k++; if (pools.every(x => !x.length)) break; }
+    const score = q => (used.includes(q.key) ? 1000 : 0) + (w[q.key] || 0) + rnd() * 0.3;
+    const S0 = new Map(), score0 = q => S0.get(q);
+    const pools = catIds.map(id => all(id).map(q => { const v = score(q); S0.set(q, v); return q; }).sort((a, b) => S0.get(a) - S0.get(b)));
+    // the categories take turns, but one whose next question was seen waits while another still has unseen ones
+    const taken = pools.map(() => 0), out = [];
+    while (out.length < n && pools.some(x => x.length)) {
+      let best = -1, bs = Infinity;
+      shuffle(pools.map((_, i) => i)).forEach(i => { if (!pools[i].length) return; const v = score0(pools[i][0]) + taken[i] * 0.3; if (v < bs) { bs = v; best = i; } });
+      out.push(pools[best].shift()); taken[best]++;
+    }
     return shuffle(out);
   }
   // Every option (truth + lies) is shown in the same style, so the real answer can't be spotted
@@ -147,7 +169,7 @@
     S = { v: 2, host: ME.pid, hk: await myKey(), phase: "lobby", rounds: 8, scores: {}, used: [], names: {}, at: Date.now() };
     if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
-    await writeMe({ name, at: Date.now(), cats: [], key: await myKey() });
+    await writeMe({ name, at: Date.now(), cats: [], key: await myKey(), sn: packSeen() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   async function joinRoom(code, name) {
@@ -161,7 +183,7 @@
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("sq/" + code + "/players/" + ME.pid).get()).val()) || {};
-    await db.ref("sq/" + code + "/players/" + ME.pid).set(enc(Object.assign({ cats: [] }, cur, { name, key: await myKey(), at: cur.at || Date.now() })));
+    await db.ref("sq/" + code + "/players/" + ME.pid).set(enc(Object.assign({ cats: [] }, cur, { name, key: await myKey(), sn: packSeen(), at: cur.at || Date.now() })));
     S = dec(s.val()); view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   function leaveRoom() { unsubscribe(); if (ME) { ME.code = null; LS.set(MKEY, ME); } S = null; P = {}; HID = null; history.replaceState(null, "", location.pathname); goHome(); }
@@ -180,7 +202,7 @@
     let chosen = CATS.map(c => c.id).filter(id => v[id] > 0);
     if (!chosen.length) chosen = CATS.map(c => c.id);
     const used = (S.used || []).slice();
-    const qs = pickQuestions(chosen, S.rounds, used);
+    const qs = pickQuestions(chosen, S.rounds, used, seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn)))));
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const scores = {}; ids.forEach(id => scores[id] = 0);
     const game = (S.game || 0) + 1;
@@ -238,7 +260,9 @@
     const upd = () => { const left = Math.max(0, sec * 1000 - (Date.now() - stepStart)); const b = document.getElementById("tb"); if (b) b.style.width = (left / (sec * 1000) * 100) + "%"; if (left <= 0) hostTick(); };
     upd(); tick = setInterval(upd, 300);
   }
+  let lastSeenQ = null;
   function render() {
+    if (S && S.q && S.q.id !== lastSeenQ && catById(S.q.cat)) { lastSeenQ = S.q.id; const i = catById(S.q.cat).items.findIndex(x => x.q === S.q.text && (x.img || null) === (S.q.img || null)); if (i >= 0) noteSeen(S.q.cat + ":" + i); }
     if (view !== "room") return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">جاري الاتصال…</p></div>`; return; }
     chip.hidden = false; chip.innerHTML = `الغرفة <b dir="ltr">${esc(ME.code)}</b> · ${esc(ME.name)}${isHost() ? " 👑" : ""}`;
@@ -418,5 +442,5 @@
     } else if (ME && ME.code && db) joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
     else goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الأسئلة. حدّث الصفحة.</p></div>`; });
-  self.SQ = { pickQuestions, buildOptions, scoreRound, norm, style, shapeLie, isTruth, lev, get CATS() { return CATS; } };
+  self.SQ = { pickQuestions, seenList, packSeen, unpackSeen, seenWeights, buildOptions, scoreRound, norm, style, shapeLie, isTruth, lev, get CATS() { return CATS; } };
 })();
