@@ -270,10 +270,21 @@
   const joinURL = c => location.origin + location.pathname + "#" + c;
 
   function unsubscribe() { subs.forEach(f => f()); subs = []; }
+  // when this phone last saw its room: opening the game later (no code in the link) only goes back to a room still in use
+  const touchMe = () => { if (ME && ME.code && Date.now() - (ME.t || 0) > 20000) { ME.t = Date.now(); LS.set(MKEY, ME); } };
+  const BACK_MS = 15 * 60e3;
+  function backToRoom() {
+    db.ref("bs/" + ME.code + "/state").get().then(s => {
+      const o = s.exists() && dec(s.val());
+      if (o && o.phase !== "end" && Date.now() - (ME.t || 0) < BACK_MS) return joinRoom(ME.code, ME.name);
+      if (!o) { ME.code = null; LS.set(MKEY, ME); }   // the room is gone; otherwise its link still takes this phone back in
+      goHome();
+    }).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
+  }
   function subscribe() {
     unsubscribe();
     const on = (r, cb) => { const h = s => cb(s.val()); r.on("value", h); subs.push(() => r.off("value", h)); };
-    on(ref("state"), v => { S = dec(v); if (S && S.round !== lastRound) { lastRound = S.round; revealed = false; myPick = null; } renderRoom(); hostTick(); });
+    on(ref("state"), v => { touchMe(); S = dec(v); if (S && S.round !== lastRound) { lastRound = S.round; revealed = false; myPick = null; } renderRoom(); hostTick(); });
     on(ref("players"), v => { P = {}; Object.entries(v || {}).forEach(([k, x]) => { const d = dec(x); if (d) P[k] = d; }); renderRoom(); decVotes(); });
     on(ref("secret/" + ME.pid), async v => { const n = ++secSeq, o = await FNC.open(dec(v)); if (n !== secSeq) return; SEC = o || null; renderRoom(); });
     on(ref("hidden"), async v => { const n = ++hidSeq, o = await FNC.open(dec(v)); if (n !== hidSeq) return; HID = o || null; hostTick(); });
@@ -558,9 +569,7 @@
     else if (/^[A-Z]{4}$/.test(h)) {
       if (ME && ME.code === h && ME.name && db) { joinRoom(h, ME.name).catch(() => renderForm("join", h, "ما لقيت غرفة بهالرمز.")); }
       else renderForm("join", h);
-    } else if (ME && ME.code && db) {
-      joinRoom(ME.code, ME.name).catch(() => { ME.code = null; LS.set(MKEY, ME); goHome(); });
-    } else if (!passResume()) goHome();
+    } else if (ME && ME.code && db) backToRoom(); else if (!passResume()) goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الكلمات. حدّث الصفحة.</p></div>`; });
 
   // test hook

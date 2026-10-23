@@ -325,6 +325,7 @@
 
   /* ---------------- follow the night ---------------- */
   let readyT = null;
+  const STALE_MS = 4 * 3600e3;
   function update() {
     if (!C) { setBar(null); return; }
     if (!NS) { setBar(isRoomHost() ? `<button type="button" data-a="switch">🔄 بدّل اللعبة</button>` : null); return; }
@@ -345,7 +346,8 @@
       if (pl && self.FA) FA.once("fnn-rank-" + C.code + "-" + cur.n, () => { FA.play("party", [40, 40]); sheetRank(); }, true);
       return;
     }
-    if (cur.g && cur.n > here) follow(cur, nh);
+    // an old سهرة (no switch for hours) moves nobody: someone opening an old link stays where they are
+    if (cur.g && cur.n > here && !(cur.at && Date.now() - cur.at > STALE_MS)) follow(cur, nh);
   }
   function follow(cur, nh) {
     const key = cur.g + ":" + cur.n;
