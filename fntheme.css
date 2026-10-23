@@ -15,6 +15,7 @@ body.catbg .fn-bg{display:none}
 .gamesbar a{border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff}
 .gamesbar a.on{background:var(--game);color:#fff}
 .gamesbar a.site{border:0;box-shadow:none;background:none}
+.gamesbar a img.gi{width:20px;height:20px;object-fit:contain;vertical-align:-5px;margin-inline-end:5px;border-radius:5px}
 .chip{background:#fff;border:2px solid var(--ink);color:var(--ink)}
 .chip b{color:var(--game)}
 
