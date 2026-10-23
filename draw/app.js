@@ -29,7 +29,7 @@
   }
 
   let WORDS = [];
-  const CHOOSE_S = 15, DRAW_S = 80, REVEAL_S = 7, MIN_P = 2;
+  const CHOOSE_S = 15, DRAW_S = 80, REVEAL_S = 7, MIN_P = 2, VOTE_S = 60, AWARD_S = 25, BEST_PTS = 10, VOTE_MIN_P = 3;
   const COLORS = ["#2b1745", "#e03131", "#ff8a00", "#ffd43b", "#12a874", "#1c7ed6", "#7c3aed", "#f03e7a", "#8b5a2b"];
   const SIZES = [5, 12, 26];
 
@@ -157,7 +157,8 @@
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const scores = {}; ids.forEach(id => scores[id] = 0);
     const queue = []; for (let r = 0; r < (S.rounds || 1); r++) queue.push(...shuffle(ids));
-    await writeState({ game: (S.game || 0) + 1, order: ids, names, scores, queue, total: queue.length, turn: -1 });
+    (S.gal || []).forEach(g => db.ref("media/" + g.m).remove().catch(() => {}));
+    await writeState({ game: (S.game || 0) + 1, order: ids, names, scores, queue, total: queue.length, turn: -1, gal: [], award: null });
     await startTurn(0);
     return "";
   }
@@ -212,20 +213,65 @@
         if (ch || hintCh) await writeState({ correct, chat: chat.slice(-14), hint });
       } else if (S.phase === "reveal") {
         if (el > REVEAL_S) await hostNext();
+      } else if (S.phase === "vote") {
+        const voters = (S.order || []).filter(id => P[id]);
+        if (voters.every(id => voteDone(id)) || el > VOTE_S + 1) await hostAward();
+      } else if (S.phase === "award") {
+        if (el > AWARD_S) await writeState({ phase: "end" });
       }
     } finally { ticking = false; }
   }
+  let revealing = false;
   async function hostReveal(correct) {
+    if (revealing || !S || S.phase !== "draw") return;
+    revealing = true;
+    try { await doReveal(correct); } finally { revealing = false; }
+  }
+  // the finished drawing goes to media/<id> (a small JPEG) for the gallery at the end of the game
+  async function saveDrawing(word, n) {
+    const list = DrawBoard.parse(STROKES, dec);
+    if (!list.length || !db) return null;
+    try { const id = rid(16); await db.ref("media/" + id).set({ d: DrawBoard.snapshot(list), t: firebase.database.ServerValue.TIMESTAMP }); return { m: id, w: word || "", d: S.drawer, n }; }
+    catch (e) { console.warn("gallery save failed", e); return null; }
+  }
+  async function doReveal(correct) {
     correct = correct || S.correct || {};
     const scores = Object.assign({}, S.scores), n = Object.keys(correct).length;
     Object.entries(correct).forEach(([id, p]) => scores[id] = (scores[id] || 0) + p);
     const dpts = drawerPts(correct); scores[S.drawer] = (scores[S.drawer] || 0) + dpts;
     const word = HID && HID.word;
-    await writeState({ phase: "reveal", t0: Date.now(), word, correct, scores, dpts, hint: null, dword: null, used: (S.used || []).concat(word ? [word] : []) });
+    const pic = await saveDrawing(word, n), gal = (S.gal || []).concat(pic ? [pic] : []);
+    await writeState({ phase: "reveal", t0: Date.now(), word, correct, scores, dpts, hint: null, dword: null, gal, used: (S.used || []).concat(word ? [word] : []) });
+  }
+  const voteDone = id => { const v = P[id] && P[id].v; return !!(v && v.g === S.game && v.done); };
+  let awarding = false;
+  async function hostAward() {
+    if (awarding || S.phase !== "vote") return;
+    awarding = true;
+    try {
+      const gal = S.gal || [], best = gal.map(() => 0), worst = gal.map(() => 0);
+      for (const id of S.order || []) {
+        const v = P[id] && P[id].v; if (!v || v.g !== S.game) continue;
+        const o = await FNC.open(v.s); if (!o) continue;
+        const ok = i => Number.isInteger(i) && gal[i] && gal[i].d !== id;   // never your own drawing
+        if (ok(o.b)) best[o.b]++;
+        if (ok(o.w) && o.w !== o.b) worst[o.w]++;
+      }
+      const top = a => { const m = Math.max(0, ...a); return m ? a.map((c, i) => c === m ? i : -1).filter(i => i >= 0) : []; };
+      const b = top(best), w = top(worst), scores = Object.assign({}, S.scores), bonus = {};
+      b.forEach(i => { bonus[gal[i].d] = BEST_PTS; });
+      Object.keys(bonus).forEach(id => scores[id] = (scores[id] || 0) + bonus[id]);
+      await writeState({ phase: "award", t0: Date.now(), scores, award: { b, bc: b.length ? best[b[0]] : 0, w, wc: w.length ? worst[w[0]] : 0, bonus } });
+    } finally { awarding = false; }
   }
   async function hostNext() {
     const i = S.turn + 1;
-    if (i >= S.total) { await writeState({ phase: "end", word: null }); return; }
+    if (i >= S.total) {
+      // 🖼️ the gallery vote needs 3 players (nobody votes for their own) and 2 drawings
+      const canVote = (S.gal || []).length >= 2 && (S.order || []).filter(id => P[id]).length >= VOTE_MIN_P;
+      await writeState(canVote ? { phase: "vote", t0: Date.now(), word: null, award: null } : { phase: "end", word: null });
+      return;
+    }
     await startTurn(i);
   }
   setInterval(() => { if (view === "room") hostTick(); }, 500);
@@ -239,7 +285,7 @@
     const now = Date.now();
     if (!final && now - flushT < 90) return;
     flushT = now;
-    const s = { c: cur.c, w: cur.w, p: cur.p.slice() };
+    const s = cur.f ? { f: 1, c: cur.c, p: cur.p.slice() } : { c: cur.c, w: cur.w, p: cur.p.slice() };
     STROKES[cur.k] = enc(s);
     ref("strokes/" + cur.k).set(enc(s)).catch(() => {});
   }
@@ -248,6 +294,7 @@
       if (!amDrawer() || S.phase !== "draw") return;
       e.preventDefault(); cv.setPointerCapture(e.pointerId);
       const [x, y] = board.at(e);
+      if (tool.fill) { cur = { k: nextKey(), c: tool.c, f: 1, p: [x, y] }; flush(true); cur = null; board.set(DrawBoard.parse(STROKES, dec)); return; }   // 🪣 one tap
       cur = { k: nextKey(), c: tool.c, w: tool.w, p: [x, y] }; board.live(cur); flushT = 0; flush(false);
     });
     cv.addEventListener("pointermove", e => {
@@ -279,11 +326,12 @@
     const me = amDrawer();
     const k = "draw:" + S.tid + ":" + (me ? "d" : "g");
     if (frame !== k || !document.getElementById("cv")) {
+      if (frame.split(":")[1] !== String(S.tid)) tool.fill = false;   // a new turn starts with the pen
       frame = k;
       app.innerHTML = `<div class="card drawcard">${turnHead()}<div class="topline"><span id="topw"></span><span class="secs" id="tn"></span></div>${timerBar()}
         <canvas id="cv" class="board ${me ? "mine" : ""}" aria-label="لوحة الرسم"></canvas>
         ${me ? `<div class="tools"><div class="colors">${COLORS.map(c => `<button type="button" data-color="${c}" style="--c:${c}" aria-label="لون"></button>`).join("")}<button type="button" data-color="#ffffff" class="eraser" aria-label="ممحاة">🧽</button></div>
-          <div class="sizes">${SIZES.map(w => `<button type="button" data-size="${w}" aria-label="حجم"><i style="width:${Math.max(6, w / 1.4)}px;height:${Math.max(6, w / 1.4)}px"></i></button>`).join("")}<button type="button" data-act="undo">↩️ تراجع</button><button type="button" data-act="clear">🗑️ امسح</button></div></div>`
+          <div class="sizes">${SIZES.map(w => `<button type="button" data-size="${w}" aria-label="حجم"><i style="width:${Math.max(6, w / 1.4)}px;height:${Math.max(6, w / 1.4)}px"></i></button>`).join("")}<button type="button" data-act="fill" class="fillb">🪣 تعبئة</button><button type="button" data-act="undo">↩️ تراجع</button><button type="button" data-act="clear">🗑️ امسح</button></div></div>`
           : `<div class="guess" id="gbox"></div>`}
         <div id="side"></div></div>`;
       const cv = document.getElementById("cv");
@@ -296,7 +344,8 @@
     // refresh the bits around the canvas
     document.getElementById("topw").innerHTML = me ? `ارسم: <b class="word">${esc(DWORD && DWORD.tid === S.tid ? DWORD.w : "…")}</b>` : hintHTML(S.hint);
     document.querySelectorAll("[data-color]").forEach(b => b.classList.toggle("on", b.dataset.color === tool.c));
-    document.querySelectorAll("[data-size]").forEach(b => b.classList.toggle("on", +b.dataset.size === tool.w));
+    document.querySelectorAll("[data-size]").forEach(b => b.classList.toggle("on", !tool.fill && +b.dataset.size === tool.w));
+    document.querySelectorAll("[data-act=fill]").forEach(b => b.classList.toggle("on", !!tool.fill));
     if (!me) {
       const ok = (S.correct || {})[ME.pid], inp = document.getElementById("fGuess"), grow = inp && inp.parentElement;
       if (grow) grow.hidden = !!ok;
@@ -305,6 +354,19 @@
     }
     document.getElementById("side").innerHTML = `${chatHTML()}${playersHTML()}${isHost() ? `<button type="button" class="btn alt mt" data-act="hreveal">خلّص الدور</button>` : ""}`;
     clearInterval(tick); startTimer(drawS());
+  }
+  // gallery pictures (media/<id>), fetched once
+  const MEDIA = {};
+  function pic(id) {
+    if (!id) return "";
+    if (MEDIA[id] === undefined && db) { MEDIA[id] = null; db.ref("media/" + id).get().then(v => { const o = v.val(); MEDIA[id] = o && typeof o.d === "string" && /^data:image\/(jpeg|png);/.test(o.d) ? o.d : ""; render(); }).catch(() => { MEDIA[id] = ""; }); }
+    return MEDIA[id] ? `<img class="galimg" src="${MEDIA[id]}" alt="الرسمة">` : `<div class="galimg wait">⏳</div>`;
+  }
+  let galI = 0, myVote = { g: null, b: null, w: null };
+  async function sendVote() {
+    const gal = S.gal || [], mine = gal.map((g, i) => g.d !== ME.pid ? i : -1).filter(i => i >= 0);
+    const done = myVote.b != null && (myVote.w != null || mine.length < 2);
+    await writeMe({ v: { g: S.game, s: await FNC.seal(S.hk, { b: myVote.b, w: myVote.w }), done } });
   }
   let lastSeenW = null;
   function render() {
@@ -354,6 +416,30 @@
       const b = DrawBoard.Board(document.getElementById("cvr")); b.set(DrawBoard.parse(STROKES, dec));
       return;
     }
+    if (S.phase === "vote") {
+      const gal = S.gal || [], voters = (S.order || []).filter(id => P[id]);
+      if (myVote.g !== S.game) myVote = { g: S.game, b: null, w: null };
+      galI = Math.max(0, Math.min(gal.length - 1, galI));
+      const g = gal[galI] || {}, own = g.d === ME.pid, ndone = voters.filter(voteDone).length;
+      if (self.FA) FA.once("dr-gal-" + ME.code + "-" + S.game, () => FA.slam("🖼️ معرض الرسمات", "صوّتوا لأحلى وأسوأ رسمة", "#ff7a1a"));
+      app.innerHTML = `<div class="card center"><h2>🖼️ معرض الرسمات</h2>${timerBar()}
+        <p class="dots">${gal.map((x, i) => `<button type="button" data-gal="${i}" class="${i === galI ? "on" : ""} ${myVote.b === i ? "b" : ""} ${myVote.w === i ? "w" : ""}" aria-label="رسمة ${i + 1}"></button>`).join("")}</p>
+        ${pic(g.m)}
+        <p class="galcap">${esc(g.w)} · رسمة ${esc(nameOf(g.d))}</p><p class="note">${g.n ? `عرفها ${g.n}` : "محد عرفها 😅"}</p>
+        <div class="galnav"><button type="button" class="ghost" data-act="gprev" ${galI ? "" : "disabled"}>→ اللي قبل</button><button type="button" class="ghost" data-act="gnext" ${galI < gal.length - 1 ? "" : "disabled"}>اللي بعد ←</button></div>
+        ${own ? `<p class="note">هذي رسمتك، ما تقدر تصوّت لها 😄</p>` : `<div class="vb"><button type="button" class="best ${myVote.b === galI ? "on" : ""}" data-vote="b">🏆 أحلى رسمة</button><button type="button" class="worst ${myVote.w === galI ? "on" : ""}" data-vote="w">😂 أسوأ رسمة</button></div>`}
+        <p class="note">${myVote.b != null ? "🏆 " + esc(gal[myVote.b].w) : "🏆 ما اخترت"} · ${myVote.w != null ? "😂 " + esc(gal[myVote.w].w) : "😂 ما اخترت"}</p></div>
+        <div class="card center"><p class="big-msg">صوّت ${ndone} من ${voters.length} ⏳</p>${isHost() ? `<button type="button" class="btn alt mt" data-act="haward">اعرض النتيجة الحين</button>` : ""}</div>`;
+      startTimer(VOTE_S); return;
+    }
+    if (S.phase === "award") {
+      const gal = S.gal || [], a = S.award || { b: [], w: [] }, names = l => l.map(i => nameOf(gal[i].d)).filter((x, i, arr) => arr.indexOf(x) === i).join(" و");
+      if (self.FA) FA.once("dr-aw-" + ME.code + "-" + S.game, () => { FA.play("party"); if (a.b.length) FA.slam("🏆 أحلى رسمة: " + names(a.b), "+" + BEST_PTS + " نقاط", "#ffb21e"); });
+      const block = (l, cls, title, c) => l.length ? `<div class="card center ${cls}"><h2>${title}: ${esc(names(l))}${cls === "bestc" ? ` <span class="plus">+${BEST_PTS}</span>` : ""}</h2>${l.map(i => `${pic(gal[i].m)}<p class="note">${esc(gal[i].w)} · ${c} ${c === 1 ? "صوت" : "أصوات"}</p>`).join("")}</div>` : "";
+      app.innerHTML = `${block(a.b, "bestc", "🏆 أحلى رسمة", a.bc)}${block(a.w, "worstc", "😂 أسوأ رسمة", a.wc)}${!a.b.length && !a.w.length ? `<div class="card center"><p class="big-msg">محد صوّت 😅</p></div>` : ""}
+        <div class="card">${isHost() ? `<button type="button" class="btn" data-act="hend">النتيجة النهائية 🏆</button>` : `<p class="note center">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>`;
+      return;
+    }
     if (S.phase === "end") {
       if (self.FA) FA.once("dr-end-" + ME.code + "-" + S.game, () => { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); if (ids.length) FA.winner(nameOf(ids[0]), ids.map(id => [nameOf(id), S.scores[id] || 0])); });
       const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0));
@@ -376,7 +462,19 @@
     const a = b.dataset.act;
     try {
       if (b.dataset.color) { tool.c = b.dataset.color; if (tool.c === "#ffffff" && tool.w < SIZES[2]) tool.w = SIZES[2]; drawFrame(); return; }
-      if (b.dataset.size) { tool.w = +b.dataset.size; drawFrame(); return; }
+      if (b.dataset.size) { tool.w = +b.dataset.size; tool.fill = false; drawFrame(); return; }
+      if (b.dataset.gal != null) { galI = +b.dataset.gal; render(); return; }
+      if (a === "gprev") { galI--; render(); return; }
+      if (a === "gnext") { galI++; render(); return; }
+      if (b.dataset.vote && S.phase === "vote" && S.hk) {
+        const k = b.dataset.vote, o = k === "b" ? "w" : "b";
+        myVote[k] = myVote[k] === galI ? null : galI; if (myVote[o] === galI && myVote[k] === galI) myVote[o] = null;
+        render(); await sendVote(); render();
+        return;
+      }
+      if (a === "haward" && isHost()) { await hostAward(); return; }
+      if (a === "hend" && isHost()) { await writeState({ phase: "end" }); return; }
+      if (a === "fill" && amDrawer()) { tool.fill = !tool.fill; drawFrame(); return; }
       if (a === "undo" && amDrawer()) { const ks = strokeKeys(); if (ks.length) await ref("strokes/" + ks[ks.length - 1]).remove(); return; }
       if (a === "clear" && amDrawer()) { if (!b.classList.contains("warn")) { b.classList.add("warn"); b.textContent = "متأكد؟"; setTimeout(() => { b.classList.remove("warn"); b.textContent = "🗑️ امسح"; }, 2500); return; } await ref("strokes").remove(); return; }
       if (b.dataset.word && amDrawer() && S.phase === "choose" && S.hk) { await writeMe({ pick: { t: S.tid, s: await FNC.seal(S.hk, b.dataset.word) } }); render(); return; }
@@ -451,7 +549,7 @@
   }
   // the host's phone drives the timers: keep its screen awake, catch up when it comes back,
   // and tell everyone else when the host is late to move on
-  const LATE = { choose: CHOOSE_S, draw: DRAW_S, reveal: REVEAL_S };
+  const LATE = { choose: CHOOSE_S, draw: DRAW_S, reveal: REVEAL_S, vote: VOTE_S, award: AWARD_S };
   Object.defineProperty(LATE, "draw", { get: drawS });
   setInterval(() => {
     if (!self.FNW) return;

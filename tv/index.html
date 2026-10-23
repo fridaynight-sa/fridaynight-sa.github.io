@@ -163,6 +163,14 @@ body.fs .gamesbar{display:none}
 .joinbox{display:flex;flex-direction:column;gap:12px;max-width:520px;margin:30px auto}
 .tbar{height:12px;background:var(--soft);border-radius:999px;overflow:hidden;margin:4px 0 16px}
 .tbar i{display:block;height:100%;background:var(--accent);border-radius:999px;transition:width .3s linear}
+.galgrid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
+.galgrid figure{margin:0;width:min(30%,340px);text-align:center}
+.galimg{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;border-radius:16px;box-shadow:inset 0 0 0 2px var(--line)}
+.galimg.wait{display:grid;place-items:center;font-size:40px}
+.galgrid figcaption{font-weight:800;font-size:20px;margin-top:6px}
+.awardrow{display:flex;gap:18px;flex-wrap:wrap}.awardrow .awardc{flex:1 1 300px}
+.awardc .galgrid figure{width:min(100%,460px)}
+.awardc .plus{color:var(--good)}
 .podium{display:grid;gap:10px}
 .podium div{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:16px;padding:14px 18px;font-weight:800;font-size:26px}
 .podium div:first-child{background:var(--gold)}
@@ -177,7 +185,7 @@ body.fs .gamesbar{display:none}
 .gamesbar a.site img{vertical-align:-5px;margin-inline-end:4px}
 @media (min-width:820px){.gamesbar{justify-content:center!important;margin-inline:0;padding-inline:0}}
 </style>
-<link rel="stylesheet" href="../fntheme.css?v=202610232132">
+<link rel="stylesheet" href="../fntheme.css?v=202610232147">
 </head>
 <body style="--game:#7c3aed">
 <div class="wrap">
@@ -191,11 +199,11 @@ body.fs .gamesbar{display:none}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610232132"></script>
-<script src="../draw/board.js?v=202610232132"></script>
-<script src="../fnfx.js?v=202610232132"></script>
-<script src="../fnanim.js?v=202610232132"></script>
-<script src="app.js?v=202610232132"></script>
+<script src="../firebase-config.js?v=202610232147"></script>
+<script src="../draw/board.js?v=202610232147"></script>
+<script src="../fnfx.js?v=202610232147"></script>
+<script src="../fnanim.js?v=202610232147"></script>
+<script src="app.js?v=202610232147"></script>
 <script>try{document.querySelector(".gamesbar .on").scrollIntoView({inline:"center",block:"nearest"})}catch(e){}</script>
 </body>
 </html>

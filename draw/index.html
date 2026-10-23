@@ -137,6 +137,21 @@ td.plus{color:var(--good)}
 .catv button{background:var(--soft);border-radius:14px;padding:12px 10px;font-weight:800;text-align:start;display:flex;justify-content:space-between;gap:6px}
 .catv button.on{background:var(--accent);color:#fff}
 .catv button small{opacity:.8}
+/* 🖼️ gallery vote */
+.galimg{display:block;width:100%;aspect-ratio:4/3;object-fit:contain;background:#fff;border-radius:16px;box-shadow:inset 0 0 0 2px var(--line);margin:8px 0}
+.galimg.wait{display:grid;place-items:center;font-size:30px}
+.galcap{font-family:var(--f-display);font-weight:800;font-size:20px;margin:4px 0 0}
+.dots{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:6px 0}
+.dots button{width:14px;height:14px;border-radius:50%;background:var(--line);padding:0}
+.dots button.on{background:var(--game);transform:scale(1.25)}
+.dots button.b{box-shadow:0 0 0 3px var(--gold)}.dots button.w{box-shadow:0 0 0 3px #ffa8a8}
+.galnav{display:flex;gap:8px;justify-content:space-between;margin:6px 0}
+.galnav button{flex:1}
+.vb{display:flex;gap:8px;margin-top:8px}
+.vb button{flex:1;border:2px solid var(--ink);border-radius:14px;padding:12px 6px;font-weight:800;font-size:16px;background:#fff}
+.vb .best.on{background:var(--gold)}.vb .worst.on{background:#ffe3e3}
+.bestc h2 .plus{color:var(--good)}
+.bestc .galimg,.worstc .galimg{max-height:34vh}
 .podium{display:grid;gap:8px}
 .podium div{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:14px;padding:12px 14px;font-weight:800;font-size:18px}
 .podium div:first-child{background:var(--gold)}
@@ -184,7 +199,7 @@ td.plus{color:var(--good)}
 .gamesbar a.site img{vertical-align:-5px;margin-inline-end:4px}
 @media (min-width:820px){.gamesbar{justify-content:center!important;margin-inline:0;padding-inline:0}}
 </style>
-<link rel="stylesheet" href="../fntheme.css?v=202610232132">
+<link rel="stylesheet" href="../fntheme.css?v=202610232147">
 </head>
 <body style="--game:#ff7a1a">
 <div class="wrap">
@@ -198,14 +213,14 @@ td.plus{color:var(--good)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610232132"></script>
-<script src="../fncrypto.js?v=202610232132"></script>
-<script src="../fnwake.js?v=202610232132"></script>
-<script src="board.js?v=202610232132"></script>
-<script src="../fnfx.js?v=202610232132"></script>
-<script src="../fnanim.js?v=202610232132"></script>
-<script src="../fnnight.js?v=202610232132"></script>
-<script src="app.js?v=202610232132"></script>
+<script src="../firebase-config.js?v=202610232147"></script>
+<script src="../fncrypto.js?v=202610232147"></script>
+<script src="../fnwake.js?v=202610232147"></script>
+<script src="board.js?v=202610232147"></script>
+<script src="../fnfx.js?v=202610232147"></script>
+<script src="../fnanim.js?v=202610232147"></script>
+<script src="../fnnight.js?v=202610232147"></script>
+<script src="app.js?v=202610232147"></script>
 <script>try{document.querySelector(".gamesbar .on").scrollIntoView({inline:"center",block:"nearest"})}catch(e){}</script>
 </body>
 </html>

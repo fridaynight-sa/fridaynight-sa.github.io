@@ -67,12 +67,30 @@
       ${plist(order.filter(id => id !== S.drawer), id => ok[id])}`;
   }
   const hintHTML = h => (h || []).map(c => c === " " ? `<i class="sp"></i>` : `<i>${esc(c)}</i>`).join("");
+  // ارسم وخمّن gallery pictures (media/<id>)
+  const MEDIA = {};
+  function pic(id) {
+    if (!id) return "";
+    if (MEDIA[id] === undefined && db) { MEDIA[id] = null; db.ref("media/" + id).get().then(v => { const o = v.val(); MEDIA[id] = o && typeof o.d === "string" && /^data:image\/(jpeg|png);/.test(o.d) ? o.d : ""; render(); }).catch(() => { MEDIA[id] = ""; }); }
+    return MEDIA[id] ? `<img class="galimg" src="${MEDIA[id]}" alt="">` : `<div class="galimg wait">⏳</div>`;
+  }
   function renderDraw() {
     const head = S.drawer ? `<p class="tvsub">الدور ${S.turn + 1} من ${S.total} · ✏️ الرسّام: <b>${esc(nameOf(S.drawer))}</b></p>` : "";
     if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("draw")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "choose") return `<div class="card">${head}<p class="tvtitle">✏️ ${esc(nameOf(S.drawer))} يختار كلمة…</p></div><div class="card"><h2>الترتيب</h2>${scoreTable()}</div>`;
     if (S.phase === "draw") return `<div class="card">${head}${timer(drawT())}<div id="tvside">${drawSide()}</div><canvas id="tvcv" class="board"></canvas></div>`;
     if (S.phase === "reveal") { const d = Object.assign({}, S.correct || {}); d[S.drawer] = (d[S.drawer] || 0) + (S.dpts || 0); return `<div class="card">${head}<p class="tvtitle">الكلمة كانت <span class="word">${esc(S.word || "")}</span></p><canvas id="tvcv" class="board"></canvas></div><div class="card"><h2>الترتيب</h2>${scoreTable(d)}</div>`; }
+    if (S.phase === "vote") {
+      const gal = S.gal || [], voters = (S.order || []).filter(id => P[id]);
+      return `<div class="card"><p class="tvtitle">🖼️ معرض الرسمات</p><p class="tvsub">صوّتوا من جوالاتكم: 🏆 أحلى رسمة و😂 أسوأ رسمة</p>${timer(60)}
+        <div class="galgrid">${gal.map(g => `<figure>${pic(g.m)}<figcaption>${esc(g.w)} · <b>${esc(nameOf(g.d))}</b></figcaption></figure>`).join("")}</div>
+        ${plist(voters, id => { const v = P[id] && P[id].v; return !!(v && v.g === S.game && v.done); })}</div>`;
+    }
+    if (S.phase === "award") {
+      const gal = S.gal || [], a = S.award || { b: [], w: [] }, who = l => l.map(i => nameOf(gal[i].d)).filter((x, i, arr) => arr.indexOf(x) === i).join(" و");
+      const block = (l, title, c, plus) => l.length ? `<div class="card awardc"><p class="tvtitle">${title}: ${esc(who(l))}${plus ? ` <span class="plus">+10</span>` : ""}</p><div class="galgrid">${l.map(i => `<figure>${pic(gal[i].m)}<figcaption>${esc(gal[i].w)} · ${c} ${c === 1 ? "صوت" : "أصوات"}</figcaption></figure>`).join("")}</div></div>` : "";
+      return `<div class="awardrow">${block(a.b, "🏆 أحلى رسمة", a.bc, true)}${block(a.w, "😂 أسوأ رسمة", a.wc, false)}</div>${!a.b.length && !a.w.length ? `<div class="card"><p class="tvtitle">محد صوّت 😅</p></div>` : ""}`;
+    }
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">النتيجة النهائية 🏆</p><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
     return "";
   }
