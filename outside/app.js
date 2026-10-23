@@ -52,16 +52,19 @@
     outs.forEach(id => h.c[id] = (h.c[id] || 0) + 1);
     return h;
   }
-  function makeRound(ids, catChoice, outCount, used, hist) {
+  // hide: in a normal category the outsider gets another word from the same category and isn't told
+  // (like الجاسوس, where that is always so)
+  function makeRound(ids, catChoice, outCount, used, hist, hide) {
     const { cat, word } = pickWord(catChoice, used);
     const order = shuffle(ids);
     const outs = pickOuts(ids, Math.min(outCount, maxOuts(ids.length)), hist);
     // a random cycle: everyone asks once and is asked once
     const pairs = order.map((id, i) => [id, order[(i + 1) % order.length]]);
     // spy mode: the spy gets a different place from the same list and is not told
-    const spyWord = isSpy(cat) ? shuffle(cat.words.filter(w => w !== word))[0] : null;
+    const blindRound = isSpy(cat) || !!hide;
+    const spyWord = blindRound ? shuffle(cat.words.filter(w => w !== word))[0] : null;
     const options = shuffle([word].concat(shuffle(cat.words.filter(w => w !== word && w !== spyWord)).slice(0, 5)));
-    return { cat: { id: cat.id, name: cat.name, emoji: cat.emoji, mode: cat.mode || null, image: cat.image || null }, word, spyWord, outs, order, pairs, options };
+    return { cat: { id: cat.id, name: cat.name, emoji: cat.emoji, mode: cat.mode || null, image: cat.image || null, hidden: !!hide && !isSpy(cat) }, word, spyWord, outs, order, pairs, options };
   }
   function tally(order, votes) {
     const counts = {}; order.forEach(id => counts[id] = 0);
@@ -85,6 +88,7 @@
 
   /* ---------------- shared bits of UI ---------------- */
   function roleCard(revealed, isOut, cat, word) {
+    if (cat && cat.hidden) isOut = false;   // (word is the outsider's other word)
     if (revealed && isSpy(cat)) return `<div class="role spy"><small>القسم: ${esc(cat.emoji)} ${esc(cat.name)}</small><small>المكان</small><span class="big">${esc(word)}</span></div>`;
     const catTxt = cat ? `القسم: ${esc(cat.emoji)} ${esc(cat.name)}` : "";
     if (!revealed) return `<button type="button" class="role${isSpy(cat) ? " spy" : ""}" data-act="reveal"><span class="tap">👆</span><span class="big">اضغط وشوف دورك</span><small>${catTxt}</small></button>`;
@@ -108,13 +112,15 @@
       return `<li>${n} انكشف، و${res.guessOk[o] ? `خمّن ${W(R.cat)} صح 👏 <b>+1</b>` : `ما عرف ${W(R.cat)} ❌`}</li>`;
     });
     if (res.rightVoters.length) lines.push(`<li>صوّتوا صح (<b>+1</b>): ${res.rightVoters.map(v => esc(nameOf(v))).join("، ")}</li>`);
-    return `<p class="big-msg">${isSpy(R.cat) ? "المكان كان" : "الكلمة كانت"} <span class="word">${esc(R.word)}</span></p>${isSpy(R.cat) && R.spyWord ? `<p class="note center">والجاسوس كان طالع له: ${esc(R.spyWord)}</p>` : ""}<ul class="note">${lines.join("")}</ul>`;
+    return `<p class="big-msg">${isSpy(R.cat) ? "المكان كان" : "الكلمة كانت"} <span class="word">${esc(R.word)}</span></p>${R.spyWord ? `<p class="note center">و${isSpy(R.cat) ? "الجاسوس" : "اللي برا السالفة"} كان طالع له: ${esc(R.spyWord)}</p>` : ""}<ul class="note">${lines.join("")}</ul>`;
   }
   const catBanner = () => "";
   const pageBg = img => { document.body.classList.toggle("catbg", !!img); document.body.style.setProperty("--catbg", img ? `url("${img}")` : "none"); };
-  function setupFields(cat, outs, n) {
+  function setupFields(cat, outs, n, hide) {
     return `${catBanner(cat)}<div class="field"><span class="lbl">القسم</span><div class="seg" data-grp="cat">${["random"].concat(CATS.map(c => c.id)).map(id => `<button type="button" data-cat="${id}" class="${cat === id ? "on" : ""}">${esc(catLabel(id))}</button>`).join("")}</div></div>
-      <div class="field"><span class="lbl">كم واحد برا السالفة (أو جاسوس)؟</span><div class="stepper"><button type="button" data-outs="-1" aria-label="أقل">−</button><b>${outs}</b><button type="button" data-outs="1" aria-label="أكثر">+</button></div>${n ? `<p class="note">مع ${n} لاعبين: لين ${maxOuts(n)} برا السالفة.</p>` : ""}</div>`;
+      <div class="field"><span class="lbl">كم واحد برا السالفة (أو جاسوس)؟</span><div class="stepper"><button type="button" data-outs="-1" aria-label="أقل">−</button><b>${outs}</b><button type="button" data-outs="1" aria-label="أكثر">+</button></div>${n ? `<p class="note">مع ${n} لاعبين: لين ${maxOuts(n)} برا السالفة.</p>` : ""}</div>
+      ${isSpy(catById(cat)) ? "" : `<div class="field"><span class="lbl">اللي برا السالفة…</span><div class="seg" data-grp="hide"><button type="button" data-hide="0" class="${hide ? "" : "on"}">يعرف إنه برا 🤫</button><button type="button" data-hide="1" class="${hide ? "on" : ""}">ما يعرف 🕵️</button></div>
+        <p class="note">${hide ? "يطلع له كلمة ثانية من نفس القسم، ويحسب نفسه مثل الباقين." : "يطلع له «أنت برا السالفة»، ويحاول يعرف الكلمة."}</p></div>`}`;
   }
 
   /* =================================================================
@@ -124,9 +130,9 @@
   let PS = null; // pass state
   function passInit() {
     const saved = LS.get(PKEY, {});
-    PS = { step: "setup", names: saved.names || ["", "", ""], cat: saved.cat || "random", outs: saved.outs || 1, scores: {}, used: {}, oh: null, R: null, idx: 0, shown: false, votes: {}, guesses: {}, pick: null, res: null };
+    PS = { step: "setup", names: saved.names || ["", "", ""], cat: saved.cat || "random", outs: saved.outs || 1, hide: !!saved.hide, scores: {}, used: {}, oh: null, R: null, idx: 0, shown: false, votes: {}, guesses: {}, pick: null, res: null };
   }
-  const passSave = () => LS.set(PKEY, { names: PS.names, cat: PS.cat, outs: PS.outs });
+  const passSave = () => LS.set(PKEY, { names: PS.names, cat: PS.cat, outs: PS.outs, hide: !!PS.hide });
   // the game in progress (round, scores, words used) survives leaving the page; «لعبة جديدة» clears it
   const GKEY = "bs-pass-game-v1";
   const passKeep = () => { if (PS && (PS.step !== "setup" || Object.keys(PS.scores || {}).length)) LS.set(GKEY, Object.assign({}, PS, { shown: false })); };
@@ -148,7 +154,7 @@
       app.innerHTML = `<div class="card"><h2>📱 جوال واحد</h2><p class="note">اكتبوا أسماءكم، وبعدين كل واحد يشوف دوره لحاله ويعطي الجوال اللي بعده.</p>
         <div class="field mt"><span class="lbl">اللاعبين (3 على الأقل)</span>${PS.names.map((nm, i) => `<div class="row" style="margin-bottom:6px"><input class="inp" data-name="${i}" value="${esc(nm)}" maxlength="18" placeholder="لاعب ${i + 1}">${PS.names.length > 3 ? `<button type="button" class="ghost" style="flex:0 0 auto" data-del="${i}" aria-label="احذف">✕</button>` : ""}</div>`).join("")}
         <button type="button" class="btn alt" data-act="addname">+ لاعب</button></div>
-        ${setupFields(PS.cat, PS.outs, n)}
+        ${setupFields(PS.cat, PS.outs, n, PS.hide)}
         <p class="err" id="perr"></p>
         <button type="button" class="btn" data-act="pstart">ابدأ الجولة</button>
         <button type="button" class="btn alt mt" data-act="home">رجوع</button></div>`;
@@ -211,7 +217,7 @@
     PS.idNames = {}; ids.forEach(id => PS.idNames[id] = pName(id));
     const oh = PS.oh || { c: {}, last: [] }, hist = { c: {}, last: ids.filter(id => oh.last.includes(pName(id))) };
     ids.forEach(id => hist.c[id] = oh.c[pName(id)] || 0);
-    PS.R = makeRound(ids, PS.cat, PS.outs, PS.used, hist);
+    PS.R = makeRound(ids, PS.cat, PS.outs, PS.used, hist, PS.hide);
     PS.oh = addOutHist({ c: oh.c }, PS.R.outs.map(pName));
     PS.step = "roles"; PS.idx = 0; PS.shown = false; PS.votes = {}; PS.guesses = {}; PS.pick = null;
     renderPass();
@@ -221,6 +227,7 @@
     if (b.dataset.name !== undefined) return;
     if (b.dataset.del !== undefined) { PS.names.splice(+b.dataset.del, 1); renderPass(); return; }
     if (b.dataset.cat) { PS.cat = b.dataset.cat; renderPass(); return; }
+    if (b.dataset.hide) { PS.hide = b.dataset.hide === "1"; renderPass(); return; }
     if (b.dataset.outs) { PS.outs = Math.max(1, Math.min(maxOuts(Math.max(3, passIds().length)), PS.outs + +b.dataset.outs)); renderPass(); return; }
     if (b.dataset.vote) { PS.pick = b.dataset.vote; renderPass(); return; }
     if (b.dataset.guess) { PS.pick = b.dataset.guess; renderPass(); return; }
@@ -309,7 +316,7 @@
     const used = JSON.parse(JSON.stringify(S.used || {}));
     const noKey = ids.filter(id => !P[id].key);
     if (noKey.length) return "لازم " + noKey.map(id => P[id].name).join(" و") + " يحدّث الصفحة.";
-    const R = makeRound(ids, S.cat, S.outs, used, S.oh);
+    const R = makeRound(ids, S.cat, S.outs, used, S.oh, S.hide);
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const sk = {}; ids.forEach(id => sk[id] = P[id].key);
     const H = { round: S.round + 1, cat: R.cat, word: R.word, spyWord: R.spyWord, outs: R.outs, options: R.options, sk };
@@ -390,7 +397,7 @@
         <div class="card center"><span class="lbl">رمز الغرفة</span><div class="code">${esc(ME.code)}</div>${qr ? `<img class="qr" src="${qr}" alt="باركود الدخول">` : ""}
         <p class="note">خلّ البقية يصوّرون الباركود أو يدخلون الرمز من «ادخل غرفة».</p><button type="button" class="ghost mt" data-act="copy">انسخ رابط الدخول</button><p class="note">📺 للعرض على التلفزيون: <b dir="ltr">${esc((location.origin + location.pathname.replace(/outside\/?(index\.html)?$/, "") + "tv/").replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>اللاعبين (${ids.length})</h2><ul class="plist">${ids.map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${id === S.host ? " 👑" : ""}${isHost() && id !== ME.pid && S.phase === "lobby" ? ` <button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}</ul></div>
-        ${isHost() && !waiting ? `<div class="card">${setupFields(S.cat, S.outs, ids.length)}<p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < 3 ? "disabled" : ""}>ابدأ الجولة</button>${ids.length < 3 ? `<p class="note center">ننتظر ${3 - ids.length} لاعب${3 - ids.length > 1 ? "ين" : ""} بعد.</p>` : ""}</div>` : !waiting ? `<div class="card center">${catBanner(S.cat)}<p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ الجولة… القسم: ${esc(catLabel(S.cat))}</p></div>` : ""}
+        ${isHost() && !waiting ? `<div class="card">${setupFields(S.cat, S.outs, ids.length, S.hide)}<p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < 3 ? "disabled" : ""}>ابدأ الجولة</button>${ids.length < 3 ? `<p class="note center">ننتظر ${3 - ids.length} لاعب${3 - ids.length > 1 ? "ين" : ""} بعد.</p>` : ""}</div>` : !waiting ? `<div class="card center">${catBanner(S.cat)}<p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ الجولة… القسم: ${esc(catLabel(S.cat))}</p></div>` : ""}
         ${leave}`;
       return;
     }
@@ -448,6 +455,7 @@
     const herr = m => { const e = document.getElementById("herr"); if (e) e.textContent = m; };
     try {
       if (b.dataset.cat && isHost()) { await writeState({ cat: b.dataset.cat }); return; }
+      if (b.dataset.hide && isHost()) { await writeState({ hide: b.dataset.hide === "1" }); return; }
       if (b.dataset.outs && isHost()) { const n = Math.max(3, Object.keys(P).length); await writeState({ outs: Math.max(1, Math.min(maxOuts(n), (S.outs || 1) + +b.dataset.outs)) }); return; }
       if (b.dataset.kick && isHost()) { await ref("players/" + b.dataset.kick).remove(); return; }
       if (b.dataset.vote) { myPick = b.dataset.vote; renderRoom(); return; }
