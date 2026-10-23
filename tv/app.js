@@ -88,7 +88,7 @@
     const order = S.order || [], L = ["أ", "ب", "ج", "د"];
     const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${S.q.diff ? " · " + esc(S.q.diff) : ""}</p>` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
-    const opts = r => `<div class="tvopts">${(S.q.opts || []).map((t, i) => { const who = r ? Object.keys(r.picks || {}).filter(id => r.picks[id] === i) : []; return `<div class="${r ? (i === r.correct ? "ok" : "dim") : ""}"><b>${L[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(nameOf).map(esc).join("، ")}</small>` : ""}</div>`; }).join("")}</div>`;
+    const opts = r => `<div class="dfopts">${(S.q.opts || []).map((t, i) => { const who = r ? Object.keys(r.picks || {}).filter(id => r.picks[id] === i) : []; return `<div class="${r ? (i === r.correct ? "ok" : "dim") : ""}"><b>${L[i]}</b><span>${esc(t)}</span>${who.length ? `<small>${who.map(nameOf).map(esc).join("، ")}</small>` : ""}</div>`; }).join("")}</div>`;
     if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">🤓 الدافور</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "q") return `<div class="card">${head}${q}${timer(20)}${opts(null)}${plist(order, id => P[id] && P[id].ans && S.q && P[id].ans.q === S.q.id)}</div>`;
     if (S.phase === "reveal") { const r = S.reveal || {}; return `<div class="card">${head}${q}${opts(r)}${r.fastest ? `<p class="tvsub">⚡ أسرع جواب صح: ${esc(nameOf(r.fastest))}</p>` : `<p class="tvsub">ما أحد جاوب صح 😅</p>`}${r.note ? `<p class="tvsub">💡 ${esc(r.note)}</p>` : ""}</div><div class="card"><h2>الترتيب</h2>${scoreTable(r.deltas)}</div>`; }
@@ -194,7 +194,6 @@
     STROKES = {}; frame = "";
     if (g === "draw") on(r.child("strokes"), v => { STROKES = v || {}; if (board) board.set(DrawBoard.parse(STROKES, dec)); });
     if (!NIGHT) history.replaceState(null, "", "#" + c);
-    try { document.documentElement.requestFullscreen && 0; } catch (e) {}
   }
   // سين جيم: open its own display screen
   function openSJ(c) {
@@ -234,6 +233,22 @@
     document.getElementById("tvGo").onclick = go; inp.onkeydown = e => { if (e.key === "Enter") go(); }; inp.focus();
   }
   newBtn.onclick = () => home();
+  // ⛶ full screen (the TV browser's own bars go away); also the F key
+  const fsBtn = document.getElementById("fsBtn"), D = document, E = D.documentElement;
+  const fsOn = () => !!(D.fullscreenElement || D.webkitFullscreenElement);
+  const fsCan = !!(E.requestFullscreen || E.webkitRequestFullscreen);
+  function fsToggle() {
+    try {
+      if (fsOn()) (D.exitFullscreen || D.webkitExitFullscreen).call(D);
+      else { const p = (E.requestFullscreen || E.webkitRequestFullscreen).call(E); if (p && p.catch) p.catch(() => {}); }
+    } catch (e) {}
+  }
+  function fsShow() { const on = fsOn(); D.body.classList.toggle("fs", on); fsBtn.textContent = on ? "✕ اطلع من الشاشة الكاملة" : "⛶ شاشة كاملة"; }
+  if (fsBtn && fsCan) {
+    fsBtn.hidden = false; fsBtn.onclick = fsToggle;
+    D.addEventListener("fullscreenchange", fsShow); D.addEventListener("webkitfullscreenchange", fsShow);
+    D.addEventListener("keydown", e => { if ((e.key === "f" || e.key === "F") && !/INPUT|TEXTAREA/.test((e.target.tagName || ""))) fsToggle(); });
+  }
   fetch("../sedq/questions.json").then(r => r.json()).then(d => { CATS = d.categories; render(); }).catch(() => {});
   fetch("../mf/questions.json").then(r => r.json()).then(d => { MFCATS = d.categories; render(); }).catch(() => {});
   const h = (location.hash || "").replace("#", "");
