@@ -27,11 +27,21 @@
 
   /* ---------------- game engine (shared by both modes) ---------------- */
   // used: {catId: [words already played this session]}
-  function pickWord(catChoice, used) {
+  // Every phone remembers the words it has seen played (any room, any night). The word of a round is one
+  // nobody here has seen yet; once everything was seen, the ones seen longest ago come back first.
+  const SEEN_KEY = "bs-seen-v1";
+  const seenList = () => { try { const v = JSON.parse(localStorage.getItem(SEEN_KEY) || "[]"); return Array.isArray(v) ? v.filter(x => typeof x === "string") : []; } catch (e) { return []; } };
+  function noteSeen(k) { if (!k) return; const l = seenList().filter(x => x !== k); l.push(k); try { localStorage.setItem(SEEN_KEY, JSON.stringify(l.slice(-1500))); } catch (e) {} }
+  // sent in the player's record: the latest seen words, up to 900 letters
+  function packSeen() { const l = seenList(); const out = []; let n = 0; for (let i = l.length - 1; i >= 0 && n + l[i].length + 1 <= 900; i--) { out.unshift(l[i]); n += l[i].length + 1; } return out.join("|"); }
+  const unpackSeen = s => typeof s === "string" && s ? s.split("|").slice(0, 300) : [];
+  function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((k, p) => { w[k] = (w[k] || 0) + 1 + p / L; }); }); return w; }
+  function pickWord(catChoice, used, w) {
+    w = w || {};
     const pool = CATS.filter(c => !isSpy(c)); const cat = catChoice === "random" ? pool[rint(pool.length)] : catById(catChoice) || CATS[0];
-    let left = cat.words.filter(w => !(used[cat.id] || []).includes(w));
+    let left = cat.words.filter(x => !(used[cat.id] || []).includes(x));
     if (!left.length) { used[cat.id] = []; left = cat.words.slice(); }
-    const word = left[rint(left.length)];
+    const word = left.map(x => ({ x, s: (w[cat.id + ":" + x] || 0) + Math.random() * 0.3 })).sort((a, b) => a.s - b.s)[0].x;
     used[cat.id] = (used[cat.id] || []).concat(word);
     return { cat, word };
   }
@@ -54,8 +64,8 @@
   }
   // hide: in a normal category the outsider gets another word from the same category and isn't told
   // (like الجاسوس, where that is always so)
-  function makeRound(ids, catChoice, outCount, used, hist, hide) {
-    const { cat, word } = pickWord(catChoice, used);
+  function makeRound(ids, catChoice, outCount, used, hist, hide, w) {
+    const { cat, word } = pickWord(catChoice, used, w);
     const order = shuffle(ids);
     const outs = pickOuts(ids, Math.min(outCount, maxOuts(ids.length)), hist);
     // a random cycle: everyone asks once and is asked once
@@ -198,6 +208,7 @@
       return;
     }
     if (PS.step === "results") {
+      noteSeen(R.cat.id + ":" + R.word);
       app.innerHTML = `<div class="card"><h2>نتيجة الجولة 🏆</h2>${resultSummary(R, PS.res, pName)}${barsHTML(R.order, pName, PS.res.tally.counts, R.outs)}</div>
         <div class="card"><h2>النقاط</h2>${scoreTable(R.order, pName, PS.scores, PS.res.deltas)}
         <button type="button" class="btn mt" data-act="pnext">جولة جديدة</button><button type="button" class="btn alt mt" data-act="psetup">غيّر اللاعبين أو القسم</button></div>`;
@@ -217,7 +228,7 @@
     PS.idNames = {}; ids.forEach(id => PS.idNames[id] = pName(id));
     const oh = PS.oh || { c: {}, last: [] }, hist = { c: {}, last: ids.filter(id => oh.last.includes(pName(id))) };
     ids.forEach(id => hist.c[id] = oh.c[pName(id)] || 0);
-    PS.R = makeRound(ids, PS.cat, PS.outs, PS.used, hist, PS.hide);
+    PS.R = makeRound(ids, PS.cat, PS.outs, PS.used, hist, PS.hide, seenWeights([seenList()]));
     PS.oh = addOutHist({ c: oh.c }, PS.R.outs.map(pName));
     PS.step = "roles"; PS.idx = 0; PS.shown = false; PS.votes = {}; PS.guesses = {}; PS.pick = null;
     renderPass();
@@ -300,7 +311,7 @@
     S.hk = await myKey();
     if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
-    await writeMe({ name, at: Date.now(), key: await myKey() });
+    await writeMe({ name, at: Date.now(), key: await myKey(), sn: packSeen() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   async function joinRoom(code, name) {
@@ -315,7 +326,7 @@
     P = {};
     const st = dec(s.val());
     const cur = (await db.ref("bs/" + code + "/players/" + ME.pid).get()).val();
-    await db.ref("bs/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, dec(cur) || {}, { name, key: await myKey(), at: (dec(cur) || {}).at || Date.now() })));
+    await db.ref("bs/" + code + "/players/" + ME.pid).set(enc(Object.assign({}, dec(cur) || {}, { name, key: await myKey(), sn: packSeen(), at: (dec(cur) || {}).at || Date.now() })));
     S = st; view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   function leaveRoom() { unsubscribe(); if (ME) { ME.code = null; LS.set(MKEY, ME); } S = null; P = {}; SEC = null; HID = null; history.replaceState(null, "", location.pathname); goHome(); }
@@ -327,7 +338,7 @@
     const used = JSON.parse(JSON.stringify(S.used || {}));
     const noKey = ids.filter(id => !P[id].key);
     if (noKey.length) return "لازم " + noKey.map(id => P[id].name).join(" و") + " يحدّث الصفحة.";
-    const R = makeRound(ids, S.cat, S.outs, used, S.oh, S.hide);
+    const R = makeRound(ids, S.cat, S.outs, used, S.oh, S.hide, seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn)))));
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const sk = {}; ids.forEach(id => sk[id] = P[id].key);
     const H = { round: S.round + 1, cat: R.cat, word: R.word, spyWord: R.spyWord, outs: R.outs, options: R.options, sk };
@@ -456,6 +467,7 @@
     }
     if (S.phase === "results") {
       const r = S.results;
+      if (S.catInfo && r.word) noteSeen(S.catInfo.id + ":" + r.word);
       const R = { outs: r.outs, word: r.word, spyWord: r.spyWord, cat: S.catInfo };
       app.innerHTML = `<div class="card"><h2>نتيجة الجولة ${S.round} 🏆</h2>${resultSummary(R, r, nameOf)}${barsHTML(order, nameOf, r.counts, r.outs)}</div>
         <div class="card"><h2>النقاط</h2>${scoreTable(Object.keys(S.scores || {}).concat(order.filter(id => !(S.scores || {})[id])).filter((x, i, a) => a.indexOf(x) === i), nameOf, S.scores || {}, r.deltas)}
@@ -573,5 +585,5 @@
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الكلمات. حدّث الصفحة.</p></div>`; });
 
   // test hook
-  self.BS = { makeRound, pickOuts, addOutHist, tally, scoreRound, pickWord, get CATS() { return CATS; } };
+  self.BS = { seenList, seenWeights, packSeen, unpackSeen, makeRound, pickOuts, addOutHist, tally, scoreRound, pickWord, get CATS() { return CATS; } };
 })();
