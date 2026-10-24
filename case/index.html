@@ -31,6 +31,22 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .hero h1{font-family:var(--f-display);font-size:clamp(28px,6vw,44px);margin:0}
 .hero p{margin:2px 0 8px;color:#cdbf9f;font-size:14px}
 .stamp{display:inline-block;border:2px solid #d24a4a;color:#e86a6a;border-radius:6px;padding:0 10px;font-weight:800;font-size:13px;transform:rotate(-4deg)}
+/* the case folder (picture) with the title written on it */
+.hero.folder{position:relative;max-width:560px;margin:0 auto 10px;padding:0}
+.hero.folder img{display:block;width:100%;height:auto;filter:drop-shadow(0 14px 22px rgba(0,0,0,.6))}
+.hero.folder .on{position:absolute;left:9%;bottom:17%;width:54%;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:rotate(-7deg);color:#2b1a0b;background:#f6eedb;border:1px solid #b89a63;border-radius:4px;padding:6px 8px 8px;box-shadow:0 2px 4px rgba(0,0,0,.35)}
+.hero.folder h1{font-size:clamp(18px,5vw,32px);line-height:1.2}
+.hero.folder p{color:#4a3315;font-weight:800;font-size:clamp(12px,3vw,16px);margin:2px 0 6px}
+.hero.folder .stamp{border-color:#8b1d1d;color:#8b1d1d;background:rgba(255,255,255,.12)}
+/* the three envelopes */
+.envs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.envimg{position:relative;text-align:center}
+.envimg img{display:block;width:100%;height:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.envimg b{display:block;font-size:12px;margin-top:2px}.envimg span{font-size:12px;color:var(--muted);font-weight:800}
+.envimg.open img{opacity:.45}.envimg.open span{color:var(--good)}
+.pic.photo{background:none;padding:0;border:0}
+.pic.photo img{display:block;width:100%;height:auto;border-radius:10px;border:6px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.pic.photo figcaption{font-size:12px;color:var(--muted);margin-top:4px}
 .card{background:var(--card);border:2px solid var(--ink);border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:0 5px 0 var(--red)}
 .card h2{font-family:var(--f-display);font-size:20px;margin:0 0 8px}
 .letter{background:#fbf5e6;font-family:var(--f-body);font-size:17px}
@@ -109,9 +125,9 @@ td small{color:var(--muted)}
   <div class="top"><a href="../">← Friday Night</a><span class="trial">🧪 تجربة</span></div>
   <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
 </div>
-<script src="../fnfx.js?v=202610241128"></script>
-<script src="../fnanim.js?v=202610241128"></script>
-<script src="data.js?v=202610241128"></script>
-<script src="app.js?v=202610241128"></script>
+<script src="../fnfx.js?v=202610241151"></script>
+<script src="../fnanim.js?v=202610241151"></script>
+<script src="data.js?v=202610241151"></script>
+<script src="app.js?v=202610241151"></script>
 </body>
 </html>

@@ -22,9 +22,9 @@
     const m = C.MISSIONS[G.solved];
     const groups = openEnvs().map(L => `<div class="grp"><h3>${L === "A" ? "📁" : "✉️"} ${ENV_NAME[L]} (${L}) <small>${C.EV.filter(e => e.id[0] === L).length} أدلة</small></h3>
       <div class="evs">${C.EV.filter(e => e.id[0] === L).map(e => `<button type="button" class="ev ${G.seen[e.id] ? "seen" : ""}" data-ev="${e.id}">${!G.seen[e.id] && L !== "A" ? `<span class="new">جديد</span>` : ""}${e.id}<small>${e.k} ${esc(e.t)}</small></button>`).join("")}</div></div>`).join("");
-    const locked = ENV.slice(openEnvs().length).map(L => `<div class="env">✉️ ${ENV_NAME[L]} (${L}) <span>🔒</span></div>`).join("");
+    const locked = ENV.slice(openEnvs().length).length ? `<div class="envs">${ENV.slice(1).map(L => { const op = openEnvs().includes(L); return `<div class="envimg ${op ? "open" : ""}"><img src="img/envelope.webp" alt=""><b>${ENV_NAME[L]} (${L})</b><span>${op ? "✅ مفتوح" : "🔒 مختوم"}</span></div>`; }).join("")}</div>` : "";
     const ms = C.MISSIONS.map((x, i) => `<div class="m ${i < G.solved ? "done" : ""}">${i < G.solved ? "✅" : i === G.solved ? "🔎" : "🔒"} ${x.final ? "المهمة الأخيرة" : "المهمة " + x.n}: ${esc(x.title)}<span class="st">${i < G.solved ? "انحلّت" : i === G.solved ? "الحين" : "مقفلة"}</span></div>`).join("");
-    app.innerHTML = `<div class="hero"><h1>🕵️ ${esc(C.title)}</h1><p>${esc(C.place)}</p><span class="stamp">${G.solved >= 4 ? "انحلّت ✓" : "مُعاد فتحها"}</span></div>
+    app.innerHTML = `<div class="hero folder"><img src="img/folder.webp" alt=""><div class="on"><h1>${esc(C.title)}</h1><p>${esc(C.place)}</p><span class="stamp">${G.solved >= 4 ? "انحلّت ✓" : "مُعاد فتحها"}</span></div></div>
       <div class="cols"><div>
         <div class="card letter"><h2>✉️ مرحباً أيها المحقق</h2>${G.letter ? C.LETTER : `<p>${esc("رسالة بخط اليد من لمى، بنت الضحية…")}</p><button type="button" class="btn alt" data-act="letter">اقرأ الرسالة</button>`}</div>
         <div class="card">${groups}${locked}</div>
