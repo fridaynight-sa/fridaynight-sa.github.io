@@ -90,3 +90,7 @@ body.catbg .fn-bg{display:none}
 @media (min-width:700px){.gamesbar{width:100vw;margin-inline:calc(50% - 50vw)!important;padding-inline:16px!important;justify-content:center!important;overflow:visible!important;flex-wrap:wrap!important}}
 /* big moments (banners, confetti) never make the page scroll sideways */
 html{overflow-x:hidden}@supports (overflow:clip){html{overflow-x:clip}}
+
+/* a blood drop hanging from the top-left corner of every page: tapping it opens the hidden case */
+.fn-drip{position:absolute;top:env(safe-area-inset-top,0px);left:10px;z-index:30;padding:0 6px 6px;line-height:0;opacity:.92}
+.fn-drip img{width:8px;height:auto;display:block}
