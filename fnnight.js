@@ -15,9 +15,9 @@
     seenjeem: { name: "سين جيم", icon: "seenjeem", color: "#7c3aed" },
     outside: { name: "برا السالفة", icon: "outside", color: "#f03e7a", path: "bs", mk: "bs-me-v1" },
     sedq: { name: "صدق ولا كذب", icon: "sedq", color: "#12a874", path: "sq", mk: "sq-me-v1" },
-    mf: { name: "مين فينا؟", icon: "mf", color: "#ff7a1a", path: "mf", mk: "mf-me-v1" },
-    draw: { name: "ارسم وخمّن", icon: "draw", color: "#1c7ed6", path: "draw", mk: "draw-me-v1" },
-    dafour: { name: "الدافور", icon: "dafour", color: "#0b7285", path: "df", mk: "df-me-v1" },
+    mf: { name: "مين فينا؟", icon: "mf", color: "#ffb21e", path: "mf", mk: "mf-me-v1" },
+    draw: { name: "ارسم وخمّن", icon: "draw", color: "#ff7a1a", path: "draw", mk: "draw-me-v1" },
+    dafour: { name: "الدافور", icon: "dafour", color: "#1c7ed6", path: "df", mk: "df-me-v1" },
   };
   const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour"];
   const MEDAL = ["🥇", "🥈", "🥉"];
