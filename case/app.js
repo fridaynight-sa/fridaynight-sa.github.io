@@ -5,6 +5,8 @@
 (function () {
   "use strict";
   const C = self.CASE714, app = document.getElementById("app");
+  // evidence codes (A5, C3…) kept whole inside Arabic text, so "(A5، A9)" reads right
+  const codes = h => h.replace(/\b([A-D]\d{1,2})\b/g, "<bdi>$1</bdi>");
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const SOL = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(C.SOL), c => c.charCodeAt(0))));
   const KEY = "case-" + C.id + "-v1";
@@ -42,12 +44,24 @@
   function showEv(id) {
     const list = evOpen(), i = list.findIndex(e => e.id === id), e = list[i]; if (!e) return;
     G.seen[id] = 1; save();
-    if (!sheet) { sheet = document.createElement("div"); sheet.className = "sheet"; sheet.onclick = ev => { if (ev.target === sheet) closeEv(); }; document.body.appendChild(sheet); }
+    if (!sheet) {
+      sheet = document.createElement("div"); sheet.className = "sheet in"; sheet.onclick = ev => { if (ev.target === sheet) closeEv(); };
+      document.body.appendChild(sheet); document.documentElement.classList.add("lock");
+      // swipe sideways between the pieces of evidence (right-to-left page: "next" sits on the left, so a swipe to the right brings it in)
+      let x0 = null, y0 = null;
+      sheet.addEventListener("touchstart", t => { x0 = t.touches[0].clientX; y0 = t.touches[0].clientY; }, { passive: true });
+      sheet.addEventListener("touchend", t => {
+        if (x0 === null) return; const dx = t.changedTouches[0].clientX - x0, dy = t.changedTouches[0].clientY - y0; x0 = null;
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        const go = sheet.querySelector(dx > 0 ? "[data-evgo]:last-of-type" : "[data-evgo]"); if (go && go.dataset.evgo) showEv(go.dataset.evgo);
+      }, { passive: true });
+    } else sheet.classList.remove("in");
     sheet.innerHTML = `<div role="dialog" aria-label="${esc(e.t)}"><div class="hd"><h3>${e.k} ${esc(e.t)}</h3><span class="code">${e.id}</span></div>${e.h}
       <div class="nav"><button type="button" class="btn alt" data-evgo="${list[i - 1] ? list[i - 1].id : ""}" ${i > 0 ? "" : "disabled"}>→ اللي قبل</button><button type="button" class="btn" data-act="closeev">سكّر</button><button type="button" class="btn alt" data-evgo="${list[i + 1] ? list[i + 1].id : ""}" ${list[i + 1] ? "" : "disabled"}>اللي بعد ←</button></div></div>`;
     sheet.scrollTop = 0; sheet.firstElementChild.scrollTop = 0;
+    const d = sheet.firstElementChild; d.classList.add("swap"); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("swap")));
   }
-  function closeEv() { if (sheet) { sheet.remove(); sheet = null; } render(); }
+  function closeEv() { if (sheet) { sheet.remove(); sheet = null; } document.documentElement.classList.remove("lock"); render(); }
 
   /* ---------- a theory ---------- */
   // each question's options in a random order (the same order for the whole game on this device)
@@ -69,26 +83,28 @@
       <div class="card"><h2>الأدلة اللي تثبت نظريتك</h2><div class="chips">${evOpen().map(e => `<button type="button" class="chip ${form.ev.includes(e.id) ? "on" : ""}" data-chip="${e.id}"><b>${e.id}</b> ${esc(e.t)}</button>`).join("")}<p class="chip-lbl">اختار ${s.min === 3 ? "ثلاث أدلة" : "دليلين"} على الأقل. تبي تقرا دليل؟ ارجع للملف، واختياراتك تبقى محفوظة.</p></div></div>
       <button type="button" class="btn" data-act="submit">قدّم النظرية</button><p class="err" id="err">${esc(msg)}</p>
       </div><div>
-      <div class="card hints"><h2>💡 التلميحات</h2>${m.hints.slice(0, used).map((h, k) => `<div class="h"><b>${k + 1}.</b> ${esc(h)}</div>`).join("")}
+      <div class="card hints"><h2>💡 التلميحات</h2>${m.hints.slice(0, used).map((h, k) => `<div class="h"><b>${k + 1}.</b> ${codes(esc(h))}</div>`).join("")}
         ${used < 3 ? `<button type="button" class="btn alt mt" data-act="hint">${used ? "التلميح اللي بعده" : "أبي تلميح"} (${used} من 3)</button>` : `<p class="chip-lbl">خلصت التلميحات.</p>`}</div>
       <button type="button" class="btn alt" data-act="file">→ رجوع للملف</button>
       </div></div>`;
   }
   function submit() {
     const i = G.solved, m = C.MISSIONS[i], s = SOL.m[i];
-    if (form.pick.some(x => x === null)) { msg = m.parts.length > 1 ? "جاوب على الجزئين." : "اختار إجابة."; render(); return; }
-    if (form.ev.length < s.min) { msg = `اختار ${s.min === 3 ? "ثلاث أدلة" : "دليلين"} على الأقل تثبت نظريتك.`; render(); return; }
+    if (form.pick.some(x => x === null)) { msg = m.parts.length > 1 ? "جاوب على الجزئين." : "اختار إجابة."; render(); showErr(); return; }
+    if (form.ev.length < s.min) { msg = `اختار ${s.min === 3 ? "ثلاث أدلة" : "دليلين"} على الأقل تثبت نظريتك.`; render(); showErr(); return; }
     G.tries[i] = (G.tries[i] || 0) + 1;
     const right = form.pick.every((x, k) => x === s.a[k]), backed = form.ev.filter(e => s.need.includes(e)).length >= s.min;
-    if (!(right && backed)) { save(); msg = "نظريتك ما ثبتت. راجع الأدلة وجرب مرة ثانية."; if (self.FA) FA.wrong(); render(); return; }
+    if (!(right && backed)) { save(); msg = "نظريتك ما ثبتت. راجع الأدلة وجرب مرة ثانية."; if (self.FA) FA.wrong(); render(); showErr(); return; }
     msg = ""; lastOk = i; G.solved = i + 1; if (G.solved >= 4) G.t1 = Date.now(); save(); form = null;
-    view = "ok"; render();
+    view = "ok"; render(); scrollTo(0, 0);
     if (self.FA) { if (G.solved >= 4) { FA.confetti(); FA.play("win", [40, 40, 120]); } else FA.right(m.opens ? "✉️ " + ENV_NAME[m.opens] : "صح!"); }
   }
+  function showErr() { const e = document.getElementById("err"); if (!e) return; e.scrollIntoView({ behavior: "smooth", block: "center" }); e.classList.remove("shake"); void e.offsetWidth; e.classList.add("shake"); }
   function okView() {
     const i = lastOk, m = C.MISSIONS[i], s = SOL.m[i];
     app.innerHTML = `<div class="hero"><h1>${G.solved >= 4 ? "🎉 حليت القضية!" : "✅ نظريتك صحيحة"}</h1></div>
-      <div class="card"><p class="okmsg">${esc(s.ok)}</p><h2>ليش هذي الإجابة؟</h2><ul class="why">${s.why.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>
+      ${m.opens ? `<div class="openenv"><img src="img/envelope.webp" alt=""><b>${ENV_NAME[m.opens]} (${m.opens})</b></div>` : ""}
+      <div class="card"><p class="okmsg">${esc(s.ok)}</p><h2>ليش هذي الإجابة؟</h2><ul class="why">${s.why.map(w => `<li>${codes(esc(w))}</li>`).join("")}</ul></div>
       ${m.opens ? `<button type="button" class="btn" data-act="file" data-go="${G.solved}">✉️ افتح ${ENV_NAME[m.opens]} (${m.opens})</button>` : `<button type="button" class="btn" data-act="solution">📖 الحل الكامل</button>`}`;
   }
   function solutionView() {
@@ -107,7 +123,9 @@
   function render() {
     if (view === "mission" && G.solved >= 4) view = "solution";
     ({ file: fileView, mission: missionView, ok: okView, solution: solutionView }[view] || fileView)();
+    if (view !== lastView) { lastView = view; app.classList.remove("fade"); void app.offsetWidth; app.classList.add("fade"); }
   }
+  let lastView = null;
 
   document.addEventListener("click", e => {
     const b = e.target.closest("button"); if (!b) return;
