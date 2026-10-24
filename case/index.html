@@ -139,6 +139,13 @@ html.lock,html.lock body{overflow:hidden}
 @keyframes envopen{0%{transform:scale(.6) rotate(-8deg);opacity:0}35%{transform:scale(1.05) rotate(2deg);opacity:1}55%{transform:rotate(-3deg)}70%{transform:rotate(3deg)}100%{transform:none;opacity:1}}
 @keyframes fadein{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.openenv b{opacity:1}}
+/* evidence window on any screen (TV included): the picture fits, the buttons stay in sight */
+.sheet>div{display:flex;flex-direction:column;max-height:94vh;max-height:94dvh;padding-bottom:0}
+.sheet .nav{position:sticky;bottom:0;background:var(--paper);padding:10px 0 12px;margin-top:auto;border-top:1px solid var(--line);z-index:2}
+.pic.photo{text-align:center}
+.pic.photo img{width:auto;max-width:100%;max-height:52vh;max-height:52dvh;margin:0 auto;object-fit:contain}
+.sheet .hd .x{margin-inline-start:auto;width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid var(--ink);font-weight:800;font-size:18px;line-height:1}
+.sheet button:focus-visible,.ev:focus-visible,.btn:focus-visible,.opt:focus-visible,.chip:focus-visible{outline:4px solid #f1c40f;outline-offset:2px}
 </style>
 </head>
 <body class="tv-plain">
@@ -146,9 +153,9 @@ html.lock,html.lock body{overflow:hidden}
   <div class="top"><a href="../">← Friday Night</a><span class="trial">🧪 تجربة</span></div>
   <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
 </div>
-<script src="../fnfx.js?v=202610241526"></script>
-<script src="../fnanim.js?v=202610241526"></script>
-<script src="data.js?v=202610241526"></script>
-<script src="app.js?v=202610241526"></script>
+<script src="../fnfx.js?v=202610241529"></script>
+<script src="../fnanim.js?v=202610241529"></script>
+<script src="data.js?v=202610241529"></script>
+<script src="app.js?v=202610241529"></script>
 </body>
 </html>

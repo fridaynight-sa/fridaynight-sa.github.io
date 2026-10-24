@@ -56,9 +56,10 @@
         const go = sheet.querySelector(dx > 0 ? "[data-evgo]:last-of-type" : "[data-evgo]"); if (go && go.dataset.evgo) showEv(go.dataset.evgo);
       }, { passive: true });
     } else sheet.classList.remove("in");
-    sheet.innerHTML = `<div role="dialog" aria-label="${esc(e.t)}"><div class="hd"><h3>${e.k} ${esc(e.t)}</h3><span class="code">${e.id}</span></div>${e.h}
+    sheet.innerHTML = `<div role="dialog" aria-label="${esc(e.t)}"><div class="hd"><h3>${e.k} ${esc(e.t)}</h3><span class="code">${e.id}</span><button type="button" class="x" data-act="closeev" aria-label="سكّر">✕</button></div>${e.h}
       <div class="nav"><button type="button" class="btn alt" data-evgo="${list[i - 1] ? list[i - 1].id : ""}" ${i > 0 ? "" : "disabled"}>→ اللي قبل</button><button type="button" class="btn" data-act="closeev">سكّر</button><button type="button" class="btn alt" data-evgo="${list[i + 1] ? list[i + 1].id : ""}" ${list[i + 1] ? "" : "disabled"}>اللي بعد ←</button></div></div>`;
     sheet.scrollTop = 0; sheet.firstElementChild.scrollTop = 0;
+    const fb = sheet.querySelector('.nav [data-act="closeev"]'); if (fb) fb.focus({ preventScroll: true });
     const d = sheet.firstElementChild; d.classList.add("swap"); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.remove("swap")));
   }
   function closeEv() { if (sheet) { sheet.remove(); sheet = null; } document.documentElement.classList.remove("lock"); render(); }
@@ -143,7 +144,15 @@
     if (a === "submit") { submit(); return; }
     if (a === "reset") { if (confirm("تبدأون القضية من أول؟ بيروح كل اللي حليتوه.")) { G = fresh(); save(); form = null; view = "file"; render(); scrollTo(0, 0); } return; }
   });
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && sheet) closeEv(); });
+  // keyboard / TV remote: Esc or Back closes the evidence, the side arrows move between pieces of evidence
+  document.addEventListener("keydown", e => {
+    if (!sheet) return;
+    if (e.key === "Escape" || e.key === "Backspace" || e.key === "GoBack" || e.key === "BrowserBack") { e.preventDefault(); closeEv(); return; }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      const go = sheet.querySelector(e.key === "ArrowLeft" ? "[data-evgo]:last-of-type" : "[data-evgo]");
+      if (go && go.dataset.evgo) { e.preventDefault(); showEv(go.dataset.evgo); }
+    }
+  });
   render();
   self.CASE = { get G() { return G; }, SOL };   // test hook
 })();
