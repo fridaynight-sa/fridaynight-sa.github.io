@@ -20,13 +20,14 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{overflow-x:hidden}@supports(overflow:clip){html{overflow-x:clip}}
-body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 20% 0,#2d2519 0,transparent 55%),radial-gradient(circle at 90% 100%,#2a1a14 0,transparent 50%);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;min-height:100vh;padding:env(safe-area-inset-top,0) 16px calc(40px + env(safe-area-inset-bottom,0))}
+body{margin:0;background:var(--bg);background-image:radial-gradient(circle at 20% 0,#2d2519 0,transparent 55%),radial-gradient(circle at 90% 100%,#2a1a14 0,transparent 50%);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.7;min-height:100vh;padding:env(safe-area-inset-top,0) 16px calc(90px + env(safe-area-inset-bottom,0))}
 button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none;font-size:inherit}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wrap{max-width:1000px;margin-inline:auto}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0}
 .top a{color:var(--gold);text-decoration:none;font-weight:800;font-size:14px}
-.top .trial{background:#3a2f23;color:var(--gold);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
+.fx-mute{top:calc(10px + env(safe-area-inset-top,0px))!important;bottom:auto!important;left:16px!important;width:34px!important;height:34px!important;font-size:15px!important}
+.top .trial{margin-left:46px;background:#3a2f23;color:var(--gold);border-radius:999px;padding:3px 12px;font-size:12px;font-weight:800}
 .hero{text-align:center;color:var(--gold);padding:6px 0 14px}
 .hero h1{font-family:var(--f-display);font-size:clamp(28px,6vw,44px);margin:0}
 .hero p{margin:2px 0 8px;color:#cdbf9f;font-size:14px}
@@ -107,6 +108,10 @@ td small{color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{border:1.5px solid var(--ink);border-radius:999px;padding:3px 12px;font-weight:800;background:#fff;font-size:15px}
 .chip.on{background:var(--red);color:#fff;border-color:var(--red)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}@media (min-width:860px){.chips{grid-template-columns:1fr 1fr 1fr}}
+.chip{font-weight:500;font-size:13px;text-align:start;border-radius:10px;padding:6px 10px;line-height:1.35}.chip-lbl{grid-column:1/-1}.chip b{font-weight:800;font-size:14px}
+.grp.flash{animation:flash 1.6s ease 2}@keyframes flash{50%{background:#ffe9b0;border-radius:12px}}
+.opt{min-height:46px}
 .chip-lbl{font-size:12px;color:var(--muted);width:100%;margin:6px 0 0}
 .err{color:#b02020;font-weight:800;min-height:1.4em;margin:8px 0 0;text-align:center}
 .hints .h{background:#fff8e6;border:1.5px solid var(--muted);border-radius:12px;padding:8px 12px;margin:6px 0;font-size:15px}
@@ -125,9 +130,9 @@ td small{color:var(--muted)}
   <div class="top"><a href="../">← Friday Night</a><span class="trial">🧪 تجربة</span></div>
   <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
 </div>
-<script src="../fnfx.js?v=202610241151"></script>
-<script src="../fnanim.js?v=202610241151"></script>
-<script src="data.js?v=202610241151"></script>
-<script src="app.js?v=202610241151"></script>
+<script src="../fnfx.js?v=202610241155"></script>
+<script src="../fnanim.js?v=202610241155"></script>
+<script src="data.js?v=202610241155"></script>
+<script src="app.js?v=202610241155"></script>
 </body>
 </html>

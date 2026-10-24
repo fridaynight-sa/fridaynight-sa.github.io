@@ -8,7 +8,7 @@
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const SOL = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(C.SOL), c => c.charCodeAt(0))));
   const KEY = "case-" + C.id + "-v1";
-  const fresh = () => ({ solved: 0, seen: {}, hints: {}, tries: {}, letter: false, t0: Date.now(), t1: null });
+  const fresh = () => ({ solved: 0, seen: {}, hints: {}, tries: {}, ord: {}, letter: false, t0: Date.now(), t1: null });
   let G; try { G = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || "null") || {}); } catch (e) { G = fresh(); }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) {} };
   const ENV = ["A", "B", "C", "D"];
@@ -50,19 +50,28 @@
   function closeEv() { if (sheet) { sheet.remove(); sheet = null; } render(); }
 
   /* ---------- a theory ---------- */
+  // each question's options in a random order (the same order for the whole game on this device)
+  function order(i, pi, n) {
+    const k = i + "-" + pi; G.ord = G.ord || {};
+    if (!Array.isArray(G.ord[k]) || G.ord[k].length !== n) {
+      const a = [...Array(n).keys()]; for (let j = n - 1; j > 0; j--) { const r = crypto.getRandomValues(new Uint32Array(1))[0] % (j + 1); [a[j], a[r]] = [a[r], a[j]]; }
+      G.ord[k] = a; save();
+    }
+    return G.ord[k];
+  }
   function missionView() {
     const i = G.solved, m = C.MISSIONS[i], s = SOL.m[i];
     if (!form || form.i !== i) form = { i, pick: m.parts.map(() => null), ev: [] };
     const used = G.hints[i] || 0;
     app.innerHTML = `<div class="hero"><h1>🔎 ${m.final ? "المهمة الأخيرة" : "المهمة " + m.n}</h1><p>${esc(m.title)}</p></div>
       <div class="cols"><div>
-      <div class="card">${m.parts.map((p, pi) => `<div class="part"><h4>${esc(p.q)}</h4>${p.o.map((o, oi) => `<button type="button" class="opt ${form.pick[pi] === oi ? "on" : ""}" data-part="${pi}" data-o="${oi}">${esc(o)}</button>`).join("")}</div>`).join("")}</div>
-      <div class="card"><h2>الأدلة اللي تثبت نظريتك</h2><div class="chips">${evOpen().map(e => `<button type="button" class="chip ${form.ev.includes(e.id) ? "on" : ""}" data-chip="${e.id}" title="${esc(e.t)}">${e.id}</button>`).join("")}<p class="chip-lbl">اختار ${s.min === 3 ? "ثلاث أدلة" : "دليلين"} على الأقل. اضغط مطوّل على الرمز تشوف اسمه، أو ارجع للملف تقرا الأدلة.</p></div></div>
+      <div class="card">${m.parts.map((p, pi) => `<div class="part"><h4>${esc(p.q)}</h4>${order(i, pi, p.o.length).map(oi => `<button type="button" class="opt ${form.pick[pi] === oi ? "on" : ""}" data-part="${pi}" data-o="${oi}">${esc(p.o[oi])}</button>`).join("")}</div>`).join("")}</div>
+      <div class="card"><h2>الأدلة اللي تثبت نظريتك</h2><div class="chips">${evOpen().map(e => `<button type="button" class="chip ${form.ev.includes(e.id) ? "on" : ""}" data-chip="${e.id}"><b>${e.id}</b> ${esc(e.t)}</button>`).join("")}<p class="chip-lbl">اختار ${s.min === 3 ? "ثلاث أدلة" : "دليلين"} على الأقل. تبي تقرا دليل؟ ارجع للملف، واختياراتك تبقى محفوظة.</p></div></div>
       <button type="button" class="btn" data-act="submit">قدّم النظرية</button><p class="err" id="err">${esc(msg)}</p>
       </div><div>
       <div class="card hints"><h2>💡 التلميحات</h2>${m.hints.slice(0, used).map((h, k) => `<div class="h"><b>${k + 1}.</b> ${esc(h)}</div>`).join("")}
         ${used < 3 ? `<button type="button" class="btn alt mt" data-act="hint">${used ? "التلميح اللي بعده" : "أبي تلميح"} (${used} من 3)</button>` : `<p class="chip-lbl">خلصت التلميحات.</p>`}</div>
-      <button type="button" class="btn alt" data-act="file">← رجوع للملف</button>
+      <button type="button" class="btn alt" data-act="file">→ رجوع للملف</button>
       </div></div>`;
   }
   function submit() {
@@ -80,7 +89,7 @@
     const i = lastOk, m = C.MISSIONS[i], s = SOL.m[i];
     app.innerHTML = `<div class="hero"><h1>${G.solved >= 4 ? "🎉 حليت القضية!" : "✅ نظريتك صحيحة"}</h1></div>
       <div class="card"><p class="okmsg">${esc(s.ok)}</p><h2>ليش هذي الإجابة؟</h2><ul class="why">${s.why.map(w => `<li>${esc(w)}</li>`).join("")}</ul></div>
-      ${m.opens ? `<button type="button" class="btn" data-act="file">✉️ افتح ${ENV_NAME[m.opens]} (${m.opens})</button>` : `<button type="button" class="btn" data-act="solution">📖 الحل الكامل</button>`}`;
+      ${m.opens ? `<button type="button" class="btn" data-act="file" data-go="${G.solved}">✉️ افتح ${ENV_NAME[m.opens]} (${m.opens})</button>` : `<button type="button" class="btn" data-act="solution">📖 الحل الكامل</button>`}`;
   }
   function solutionView() {
     const mins = Math.max(1, Math.round(((G.t1 || Date.now()) - G.t0) / 60000)), tries = Object.values(G.tries).reduce((a, b) => a + b, 0), hints = Object.values(G.hints).reduce((a, b) => a + b, 0);
@@ -90,7 +99,7 @@
       <div class="card"><h2>⏱️ وش صار تلك الليلة</h2><div class="tw"><table class="tl"><tbody>${SOL.timeline.map(([t, x]) => `<tr><td>${esc(t)}</td><td>${esc(x)}</td></tr>`).join("")}</tbody></table></div></div>
       <div class="cols"><div class="card"><h2>🔍 الأخطاء اللي فضحتها</h2><ul class="why">${SOL.mistakes.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>
       <div class="card"><h2>🙌 ليش الباقين أبرياء</h2><ul class="why">${SOL.innocent.map(([n, x]) => `<li><b>${esc(n)}:</b> ${esc(x)}</li>`).join("")}</ul></div></div>
-      <button type="button" class="btn alt" data-act="file">← رجوع للملف</button>
+      <button type="button" class="btn alt" data-act="file">→ رجوع للملف</button>
       <p class="reset">تبون تلعبونها مرة ثانية؟ <button type="button" data-act="reset">ابدأ من جديد</button></p>`;
   }
   const rank = (tries, hints) => { const x = (tries - 4) + hints * 1.5; return x <= 0 ? "🕵️ أسطوري" : x <= 3 ? "🥇 محقق خبير" : x <= 7 ? "🥈 محقق شاطر" : "🥉 محقق مبتدئ"; };
@@ -108,7 +117,7 @@
     if (a === "closeev") { closeEv(); return; }
     if (a === "letter") { G.letter = true; save(); render(); return; }
     if (a === "mission") { view = "mission"; msg = ""; render(); scrollTo(0, 0); return; }
-    if (a === "file") { view = "file"; render(); scrollTo(0, 0); return; }
+    if (a === "file") { view = "file"; render(); const g = b.dataset.go && document.querySelectorAll(".grp")[+b.dataset.go]; if (g) { g.scrollIntoView({ behavior: "smooth", block: "start" }); g.classList.add("flash"); } else scrollTo(0, 0); return; }
     if (a === "solution") { view = "solution"; render(); scrollTo(0, 0); return; }
     if (b.dataset.part !== undefined) { form.pick[+b.dataset.part] = +b.dataset.o; msg = ""; render(); return; }
     if (b.dataset.chip) { const id = b.dataset.chip; form.ev = form.ev.includes(id) ? form.ev.filter(x => x !== id) : form.ev.concat(id); msg = ""; render(); return; }
