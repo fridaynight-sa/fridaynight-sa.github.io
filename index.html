@@ -44,8 +44,7 @@ button,input{font:inherit;color:inherit;border:0}
 .hero h1 span{color:var(--pink);display:inline-block;animation:hop 1.8s ease-in-out infinite}
 /* a blood drop hanging from the top-left corner: tapping it opens the hidden case (case/) */
 .drip{position:absolute;top:env(safe-area-inset-top,0px);left:14px;z-index:5;padding:0 10px 10px;line-height:0;opacity:.92}
-.drip img{width:11px;height:auto;display:block;transform-origin:top center;animation:drip 3.2s ease-in-out infinite}
-@keyframes drip{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1.08)}}
+.drip img{width:8px;height:auto;display:block}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px) rotate(-3deg)}}
 .hero p{max-width:30em;margin:12px auto 0;color:var(--muted);font-weight:700;font-size:clamp(15px,4.2vw,18px)}
 
@@ -194,11 +193,11 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610241238"></script>
-<script src="fninstall.js?v=202610241238"></script>
+<script src="fnfx.js?v=202610241239"></script>
+<script src="fninstall.js?v=202610241239"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610241238"></script>
+<script src="firebase-config.js?v=202610241239"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
