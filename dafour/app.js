@@ -21,7 +21,7 @@
   const Q_S = 20, MIN_P = 2, BASE_PTS = 100, SPEED_PTS = 50;
 
   /* ---------------- engine ---------------- */
-  // n questions not played yet in this room, easy first and hard last
+  // n questions nobody here has seen yet, in a random order (easy and hard mixed)
   // Every phone remembers the questions it has seen (any room, any night). The host picks the ones
   // nobody in the room has seen; once everything was seen, the ones seen longest ago come back first.
   const SEEN_KEY = "df-seen-v1";
@@ -34,9 +34,8 @@
   function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((id, p) => { w[id] = (w[id] || 0) + 1 + p / L; }); }); return w; }
   function pickQuestions(n, used, w) {
     w = w || {};
-    const lv = { "سهل": 0, "متوسط": 1, "صعب": 2 };
     const picked = QS.map(q => ({ q, s: (used.includes(q.id) ? 1000 : 0) + (w[q.id] || 0) + rnd() * 0.3 })).sort((a, b) => a.s - b.s).slice(0, n).map(x => x.q);
-    return picked.sort((a, b) => (lv[a.difficulty] ?? 1) - (lv[b.difficulty] ?? 1) || rnd() - .5);
+    return shuffle(picked);
   }
   // the options in a fresh random order; returns the texts and where the right one landed
   function deal(q) {
@@ -250,7 +249,7 @@
           <p class="note">📺 للعرض على التلفزيون: <b dir="ltr">${esc(tvURL().replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>اللاعبين (${ids.length})</h2><ul class="plist">${ids.map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${id === S.host ? " 👑" : ""}${isHost() && id !== ME.pid && !waiting ? ` <button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}</ul></div>
         ${waiting ? "" : isHost() ? `<div class="card"><div class="field"><span class="lbl">مدة اللعبة</span><div class="seg">${[10, 20, 30, 50].map(n => `<button type="button" data-rounds="${n}" class="${S.rounds === n ? "on" : ""}">${n}</button>`).join("")}<button type="button" data-rounds="inf" class="inf ${!S.rounds ? "on" : ""}">♾️ ما توقف</button></div></div>
-          <p class="note">${S.rounds ? "الأسئلة تبدأ سهلة وتصعب شوي شوي 🤓" : "الأسئلة تكمل وحدة ورا الثانية لين تضغط «🏁 خلّصنا» 🤓"}</p>
+          <p class="note">${S.rounds ? "الأسئلة عشوائية: سهلة وصعبة مخلوطة 🤓" : "الأسئلة تكمل وحدة ورا الثانية لين تضغط «🏁 خلّصنا» 🤓"}</p>
           <p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < MIN_P ? "disabled" : ""}>ابدأ اللعبة</button>${ids.length < MIN_P ? `<p class="note center">ننتظر لاعب ثاني على الأقل.</p>` : ""}</div>`
           : `<div class="card center"><p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ اللعبة…</p></div>`}
         ${leave}`;
@@ -319,7 +318,7 @@
         <button type="button" class="mode" data-act="ocreate"><span class="ic">📡</span><span><b>افتح غرفة</b><span>كل واحد يلعب من جواله (لاعبين وأكثر)</span></span></button>
         <button type="button" class="mode" data-act="ojoin"><span class="ic">🔑</span><span><b>ادخل غرفة</b><span>عندك رمز من صاحبك</span></span></button>
       </div>
-      <div class="card mt"><h3>طريقة اللعب</h3><ul class="note"><li>يطلع سؤال مع ٤ خيارات، وكل واحد يختار من جواله.</li><li>عندك ${Q_S} ثانية. الجواب الصح ياخذ <b>${BASE_PTS}</b> نقطة، وكل ما جاوبت أسرع تاخذ لين <b>${SPEED_PTS}</b> زيادة ⚡</li><li>بعد كل سؤال ينكشف الجواب، ومين جاوب وش.</li><li>الأسئلة تبدأ سهلة وتصعب، وما تتكرر في نفس الغرفة.</li><li>الأول في الآخر ياخذ لقب <b>دافور الشلة 🤓</b>.</li></ul>
+      <div class="card mt"><h3>طريقة اللعب</h3><ul class="note"><li>يطلع سؤال مع ٤ خيارات، وكل واحد يختار من جواله.</li><li>عندك ${Q_S} ثانية. الجواب الصح ياخذ <b>${BASE_PTS}</b> نقطة، وكل ما جاوبت أسرع تاخذ لين <b>${SPEED_PTS}</b> زيادة ⚡</li><li>بعد كل سؤال ينكشف الجواب، ومين جاوب وش.</li><li>الأسئلة عشوائية (سهلة وصعبة مخلوطة)، وما تتكرر لين تخلص كل الأسئلة.</li><li>الأول في الآخر ياخذ لقب <b>دافور الشلة 🤓</b>.</li></ul>
       <p class="note">فيها ${QS.length} سؤال · 📺 تقدرون تعرضونها على التلفزيون من «شاشة العرض».</p></div>`;
   }
   function renderForm(kind, code, msg) {
