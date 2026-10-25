@@ -42,9 +42,6 @@ button,input{font:inherit;color:inherit;border:0}
 @keyframes wiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-10deg) scale(1.05)}20%{transform:rotate(8deg)}30%{transform:rotate(0)}}
 .hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(40px,11vw,66px);line-height:1.05;margin:14px 0 0;direction:ltr}
 .hero h1 span{color:var(--pink);display:inline-block;animation:hop 1.8s ease-in-out infinite}
-/* a blood drop hanging from the top-left corner: tapping it opens the hidden case (case/) */
-.drip{position:absolute;top:env(safe-area-inset-top,0px);left:14px;z-index:5;padding:0 10px 10px;line-height:0;opacity:.92}
-.drip img{width:8px;height:auto;display:block}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px) rotate(-3deg)}}
 .hero p{max-width:30em;margin:12px auto 0;color:var(--muted);font-weight:700;font-size:clamp(15px,4.2vw,18px)}
 
@@ -122,7 +119,6 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 </style>
 </head>
 <body>
-<a class="drip" href="case/" aria-label="؟"><img src="case/img/drip.png" alt=""></a>
 <div class="bg" aria-hidden="true"><span style="top:8%;left:8%">⭐</span><span style="top:22%;left:88%;animation-delay:-1s">🎲</span><span style="top:60%;left:4%;animation-delay:-2s">🎈</span><span style="top:78%;left:85%;animation-delay:-3s">🍿</span><span style="top:44%;left:92%;animation-delay:-4s">🎯</span><span style="top:90%;left:30%;animation-delay:-1.5s">✨</span><span style="top:35%;left:15%;animation-delay:-2.5s">🃏</span><span style="top:70%;left:60%;animation-delay:-3.5s">🎤</span></div>
 <div class="wrap">
   <header class="hero">
@@ -193,11 +189,11 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610251446"></script>
-<script src="fninstall.js?v=202610251446"></script>
+<script src="fnfx.js?v=202610251526"></script>
+<script src="fninstall.js?v=202610251526"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610251446"></script>
+<script src="firebase-config.js?v=202610251526"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
