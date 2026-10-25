@@ -25,13 +25,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610251437"></script>
-<script src="fncrypto.js?v=202610251437"></script>
-<script src="fnwake.js?v=202610251437"></script>
-<script src="fnfx.js?v=202610251437"></script>
-<script src="fnanim.js?v=202610251437"></script>
-<script src="shim.js?v=202610251437"></script>
-<script src="fnnight.js?v=202610251437"></script>
+<script src="firebase-config.js?v=202610251444"></script>
+<script src="fncrypto.js?v=202610251444"></script>
+<script src="fnwake.js?v=202610251444"></script>
+<script src="fnfx.js?v=202610251444"></script>
+<script src="fnanim.js?v=202610251444"></script>
+<script src="shim.js?v=202610251444"></script>
+<script src="fnnight.js?v=202610251444"></script>
 <style>
 /* Layout: a bright party-game board — lavender ground, white rounded cards; setup is one long page (name, teams, category cards with photos, settings) and the board is a grid of category columns, each with its cover and six cells */
 :root{
@@ -329,7 +329,7 @@ body.tv .media img.up{max-height:60vh}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
-<link rel="stylesheet" href="fntheme-sj.css?v=202610251437">
+<link rel="stylesheet" href="fntheme-sj.css?v=202610251444">
 
 <div class="wrap" dir="rtl" lang="ar">
   <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="./" aria-label="الصفحة الرئيسية"><img src="favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="seenjeem/" class="on" aria-current="page"><img class="gi" src="icons/seenjeem.png" alt="">سين جيم</a><a href="outside/"><img class="gi" src="icons/outside.png" alt="">برا السالفة</a><a href="sedq/"><img class="gi" src="icons/sedq.png" alt="">صدق ولا كذب</a><a href="mf/"><img class="gi" src="icons/mf.png" alt="">مين فينا؟</a><a href="draw/"><img class="gi" src="icons/draw.png" alt="">ارسم وخمّن</a><a href="dafour/"><img class="gi" src="icons/dafour.png" alt="">الدافور</a><a href="tv/"><img class="gi" src="icons/tv.png" alt="">شاشة العرض</a></nav>
@@ -1135,11 +1135,19 @@ $("cgrid").onclick=e=>{const b=e.target.closest("[data-pick]");if(!b)return;cons
   save();renderCats()};
 $("pickRandom").onclick=()=>{const pool=BUILTIN.map(c=>c.key);for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}S.sel=pool.slice(0,6);save();renderCats()};
 $("pickClear").onclick=()=>{S.sel=[];save();renderCats()};
+const SJ_SEEN="sj-seen-v1";
+const sjSeen=()=>{try{const v=JSON.parse(localStorage.getItem(SJ_SEEN)||"[]");return Array.isArray(v)?v.filter(x=>typeof x==="string"):[]}catch(e){return[]}};
+function sjNote(codes){if(!codes.length)return;const l=sjSeen().filter(x=>!codes.includes(x)).concat(codes);try{localStorage.setItem(SJ_SEEN,JSON.stringify(l.slice(-3000)))}catch(e){}}
 function dealCats(){
   const list=allCats(),cats=S.sel.map(k=>list.find(c=>c.key===k)).filter(Boolean);
   const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-  const deal=c=>c.mine?c.qs:[200,400,600].flatMap(p=>shuf(c.qs.filter(q=>q.p===p)).slice(0,2));
-  return cats.map(c=>JSON.parse(JSON.stringify({name:c.name,kind:c.kind,icon:c.icon||null,motif:c.motif||null,qs:deal(c)})));
+  // this device remembers the questions it has dealt (any game, any night): the ones not played yet come first,
+  // and once a series' questions were all played, the ones played longest ago come back first
+  const seen=sjSeen(),w={};seen.forEach((k,i)=>w[k]=1+i/seen.length);
+  const deal=c=>c.mine?c.qs:[200,400,600].flatMap(p=>c.qs.filter(q=>q.p===p).map(q=>({q,s:(w[q.c]||0)+Math.random()*.3})).sort((a,b)=>a.s-b.s).slice(0,2).map(x=>x.q));
+  const out=cats.map(c=>JSON.parse(JSON.stringify({name:c.name,kind:c.kind,icon:c.icon||null,motif:c.motif||null,qs:deal(c)})));
+  sjNote(out.flatMap(c=>c.qs.map(q=>q.c).filter(Boolean)));
+  return out;
 }
 function resetGame(cats){
   S.teams=S.teams.map((t,i)=>({name:(t.name||"").trim()||`الفريق ${i+1}`,score:0,dbl:true}));

@@ -22,11 +22,22 @@
   const VOTE_S = 30, MIN_P = 3;
 
   /* ---------------- engine ---------------- */
-  function pickQuestions(catIds, n, used) {
+  // Every phone remembers the questions it has seen (any room, any night). The host picks the ones
+  // nobody in the room has seen; once everything was seen, the ones seen longest ago come back first.
+  const SEEN_KEY = "mf-seen-v1";
+  const seenList = () => { const v = LS.get(SEEN_KEY, []); return Array.isArray(v) ? v.filter(x => typeof x === "string") : []; };
+  function noteSeen(k) { if (!k) return; const l = seenList().filter(x => x !== k); l.push(k); LS.set(SEEN_KEY, l.slice(-2000)); }
+  // sent in the player's record: the last 300 seen, three letters each (category number + question number)
+  function packSeen() {
+    return seenList().map(k => { const [c, i] = String(k).split(":"), ci = CATS.findIndex(x => x.id === c); return ci >= 0 && ci < 36 && +i < 1296 ? ci.toString(36) + (+i).toString(36).padStart(2, "0") : ""; })
+      .filter(Boolean).slice(-300).join("");
+  }
+  const unpackSeen = s => (typeof s === "string" ? s.match(/[0-9a-z]{3}/g) || [] : []).map(x => { const c = CATS[parseInt(x[0], 36)]; return c ? c.id + ":" + parseInt(x.slice(1), 36) : ""; });
+  function seenWeights(lists) { const w = {}; lists.forEach(l => { const L = l.length || 1; l.forEach((k, p) => { w[k] = (w[k] || 0) + 1 + p / L; }); }); return w; }
+  function pickQuestions(catIds, n, used, w) {
+    w = w || {};
     const all = id => catById(id).items.map((it, i) => ({ key: id + ":" + i, cat: id, ...it }));
-    let pool = shuffle(catIds.flatMap(all).filter(q => !used.includes(q.key)));
-    if (pool.length < n) pool = pool.concat(shuffle(catIds.flatMap(all).filter(q => !pool.includes(q))));
-    return pool.slice(0, n);
+    return catIds.flatMap(all).map(q => ({ q, s: (used.includes(q.key) ? 1000 : 0) + (w[q.key] || 0) + Math.random() * 0.3 })).sort((a, b) => a.s - b.s).slice(0, n).map(x => x.q);
   }
   // votes: {voter: target}. winners = most votes; right = voters who picked a winner.
   // A vote for yourself never earns a point, and when everyone ties nobody takes the title.
@@ -98,7 +109,7 @@
     S = { v: 1, host: ME.pid, hk: await myKey(), phase: "lobby", rounds: 8, scores: {}, used: [], names: {}, titles: [], at: Date.now() };
     if (self.FNN) S.nt = FNN.n;   // which step of the سهرة this room is
     await ref("state").set(enc(S));
-    await writeMe({ name, at: Date.now(), cats: [], key: await myKey() });
+    await writeMe({ name, at: Date.now(), cats: [], key: await myKey(), sn: packSeen() });
     view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   async function joinRoom(code, name) {
@@ -112,7 +123,7 @@
     ME = { pid: same || (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
     P = {};
     const cur = dec((await db.ref("mf/" + code + "/players/" + ME.pid).get()).val()) || {};
-    await db.ref("mf/" + code + "/players/" + ME.pid).set(enc(Object.assign({ cats: [] }, cur, { name, key: await myKey(), at: cur.at || Date.now() })));
+    await db.ref("mf/" + code + "/players/" + ME.pid).set(enc(Object.assign({ cats: [] }, cur, { name, key: await myKey(), sn: packSeen(), at: cur.at || Date.now() })));
     S = dec(s.val()); view = "room"; history.replaceState(null, "", "#" + code); subscribe();
   }
   function leaveRoom() { unsubscribe(); if (ME) { ME.code = null; LS.set(MKEY, ME); } S = null; P = {}; VDEC = {}; history.replaceState(null, "", location.pathname); goHome(); }
@@ -129,7 +140,7 @@
     let chosen = CATS.map(c => c.id).filter(id => v[id] > 0);
     if (!chosen.length) chosen = CATS.map(c => c.id);
     const used = (S.used || []).slice();
-    const qs = pickQuestions(chosen, S.rounds, used);
+    const qs = pickQuestions(chosen, S.rounds, used, seenWeights([seenList()].concat(ids.filter(id => id !== ME.pid).map(id => unpackSeen(P[id].sn)))));
     const names = {}; ids.forEach(id => names[id] = P[id].name);
     const scores = {}; ids.forEach(id => scores[id] = 0);
     const game = (S.game || 0) + 1;
@@ -181,7 +192,9 @@
     if (!t.length) return "";
     return `<div class="card"><h2>الألقاب 👑</h2><ul class="titles">${t.map(x => `<li><b>${esc(x.w.map(nameOf).join(" و"))}</b><span>${esc(short(x.q))}</span></li>`).join("")}</ul></div>`;
   }
+  let lastSeenQ = null;
   function render() {
+    if (S && S.q && S.q.id !== lastSeenQ && catById(S.q.cat)) { lastSeenQ = S.q.id; const i = catById(S.q.cat).items.findIndex(x => x.q === S.q.text); if (i >= 0) noteSeen(S.q.cat + ":" + i); }
     if (view !== "room") return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">جاري الاتصال…</p></div>`; return; }
     chip.hidden = false; chip.innerHTML = `الغرفة <b dir="ltr">${esc(ME.code)}</b> · ${esc(ME.name)}${isHost() ? " 👑" : ""}`;
@@ -335,5 +348,5 @@
     } else if (ME && ME.code && db) backToRoom();
     else goHome();
   }).catch(() => { app.innerHTML = `<div class="card"><p class="big-msg">ما قدرت أحمّل الأسئلة. حدّث الصفحة.</p></div>`; });
-  self.MF = { pickQuestions, scoreRound, get CATS() { return CATS; } };
+  self.MF = { seenList, seenWeights, packSeen, unpackSeen, pickQuestions, scoreRound, get CATS() { return CATS; } };
 })();
