@@ -113,9 +113,10 @@
         <li>تستوعب اللي تشوفه حولك بسرعة أكبر</li><li>تنتبه للأطراف وأنت مركّز على اللي قدامك</li><li>ردة فعلك أسرع وقيادتك أأمن</li><li>التحسن يستمر لسنين بعد ما توقف التدريب</li><li>خطر الخرف أقل مع التقدم في العمر</li></ul>
         <p class="note" style="margin:10px 0 0">ملاحظة: لمحة مستوحاة من التمرين اللي انختبر في الدراسة، والدراسة كانت على كبار السن. تحسّنك داخل اللعبة مؤكد، أما الفوايد خارجها فتختلف من شخص لثاني.</p></div>
       <div class="card"><h2>🎮 كيف تلعب</h2><ol class="steps">
+        <li>كل جلسة لها <b>سيارتين</b>، تشوفهم قبل ما تبدأ. والجلسة اللي بعدها تتغير.</li>
         <li>ثبّت عينك على نص الشاشة، واضغط الزر اللي في النص.</li>
         <li>للحظة قصيرة تطلع <b>سيارة في النص</b> و<b>نجمة صفرا ⭐ في الأطراف</b>، وبعدها يغطيها تشويش.</li>
-        <li>اختار السيارة اللي شفتها.</li><li>اضغط المكان اللي كانت فيه النجمة.</li>
+        <li>اختار أي سيارة من الثنتين شفتها.</li><li>اضغط المكان اللي كانت فيه النجمة.</li>
         <li>صح؟ يقصر وقت العرض. غلط؟ يطول. وفيه أشكال تشبه النجمة تحاول تلخبطك.</li>
         <li>الجلسة ${TRIALS} محاولة، ورقمك هو أقصر وقت تلتقط فيه الاثنين. <b>كل ما نزل الرقم أحسن.</b></li></ol></div>
       <div class="card"><h2>🔑 رمز تقدمك</h2>
@@ -132,7 +133,7 @@
   const isSide = () => innerWidth >= 800 && innerWidth > innerHeight * 1.2;
   function stageSize(side) { return side ? Math.max(220, Math.min(innerHeight - 90, innerWidth - 380, 680)) : Math.max(260, Math.min(innerWidth - 32, innerHeight - 250, 680)); }
   function makeTrial() {
-    const pair = pick(D.PAIRS), shown = pick(pair), color = pick(D.CAR_COLORS);
+    const pair = session.pair, shown = pick(pair), color = pick(D.CAR_COLORS);
     const dir = rint(8), far = Math.random() < 0.5;
     const others = shuffle([0, 1, 2, 3, 4, 5, 6, 7].filter(d => d !== dir)).slice(0, 4 + rint(4));
     const distract = others.map(d => ({ d, far: Math.random() < 0.5, kind: pick(D.DISTRACTORS) }));
@@ -153,12 +154,32 @@
   function drawFix(tr) { ctx.drawImage(tr.bgCv, 0, 0, S, S); ctx.fillStyle = "rgba(13,18,48,.35)"; ctx.fillRect(0, 0, S, S); ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(S / 2 - 12, S / 2); ctx.lineTo(S / 2 + 12, S / 2); ctx.moveTo(S / 2, S / 2 - 12); ctx.lineTo(S / 2, S / 2 + 12); ctx.stroke(); }
   function drawIdle(tr) { ctx.drawImage(tr.bgCv, 0, 0, S, S); ctx.fillStyle = "rgba(13,18,48,.55)"; ctx.fillRect(0, 0, S, S); }
 
+  // like the original exercise: one pair of cars for the whole session, shown before it starts.
+  // Every pair comes once before any comes again, and never the same pair twice in a row.
+  function nextPair() {
+    const all = D.PAIRS.map((_, i) => i), last = G.sessions.length ? G.sessions[G.sessions.length - 1].p : null;
+    let q = Array.isArray(G.pq) ? G.pq.filter(i => all.includes(i)) : [];
+    if (!q.length) { q = shuffle(all); if (q[0] === last && q.length > 1) q.push(q.shift()); }
+    const i = q.shift(); G.pq = q; save(); return i;
+  }
   function startSession() {
     const best = G.best, lastMs = G.sessions.length ? G.sessions[G.sessions.length - 1].ms : null;
     // first session starts slow (500 ms); later ones start a bit above the last number so the first tries are not a wall
     const startMs = lastMs ? Math.min(500, Math.max(120, lastMs * 1.8)) : 500;
-    session = { i: 0, frames: Math.max(1, Math.round(startMs / frameMs)), log: [], dirs: [], rev: [], ok: 0, t0: Date.now(), hidden: 0, hiddenAt: 0, best, aborted: false };
-    view = "play"; render(); nextTrial();
+    const p = nextPair();
+    session = { i: 0, p, pair: D.PAIRS[p], frames: Math.max(1, Math.round(startMs / frameMs)), log: [], dirs: [], rev: [], ok: 0, t0: Date.now(), hidden: 0, hiddenAt: 0, best, aborted: false };
+    view = "pair"; render();
+  }
+  const CAR_AR = { sedan: "سيدان", coupe: "كوبيه", hatch: "هاتشباك", suv: "جيب", van: "فان", pickup: "وانيت" };
+  function pairView() {
+    const w = Math.min(260, (Math.min(innerWidth, 640) - 70) / 2), color = "#1971c2";
+    app.innerHTML = `<div class="card pairs"><h2>🚗 سيارات هالجلسة</h2>
+        <p style="margin:0 0 12px">في كل محاولة بتطلع لك <b>وحدة من هالسيارتين</b> في النص. ركّز على الفرق بينهم.</p>
+        <div class="cars">${session.pair.map(t => `<div><img src="${D.carImage(t, color, w)}" alt="${CAR_AR[t] || ""}"><b>${CAR_AR[t] || ""}</b></div>`).join("")}</div>
+        <p class="small muted" style="margin:12px 0 0">لونها يتغير من محاولة لثانية، المهم شكلها.</p></div>
+      <button type="button" class="btn" data-act="go">يلا نبدأ</button>
+      <button type="button" class="btn alt" data-act="back">رجوع</button>`;
+    app.querySelector("[data-act=go]").focus({ preventScroll: true });
   }
   function playView() {
     const side = isSide(); S = stageSize(side); dpr = Math.min(2, self.devicePixelRatio || 1);
@@ -249,7 +270,7 @@
     const today = dayKey(), prevBest = G.best;
     if (!G.first) G.first = today;
     G.days[today] = (G.days[today] || 0) + mins;
-    G.sessions.push({ t: Date.now(), ms, acc, n: s.log.length }); G.sessions = G.sessions.slice(-200);
+    G.sessions.push({ t: Date.now(), ms, acc, n: s.log.length, p: s.p }); G.sessions = G.sessions.slice(-200);
     const record = !prevBest || ms < prevBest;
     if (record) G.best = ms;
     const justDone = !G.doneAt && totalMin() >= PLAN_MIN; if (justDone) G.doneAt = today;
@@ -273,7 +294,7 @@
     if (r.first) msg = "🎯 هذا أول رقم لك. المرة الجاية حاول تكسره!";
     else if (r.record) msg = `🎉 رقم قياسي جديد! كسرت رقمك السابق (${N(r.prevBest)}) بـ ${N(r.prevBest - r.ms)} ملّي ثانية. استمر!`;
     else if (r.ms <= r.prevBest * 1.12) msg = `👌 قريب من أفضل رقم لك (${N(r.prevBest)}). التذبذب البسيط بين جلسة وجلسة طبيعي، الأهم إنك تستمر.`;
-    else msg = `😴 أبطأ من أفضل رقم لك (${N(r.prevBest)}). التعب وقلة النوم يأثرون على سرعة الالتقاط، جرّب وأنت مرتاح.`;
+    else msg = `😴 أبطأ من أفضل رقم لك (${N(r.prevBest)}). ممكن سيارات هالجلسة أصعب من غيرها، والتعب وقلة النوم بعد يأثرون على سرعة الالتقاط. جرّب وأنت مرتاح.`;
     app.innerHTML = `<div class="card big"><span class="u">رقمك في هالجلسة</span><div class="n">${N(r.ms)}</div><span class="u">ملّي ثانية · أقصر وقت التقطت فيه الاثنين</span>
         <div class="stats"><div>${r.acc}%<small>دقتك</small></div><div>${N(G.best)}<small>🏅 أفضل رقم لك</small></div><div>${G.sessions.length}<small>جلسة</small></div></div></div>
       <div class="card"><p class="msg" style="margin:0">${esc(msg)}</p></div>
@@ -284,13 +305,15 @@
       <a class="btn alt" href="../">ألعاب Mind Games</a>
       ${G.code ? `<p class="tip">🔑 رمز تقدمك: <b style="direction:ltr;unicode-bidi:isolate">${showCode(G.code)}</b>${backupMsg ? " · " + esc(backupMsg) : ""}</p>` : ""}`;
   }
-  function render() { if (view !== "play") document.body.classList.remove("wide", "playing"); ({ intro: introView, play: playView, result: resultView }[view] || introView)(); }
+  function render() { if (view !== "play") document.body.classList.remove("wide", "playing"); ({ intro: introView, pair: pairView, play: playView, result: resultView }[view] || introView)(); }
 
   /* ---------------- buttons ---------------- */
   document.addEventListener("click", async e => {
     const b = e.target.closest("[data-act]"); if (!b) return;
     const a = b.dataset.act;
     if (a === "start") { startSession(); scrollTo(0, 0); return; }
+    if (a === "go") { if (!session) return; session.t0 = Date.now(); session.hidden = 0; session.hiddenAt = 0; view = "play"; render(); nextTrial(); scrollTo(0, 0); return; }
+    if (a === "back") { session = null; view = "intro"; render(); scrollTo(0, 0); return; }
     if (a === "quit") { if (confirm("تطلع من الجلسة؟ ما راح تنحسب.")) { if (session) session.aborted = true; session = null; view = "intro"; render(); } return; }
     if (a === "restore") { b.disabled = true; const m = await restore(document.getElementById("rc").value); codeMsg = m || "✅ رجع تقدمك."; render(); return; }
   });
