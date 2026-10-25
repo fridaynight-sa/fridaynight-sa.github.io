@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="../favicon-64.png"><link rel="shortcut icon" href="../favicon.ico"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><link rel="manifest" href="../site.webmanifest"><meta name="theme-color" content="#0d1230">
+<title>Mind Games · Friday Night</title>
+<meta name="description" content="ألعاب قصيرة تدرّب عقلك. كل لعبة تشرح لك وش بتسوي، وكم تحتاج تلعب، ووش الفايدة.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Friday Night"><meta property="og:title" content="🧠 Mind Games · Friday Night"><meta property="og:description" content="ألعاب قصيرة تدرّب عقلك. كل لعبة تشرح لك وش بتسوي، وكم تحتاج تلعب، ووش الفايدة."><meta property="og:url" content="https://fridaynight-sa.github.io/mind/"><meta property="og:image" content="https://fridaynight-sa.github.io/og-image.jpg"><meta property="og:locale" content="ar_SA"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://fridaynight-sa.github.io/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="mind.css?v=202610251757">
+<style>
+.hero{text-align:center;padding:18px 0 8px}
+.hero img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.55));animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.hero h1{font-family:var(--f-display);font-size:clamp(34px,9vw,52px);margin:8px 0 0;direction:ltr;background:linear-gradient(90deg,#b7a6ff,#7fe0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:30em;margin:6px auto 0;color:var(--muted);font-weight:700}
+.mg{display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:16px 18px;margin:18px 0 14px;transition:transform .2s,border-color .2s}
+.mg:hover{transform:translateY(-3px);border-color:rgba(127,224,255,.7)}
+.mg .top{display:flex;align-items:center;gap:14px}
+.mg .top img{width:72px;height:72px;object-fit:contain;flex:none;filter:drop-shadow(0 6px 12px rgba(0,0,0,.35))}
+.mg h2{font-family:var(--f-display);font-size:22px;margin:0}
+.mg .sub{margin:0;color:#9fe3ff;font-weight:800;font-size:14px}
+.mg .new{margin-inline-start:auto;align-self:flex-start;background:var(--gold);color:#2b1745;border-radius:999px;padding:1px 10px;font-size:12px;font-weight:800}
+.mg .best{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:800;font-size:14px}
+.mg .go{display:flex;justify-content:space-between;align-items:center;font-weight:800;color:#9fe3ff}
+.soon{text-align:center;color:var(--muted);border-style:dashed}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../" aria-label="الصفحة الرئيسية"><img src="../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../seenjeem/"><img src="../icons/seenjeem.png" alt="">سين جيم</a><a href="../outside/"><img src="../icons/outside.png" alt="">برا السالفة</a><a href="../sedq/"><img src="../icons/sedq.png" alt="">صدق ولا كذب</a><a href="../mf/"><img src="../icons/mf.png" alt="">مين فينا؟</a><a href="../draw/"><img src="../icons/draw.png" alt="">ارسم وخمّن</a><a href="../dafour/"><img src="../icons/dafour.png" alt="">الدافور</a><a href="./" class="on" aria-current="page"><img src="../icons/mind.png" alt="">Mind Games</a><a href="../tv/"><img src="../icons/tv.png" alt="">شاشة العرض</a></nav>
+
+  <header class="hero">
+    <img src="../icons/mind.png" alt="">
+    <h1>Mind Games</h1>
+    <p>ألعاب قصيرة تدرّب عقلك. كل لعبة تشرح لك وش بتسوي، وكم تحتاج تلعب عشان تستفيد، ووش الفايدة.</p>
+  </header>
+
+  <a class="mg" href="lamha/">
+    <div class="top"><img src="../icons/lamha.png" alt=""><div><h2>لمحة</h2><p class="sub">تمرين سرعة الالتقاط</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">⚡ سرعة الالتقاط</span><span class="chip">👀 الانتباه للأطراف</span><span class="chip">⏱️ 3 دقايق</span><span class="chip">👤 لاعب واحد</span></div>
+    <div class="best" id="lamhaBest"><span>🏅 ما لعبتها للحين</span></div>
+    <span class="go">العب <b>←</b></span>
+  </a>
+
+  <div class="card soon">🧩 ألعاب جديدة قريباً</div>
+  <p class="muted small" style="text-align:center">تقدمك ينحفظ في جوالك. وتقدر تاخذ «رمز تقدمك» من داخل كل لعبة عشان ترجعه لو غيّرت جوالك.</p>
+</div>
+<script src="../fnfx.js?v=202610251757"></script>
+<script>
+(function () {
+  "use strict";
+  // best result of لمحة, read from this phone
+  try {
+    const g = JSON.parse(localStorage.getItem("lamha-v1") || "null");
+    const el = document.getElementById("lamhaBest");
+    if (g && g.best) {
+      const mins = Object.values(g.days || {}).reduce((a, b) => a + b, 0);
+      el.innerHTML = `<span>🏅 أفضل رقم لك: ${Math.round(g.best)} ملّي ثانية</span><span>📅 ${mins < 60 ? Math.floor(mins) + " دقيقة" : (mins / 60).toFixed(1) + " ساعة"} من 10 ساعات</span>`;
+    }
+  } catch (e) {}
+  if (self.FX) FX.muteButton();
+})();
+</script>
+</body>
+</html>

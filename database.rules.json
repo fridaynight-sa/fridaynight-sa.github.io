@@ -140,6 +140,13 @@
           ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 60000"
         }
       }
+    },
+    "mind": {
+      "$code": {
+        ".read": true,
+        ".write": true,
+        ".validate": "$code.matches(/^[A-HJ-NP-Z2-9]{8}$/) && (!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 50000)"
+      }
     }
   }
 }

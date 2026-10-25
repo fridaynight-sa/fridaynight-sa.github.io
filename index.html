@@ -86,6 +86,7 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 .tv:hover{transform:translateY(-3px)}
 .tv .ic{width:64px;height:64px;font-size:30px}.tv .ic img{width:100%;height:100%;object-fit:contain}
 .tv h3{margin:0;font-family:var(--f-display);font-size:20px}.tv p{margin:2px 0 0;opacity:.85}.tv .arrow{margin-inline-start:auto;font-size:22px;font-weight:800}
+.tv.mind{--c:#4b2a8a;margin-top:16px;background:linear-gradient(135deg,#1b2160,#4b2a8a);box-shadow:6px 6px 0 #3ec6ff}
 /* install as an app */
 .inst{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:520px;margin:0 auto;z-index:50;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:18px;padding:10px 10px 10px 12px;box-shadow:5px 5px 0 var(--gold);animation:rise .5s both}
 body.has-inst .fx-mute{bottom:calc(86px + env(safe-area-inset-bottom,0px))!important}
@@ -180,6 +181,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     <span class="arrow">←</span>
   </a>
 
+  <a class="tv mind" href="mind/">
+    <span class="ic"><img src="icons/mind.png" alt=""></span>
+    <div><h3>Mind Games</h3><p>ألعاب قصيرة تدرّب عقلك وتلعبها لحالك. أولها «لمحة» لسرعة الالتقاط ⚡</p></div>
+    <span class="arrow">←</span>
+  </a>
+
   <h2 class="sec">كيف تبدأون؟</h2>
   <ol class="steps">
     <li><div>واحد يفتح غرفة<small>يختار لعبة ويضغط «افتح غرفة».</small></div></li>
@@ -189,11 +196,11 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610251526"></script>
-<script src="fninstall.js?v=202610251526"></script>
+<script src="fnfx.js?v=202610251757"></script>
+<script src="fninstall.js?v=202610251757"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610251526"></script>
+<script src="firebase-config.js?v=202610251757"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).

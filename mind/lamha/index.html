@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="../../favicon-64.png"><link rel="shortcut icon" href="../../favicon.ico"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="manifest" href="../../site.webmanifest"><meta name="theme-color" content="#0d1230">
+<title>لمحة · Mind Games</title>
+<meta name="description" content="لمحة: تمرين سرعة الالتقاط والانتباه للأطراف. 3 دقايق، وحاول تكسر رقمك كل مرة.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Friday Night"><meta property="og:title" content="⚡ لمحة · Mind Games"><meta property="og:description" content="تمرين سرعة الالتقاط والانتباه للأطراف. 3 دقايق، وحاول تكسر رقمك كل مرة."><meta property="og:url" content="https://fridaynight-sa.github.io/mind/lamha/"><meta property="og:image" content="https://fridaynight-sa.github.io/og-image.jpg"><meta property="og:locale" content="ar_SA"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://fridaynight-sa.github.io/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../mind.css?v=202610251757">
+<style>
+.hero{text-align:center;padding:10px 0 6px}
+.hero img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.5))}
+.hero h1{font-family:var(--f-display);font-size:clamp(34px,9vw,48px);margin:4px 0 0}
+.hero p{margin:0;color:#9fe3ff;font-weight:800}
+.record{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(62,198,255,.25));border-color:rgba(127,224,255,.5)}
+.record b{font-family:var(--f-display);font-size:30px;direction:ltr;unicode-bidi:isolate}
+.record small{display:block;color:var(--muted);font-weight:700}
+.prog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prog>div{background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px}
+.prog b{font-family:var(--f-display);font-size:20px}
+.prog small{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:4px}
+.steps{margin:0;padding-inline-start:22px}.steps li{margin:5px 0}
+.code{font-family:ui-monospace,Menlo,monospace;font-size:24px;font-weight:800;letter-spacing:3px;direction:ltr;text-align:center;background:rgba(0,0,0,.25);border-radius:12px;padding:8px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0;background:rgba(0,0,0,.25);border:1.5px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:18px;padding:8px 12px;text-align:center;letter-spacing:2px;direction:ltr;text-transform:uppercase}
+.row button{background:var(--card2);border-radius:12px;padding:8px 14px;font-weight:800}
+.note{background:rgba(255,212,59,.1);border:1px solid rgba(255,212,59,.4);border-radius:14px;padding:10px 12px;font-size:14px}
+.done{background:linear-gradient(135deg,rgba(52,211,153,.25),rgba(62,198,255,.2));border-color:rgba(52,211,153,.6)}
+
+/* play */
+.playtop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:800;font-size:14px;padding:8px 0}
+.playtop .x{width:38px;height:38px;border-radius:50%;background:var(--card2);font-size:18px}
+.playtop .ms{direction:ltr;unicode-bidi:isolate;color:#9fe3ff}
+.tbar{height:6px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden;margin-bottom:8px}.tbar i{display:block;height:100%;background:linear-gradient(90deg,var(--a1),var(--a2))}
+.stagewrap{display:flex;justify-content:center}
+.stage{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.45);background:#000;touch-action:manipulation}
+.stage canvas{display:block}
+.go{position:absolute;left:50%;top:50%;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;background:rgba(13,18,48,.85);border:3px solid #fff;color:#fff;font-weight:800;font-size:15px;line-height:1.2;box-shadow:0 0 0 6px rgba(124,92,255,.45);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 12px rgba(124,92,255,.15)}}
+.dir{position:absolute;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:rgba(13,18,48,.75);border:3px solid rgba(255,255,255,.85);font-size:22px}
+.dir.ok{background:var(--good);border-color:#fff}.dir.bad{background:var(--bad);border-color:#fff}
+.ask{text-align:center;padding:12px 0}
+.ask h3{margin:0 0 10px;font-family:var(--f-display);font-size:20px}
+.cars{display:flex;gap:12px;justify-content:center}
+.cars button{flex:1;max-width:220px;background:var(--card2);border:2px solid var(--line);border-radius:16px;padding:8px}
+.cars button img{display:block;width:100%;height:auto}
+.cars button.ok{border-color:var(--good);background:rgba(52,211,153,.25)}.cars button.bad{border-color:var(--bad);background:rgba(251,113,133,.25)}
+.fb{font-family:var(--f-display);font-size:20px;min-height:1.6em}
+.tip{font-size:13px;color:var(--muted);text-align:center;margin:6px 0 0}
+body.wide .wrap{max-width:1080px}
+.playgrid.side{display:flex;gap:28px;align-items:center;justify-content:center}
+.playgrid.side .ask{width:320px;flex:none}
+body.playing .gamesbar{display:none}   /* during a session only the game is on screen; ✕ goes back */
+body.playing .playtop{padding-top:12px}
+
+/* results */
+.big{text-align:center}
+.big .n{font-family:var(--f-display);font-size:64px;line-height:1.1;direction:ltr;unicode-bidi:isolate;background:linear-gradient(90deg,#b7a6ff,#7fe0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.big .u{color:var(--muted);font-weight:800}
+.stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.stats div{background:rgba(255,255,255,.06);border-radius:12px;padding:6px 14px;text-align:center;font-weight:800}
+.stats small{display:block;color:var(--muted);font-weight:700;font-size:12px}
+.msg{font-weight:700}
+.chart{width:100%;height:auto;display:block}
+</style>
+</head>
+<body class="tv-plain">
+<div class="wrap">
+  <nav class="gamesbar" aria-label="الألعاب" id="nav"><a class="site" href="../../" aria-label="الصفحة الرئيسية"><img src="../../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../../seenjeem/"><img src="../../icons/seenjeem.png" alt="">سين جيم</a><a href="../../outside/"><img src="../../icons/outside.png" alt="">برا السالفة</a><a href="../../sedq/"><img src="../../icons/sedq.png" alt="">صدق ولا كذب</a><a href="../../mf/"><img src="../../icons/mf.png" alt="">مين فينا؟</a><a href="../../draw/"><img src="../../icons/draw.png" alt="">ارسم وخمّن</a><a href="../../dafour/"><img src="../../icons/dafour.png" alt="">الدافور</a><a href="../" class="on"><img src="../../icons/mind.png" alt="">Mind Games</a><a href="../../tv/"><img src="../../icons/tv.png" alt="">شاشة العرض</a></nav>
+  <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../../firebase-config.js?v=202610251757"></script>
+<script src="../../fnfx.js?v=202610251757"></script>
+<script src="../../fnanim.js?v=202610251757"></script>
+<script src="draw.js?v=202610251757"></script>
+<script src="app.js?v=202610251757"></script>
+</body>
+</html>
