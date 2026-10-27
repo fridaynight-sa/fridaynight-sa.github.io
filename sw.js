@@ -27,9 +27,27 @@ self.addEventListener("fetch", e => {
 });
 
 /* Mind Games offline: a copy of the section (pages, games, and the shared files they use) is kept on the
-   phone (mind/sync.js fills it the first time a Mind Games page opens). The internet is always tried first,
-   so updates arrive right away; the copy is used only when offline. */
+   phone. Mind Games pages (and the home-screen app) ask for it with a "cache-mind" message, once per site
+   update. The internet is always tried first, so updates arrive right away; the copy is used only offline.
+   With no internet at all, any other page of the site opens Mind Games instead (the group games need internet). */
 const MIND = "mind-v1";
+const MIND_FILES = ["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js",
+  "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js", "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png",
+  ...["mind", "lamha", "dots", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)];
+const MIND_MUST = 9;                     // the first nine files: without them the games can't open offline
+const MIND_CDN = ["app", "database", "auth"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`);
+async function cacheMind() {
+  const c = await caches.open(MIND), root = self.registration.scope;
+  const got = await Promise.all(MIND_FILES.map(u => c.add(new Request(new URL(u, root).href, { cache: "reload" })).then(() => true, () => false)));
+  await Promise.all(MIND_CDN.map(u => fetch(u, { mode: "no-cors" }).then(r => c.put(u, r)).catch(() => {})));
+  return got.slice(0, MIND_MUST).every(Boolean);
+}
+self.addEventListener("message", e => {
+  const d = e.data || {};
+  if (d.type !== "cache-mind") return;
+  e.waitUntil(cacheMind().catch(() => false).then(ok => { if (e.source) e.source.postMessage({ type: "mind-cached", v: d.v, ok }); }));
+});
+const fromCopy = req => caches.open(MIND).then(c => c.match(req, { ignoreVary: true }).then(m => m || c.match(req, { ignoreSearch: true, ignoreVary: true })));
 const mindPages = new Set();     // open Mind Games pages: only their requests are handled here, other games are left alone
 function shared(u) {
   if (u.origin === self.location.origin) return /\/(fnfx|fnanim|firebase-config)\.js$/.test(u.pathname) || /\/icons\/[\w-]+\.png$/.test(u.pathname) || /\/favicon-\d+\.png$/.test(u.pathname);
@@ -39,11 +57,18 @@ const fromMind = e => mindPages.has(e.clientId) || /\/mind\//.test(e.request.ref
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const u = new URL(e.request.url), own = u.origin === self.location.origin && u.pathname.includes("/mind/");
-  if (e.request.mode === "navigate") { if (!own) return; if (e.resultingClientId) mindPages.add(e.resultingClientId); }
+  if (e.request.mode === "navigate") {
+    if (!own) {   // another page while there is no internet at all: open Mind Games (if its copy is here)
+      if (self.navigator && navigator.onLine === false && u.origin === self.location.origin)
+        e.respondWith(fromCopy(new URL("mind/", self.registration.scope).href).then(m => m ? Response.redirect(new URL("mind/?offline=1", self.registration.scope).href, 302) : fetch(e.request)));
+      return;
+    }
+    if (e.resultingClientId) mindPages.add(e.resultingClientId);
+  }
   else if (!((own || shared(u)) && fromMind(e))) return;
   if (e.clientId && own) mindPages.add(e.clientId);
   e.respondWith(fetch(e.request).then(r => {
     if (r && (r.ok || r.type === "opaque")) { const copy = r.clone(); caches.open(MIND).then(c => c.put(e.request, copy)).catch(() => {}); }
     return r;
-  }).catch(() => caches.open(MIND).then(c => c.match(e.request).then(m => m || c.match(e.request, { ignoreSearch: true }))).then(m => m || Response.error())));
+  }).catch(() => fromCopy(e.request).then(m => m || Response.error())));
 });

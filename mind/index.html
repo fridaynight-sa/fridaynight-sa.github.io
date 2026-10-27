@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
-<link rel="stylesheet" href="mind.css?v=202610271759">
+<link rel="stylesheet" href="mind.css?v=202610271811">
 <style>
 .hero{text-align:center;padding:18px 0 8px}
 .hero img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.55));animation:float 4s ease-in-out infinite}
@@ -33,6 +33,7 @@
 <div class="wrap">
   <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../" aria-label="الصفحة الرئيسية"><img src="../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../seenjeem/"><img src="../icons/seenjeem.png" alt="">سين جيم</a><a href="../outside/"><img src="../icons/outside.png" alt="">برا السالفة</a><a href="../sedq/"><img src="../icons/sedq.png" alt="">صدق ولا كذب</a><a href="../mf/"><img src="../icons/mf.png" alt="">مين فينا؟</a><a href="../draw/"><img src="../icons/draw.png" alt="">ارسم وخمّن</a><a href="../dafour/"><img src="../icons/dafour.png" alt="">الدافور</a><a href="./" class="on" aria-current="page"><img src="../icons/mind.png" alt="">Mind Games</a><a href="../tv/"><img src="../icons/tv.png" alt="">شاشة العرض</a></nav>
 
+  <div class="card" id="nonet" hidden style="border-color:rgba(255,212,59,.6);background:rgba(255,212,59,.12)"><b>📴 ما فيه نت الحين.</b> الألعاب الجماعية تحتاج نت، بس ألعاب Mind Games تشتغل عادي.</div>
   <header class="hero">
     <img src="../icons/mind.png" alt="">
     <h1>Mind Games</h1>
@@ -55,13 +56,13 @@
 
   <div class="card soon">🧩 ألعاب جديدة قريباً</div>
   <div id="sync"></div>
-  <p class="muted small" style="text-align:center">📴 ألعاب Mind Games تشتغل بدون نت بعد ما تفتحها مرة وحدة.</p>
+  <p class="muted small" id="offl" style="text-align:center"></p>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610271759"></script>
-<script src="../fnfx.js?v=202610271759"></script>
-<script src="sync.js?v=202610271759"></script>
+<script src="../firebase-config.js?v=202610271811"></script>
+<script src="../fnfx.js?v=202610271811"></script>
+<script src="sync.js?v=202610271811"></script>
 <script>
 (function () {
   "use strict";
@@ -82,6 +83,13 @@
     const g = own && inc ? { best: Math.max(own.best || 0, inc.best || 0), level: Math.max(own.level || 1, inc.level || 1) } : (own || inc);
     if (g && (g.best || g.level > 1)) document.getElementById("dotsBest").innerHTML = `<span>🏅 أعلى نتيجة: ${Math.round(g.best || 0).toLocaleString("en-US")}</span><span>📶 المستوى ${Math.min(400, g.level || 1)} من 400</span>`;
   } catch (e) {}
+  // no internet: say so; and whether this phone already has the offline copy
+  const net = () => { document.getElementById("nonet").hidden = navigator.onLine !== false; };
+  const offl = () => {
+    const s = self.MindSync ? MindSync.offline : "none", el = document.getElementById("offl");
+    el.textContent = s === "ready" ? "✅ Mind Games جاهزة تشتغل بدون نت على هالجهاز." : s === "wait" ? "⏳ نجهز Mind Games عشان تشتغل بدون نت… خلك على النت لحظات." : "";
+  };
+  net(); offl(); addEventListener("online", net); addEventListener("offline", net); addEventListener("mindoffline", offl);
   // one «حفظ تقدمك» card for the whole section
   if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();
   if (self.FX) FX.muteButton();

@@ -20,19 +20,21 @@
   const games = {};
   let db = null, auth = null, user = null, msg = "";
 
-  // offline: the service worker (../sw.js) answers from a copy when there is no internet. The copy is filled
-  // here, once per site update, so only people who open Mind Games download it.
+  // offline: the service worker (../sw.js) answers from a copy when there is no internet. It fills the copy
+  // when asked, once per site update, so only people who open Mind Games download it.
+  let offline = "none";   // none (this browser can't) · wait (copy being made) · ready
   try {
     const me = document.currentScript && new URL(document.currentScript.src), root = me && new URL("../", me);
     if (root && "serviceWorker" in navigator && self.caches) {
-      navigator.serviceWorker.register(new URL("sw.js", root)).catch(() => {});
       const ver = me.searchParams.get("v") || "0";
-      if (ls.get("mind-cached") !== ver) navigator.serviceWorker.ready.then(() => caches.open("mind-v1")).then(c => Promise.all([
-        ...["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js", "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js",
-          "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png", ...["mind", "lamha", "dots", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)]
-          .map(u => c.add(new Request(new URL(u, root), { cache: "reload" })).catch(() => {})),
-        ...["app", "database", "auth"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`).map(u => fetch(u, { mode: "no-cors" }).then(r => c.put(u, r)).catch(() => {})),
-      ])).then(() => ls.set("mind-cached", ver)).catch(() => {});
+      offline = ls.get("mind-cached") ? "ready" : "wait";
+      navigator.serviceWorker.register(new URL("sw.js", root)).catch(() => {});
+      navigator.serviceWorker.addEventListener("message", e => {
+        const d = e.data || {};
+        if (d.type === "mind-cached" && d.ok) { ls.set("mind-cached", d.v); offline = "ready"; dispatchEvent(new Event("mindoffline")); }
+      });
+      if (ls.get("mind-cached") !== ver && navigator.onLine !== false)
+        navigator.serviceWorker.ready.then(r => { if (r.active) r.active.postMessage({ type: "cache-mind", v: ver }); }).catch(() => {});
     }
   } catch (e) {}
 
@@ -165,5 +167,5 @@
 
   function register(f, g) { games[f] = g; }
   setTimeout(flush, 1500);
-  self.MindSync = { register, save, incoming, code, show, card, restore, flush, get signedIn() { return !!user; } };
+  self.MindSync = { register, save, incoming, code, show, card, restore, flush, get signedIn() { return !!user; }, get offline() { return offline; } };
 })();

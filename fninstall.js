@@ -7,6 +7,16 @@
   const KEY = "fn-install-v1", WAIT = 30 * 864e5;
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
   const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  // the home-screen app keeps its own storage: ask for the Mind Games copy here too, so it opens with no internet
+  if (standalone && "serviceWorker" in navigator && self.caches) {
+    try {
+      const v = (document.currentScript && new URL(document.currentScript.src).searchParams.get("v")) || "0";
+      if (localStorage.getItem("mind-cached") !== v && navigator.onLine !== false) {
+        navigator.serviceWorker.addEventListener("message", e => { const d = e.data || {}; if (d.type === "mind-cached" && d.ok) try { localStorage.setItem("mind-cached", d.v); } catch (er) {} });
+        navigator.serviceWorker.ready.then(r => { if (r.active) r.active.postMessage({ type: "cache-mind", v }); }).catch(() => {});
+      }
+    } catch (e) {}
+  }
   if (standalone) return;
   let closed = 0; try { closed = +localStorage.getItem(KEY) || 0; } catch (e) {}
   if (Date.now() - closed < WAIT) return;
