@@ -58,9 +58,10 @@ self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
   const u = new URL(e.request.url), own = u.origin === self.location.origin && u.pathname.includes("/mind/");
   if (e.request.mode === "navigate") {
-    if (!own) {   // another page while there is no internet at all: open Mind Games (if its copy is here)
-      if (self.navigator && navigator.onLine === false && u.origin === self.location.origin)
-        e.respondWith(fromCopy(new URL("mind/", self.registration.scope).href).then(m => m ? Response.redirect(new URL("mind/?offline=1", self.registration.scope).href, 302) : fetch(e.request)));
+    if (!own) {   // another page of the site with no internet: open Mind Games instead (if its copy is here)
+      if (u.origin !== self.location.origin) return;
+      const toMind = () => fromCopy(new URL("mind/", self.registration.scope).href).then(m => m ? Response.redirect(new URL("mind/?offline=1", self.registration.scope).href, 302) : Response.error());
+      e.respondWith(self.navigator && navigator.onLine === false ? toMind().then(r => r.type === "error" ? fetch(e.request) : r) : fetch(e.request).catch(toMind));
       return;
     }
     if (e.resultingClientId) mindPages.add(e.resultingClientId);
