@@ -31,7 +31,7 @@
         ...["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js", "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js",
           "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png", ...["mind", "lamha", "dots", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)]
           .map(u => c.add(new Request(new URL(u, root), { cache: "reload" })).catch(() => {})),
-        ...["app", "database"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`).map(u => fetch(u, { mode: "no-cors" }).then(r => c.put(u, r)).catch(() => {})),
+        ...["app", "database", "auth"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`).map(u => fetch(u, { mode: "no-cors" }).then(r => c.put(u, r)).catch(() => {})),
       ])).then(() => ls.set("mind-cached", ver)).catch(() => {});
     }
   } catch (e) {}

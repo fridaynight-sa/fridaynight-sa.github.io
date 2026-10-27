@@ -1,1 +1,1 @@
-self.FIREBASE_CONFIG = { databaseURL: "https://fridaynight-3b0e9-default-rtdb.europe-west1.firebasedatabase.app", projectId: "fridaynight-3b0e9" };
+self.FIREBASE_CONFIG = { databaseURL: "https://fridaynight-3b0e9-default-rtdb.europe-west1.firebasedatabase.app", projectId: "fridaynight-3b0e9", apiKey: "AIzaSyD8sxoZgf0e5DTL8X-ntKnXBt9hS2wEhk8", authDomain: "fridaynight-3b0e9.firebaseapp.com" };
