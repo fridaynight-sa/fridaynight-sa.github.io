@@ -30,19 +30,7 @@
   }
   const week = () => G.first ? Math.min(WEEKS, Math.floor((new Date() - fromKey(G.first)) / (7 * 864e5)) + 1) : 1;
 
-  /* ---------------- backup online («رمز تقدمك») ---------------- */
-  let db = null;
-  try { const C = self.FIREBASE_CONFIG; if (C && C.databaseURL && self.firebase) { if (!firebase.apps.length) firebase.initializeApp(C); db = firebase.database(); } } catch (e) {}
-  const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const newCode = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), b => ABC[b % ABC.length]).join("");
-  const showCode = c => c ? c.slice(0, 4) + "-" + c.slice(4) : "";
-  let backupMsg = "";
-  async function backup() {
-    if (!db) return;
-    if (!G.code) { G.code = newCode(); save(); }
-    try { await db.ref("mind/" + G.code).set({ j: JSON.stringify(G) }); backupMsg = ""; }
-    catch (e) { backupMsg = "ما قدرت أحفظ نسخة أونلاين الحين. تقدمك محفوظ في جوالك."; }
-  }
+  /* ---------------- backup online: one «رمز تقدمك» for all Mind Games (../sync.js) ---------------- */
   function merge(a, b) {   // two copies of the progress → one (nothing is lost)
     const out = fresh(), seen = new Set();
     a.sessions.concat(b.sessions).sort((x, y) => x.t - y.t).forEach(s => { if (!seen.has(s.t)) { seen.add(s.t); out.sessions.push(s); } });
@@ -53,18 +41,12 @@
     out.doneAt = [a.doneAt, b.doneAt].filter(x => x).sort()[0] || null;
     return out;
   }
-  async function restore(code) {
-    code = String(code || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-    if (code.length !== 8) return "الرمز 8 حروف وأرقام، مثل ABCD-EFGH.";
-    if (!db) return "ما فيه اتصال الحين. جرّب بعدين.";
-    try {
-      const v = (await db.ref("mind/" + code).get()).val();
-      const o = v && typeof v.j === "string" ? JSON.parse(v.j) : null;
-      if (!o || !Array.isArray(o.sessions)) return "ما لقيت تقدم بهالرمز. تأكد منه.";
-      G = Object.assign(merge(G, Object.assign(fresh(), o)), { code }); save(); backup();
-      return "";
-    } catch (e) { return "ما قدرت أرجّع التقدم. تأكد من الاتصال وجرّب مرة ثانية."; }
+  const take = o => { G = merge(G, Object.assign(fresh(), o)); save(); };
+  if (self.MindSync) {
+    MindSync.register("j", { get: () => G, merge: take, after: () => { if (view === "intro") render(); } });
+    const inc = MindSync.incoming("j"); if (inc) { take(inc); MindSync.save("j"); }
   }
+  const backup = () => self.MindSync ? MindSync.save("j") : Promise.resolve();
 
   /* ---------------- screen timing ---------------- */
   // how long one screen refresh takes (16.7 ms on most screens): the shortest look is one refresh
@@ -77,7 +59,7 @@
   const msOf = f => f * frameMs;
 
   /* ---------------- views ---------------- */
-  let view = "intro", session = null, lastResult = null, codeMsg = "";
+  let view = "intro", session = null, lastResult = null;
   function programCard() {
     const today = G.days[dayKey()] || 0, tot = totalMin();
     const bar = (v, max) => `<div class="bar"><i style="width:${Math.min(100, v / max * 100).toFixed(1)}%"></i></div>`;
@@ -119,12 +101,7 @@
         <li>اختار أي سيارة من الثنتين شفتها.</li><li>اضغط المكان اللي كانت فيه النجمة.</li>
         <li>صح؟ يقصر وقت العرض. غلط؟ يطول. وفيه أشكال تشبه النجمة تحاول تلخبطك.</li>
         <li>الجلسة ${TRIALS} محاولة، ورقمك هو أقصر وقت تلتقط فيه الاثنين. <b>كل ما نزل الرقم أحسن.</b></li></ol></div>
-      <div class="card"><h2>🔑 رمز تقدمك</h2>
-        ${G.code ? `<div class="code">${showCode(G.code)}</div><p class="small muted" style="margin:6px 0 0">اكتبه عندك. لو غيّرت جوالك أو انمسح تقدمك، اكتبه هنا ويرجع كل شي.</p>`
-          : `<p class="small muted" style="margin:0">يطلع لك بعد أول جلسة. تكتبه عندك عشان ترجّع تقدمك لو غيّرت جوالك.</p>`}
-        <p class="small" style="margin:10px 0 6px">عندك رمز من قبل؟</p>
-        <div class="row"><input id="rc" maxlength="9" placeholder="ABCD-EFGH" autocomplete="off" aria-label="رمز التقدم"><button type="button" data-act="restore">رجّع</button></div>
-        <p class="small" id="rcmsg" style="margin:6px 0 0;color:#ffd43b">${esc(codeMsg)}</p></div>`;
+      ${self.MindSync ? MindSync.card() : ""}`;
   }
 
   /* ---------------- one session ---------------- */
@@ -303,7 +280,7 @@
       ${programCard()}
       <button type="button" class="btn" data-act="start">العب جلسة ثانية</button>
       <a class="btn alt" href="../">ألعاب Mind Games</a>
-      ${G.code ? `<p class="tip">🔑 رمز تقدمك: <b style="direction:ltr;unicode-bidi:isolate">${showCode(G.code)}</b>${backupMsg ? " · " + esc(backupMsg) : ""}</p>` : ""}`;
+      ${self.MindSync && MindSync.code() ? `<p class="tip">🔑 رمز تقدمك: <b style="direction:ltr;unicode-bidi:isolate">${MindSync.show(MindSync.code())}</b></p>` : ""}`;
   }
   function render() { if (view !== "play") document.body.classList.remove("wide", "playing"); ({ intro: introView, pair: pairView, play: playView, result: resultView }[view] || introView)(); }
 
@@ -315,7 +292,6 @@
     if (a === "go") { if (!session) return; session.t0 = Date.now(); session.hidden = 0; session.hiddenAt = 0; view = "play"; render(); nextTrial(); scrollTo(0, 0); return; }
     if (a === "back") { session = null; view = "intro"; render(); scrollTo(0, 0); return; }
     if (a === "quit") { if (confirm("تطلع من الجلسة؟ ما راح تنحسب.")) { if (session) session.aborted = true; session = null; view = "intro"; render(); } return; }
-    if (a === "restore") { b.disabled = true; const m = await restore(document.getElementById("rc").value); codeMsg = m || "✅ رجع تقدمك."; render(); return; }
   });
   // screen turned or resized: redraw the play area at the new size (right away while waiting, or before the next look)
   let rz = 0;

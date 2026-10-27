@@ -25,3 +25,25 @@ self.addEventListener("fetch", e => {
   const m = new URL(e.request.url).pathname.match(/\/_blob\/([0-9a-f]{32})$/);
   if (m) e.respondWith(serve(m[1]));
 });
+
+/* Mind Games offline: a copy of the section (pages, games, and the shared files they use) is kept on the
+   phone (mind/sync.js fills it the first time a Mind Games page opens). The internet is always tried first,
+   so updates arrive right away; the copy is used only when offline. */
+const MIND = "mind-v1";
+const mindPages = new Set();     // open Mind Games pages: only their requests are handled here, other games are left alone
+function shared(u) {
+  if (u.origin === self.location.origin) return /\/(fnfx|fnanim|firebase-config)\.js$/.test(u.pathname) || /\/icons\/[\w-]+\.png$/.test(u.pathname) || /\/favicon-\d+\.png$/.test(u.pathname);
+  return u.href.startsWith("https://www.gstatic.com/firebasejs/") || u.hostname === "fonts.googleapis.com" || u.hostname === "fonts.gstatic.com";
+}
+const fromMind = e => mindPages.has(e.clientId) || /\/mind\//.test(e.request.referrer || "");
+self.addEventListener("fetch", e => {
+  if (e.request.method !== "GET") return;
+  const u = new URL(e.request.url), own = u.origin === self.location.origin && u.pathname.includes("/mind/");
+  if (e.request.mode === "navigate") { if (!own) return; if (e.resultingClientId) mindPages.add(e.resultingClientId); }
+  else if (!((own || shared(u)) && fromMind(e))) return;
+  if (e.clientId && own) mindPages.add(e.clientId);
+  e.respondWith(fetch(e.request).then(r => {
+    if (r && (r.ok || r.type === "opaque")) { const copy = r.clone(); caches.open(MIND).then(c => c.put(e.request, copy)).catch(() => {}); }
+    return r;
+  }).catch(() => caches.open(MIND).then(c => c.match(e.request).then(m => m || c.match(e.request, { ignoreSearch: true }))).then(m => m || Response.error())));
+});

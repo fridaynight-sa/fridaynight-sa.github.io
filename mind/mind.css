@@ -42,3 +42,8 @@ ul.list{margin:0;padding-inline-start:20px}ul.list li{margin:4px 0}
 
 /* confetti from fnanim.js */
 .fn-confetti{position:fixed;inset:0;pointer-events:none;z-index:95}
+
+/* «حفظ تقدمك» card (sync.js), the same in every game */
+.code{font-family:ui-monospace,Menlo,monospace;font-size:24px;font-weight:800;letter-spacing:3px;direction:ltr;text-align:center;background:rgba(0,0,0,.25);border-radius:12px;padding:8px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0;background:rgba(0,0,0,.25);border:1.5px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:18px;padding:8px 12px;text-align:center;letter-spacing:2px;direction:ltr;text-transform:uppercase}
+.row button{background:var(--card2);border-radius:12px;padding:8px 14px;font-weight:800}

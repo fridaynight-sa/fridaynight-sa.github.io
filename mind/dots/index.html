@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="../../favicon-64.png"><link rel="shortcut icon" href="../../favicon.ico"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="manifest" href="../../site.webmanifest"><meta name="theme-color" content="#0d1230">
+<title>توصيل النقاط · Mind Games</title>
+<meta name="description" content="توصيل النقاط: وصّل كل لونين ببعض بدون ما تتقاطع الخطوط وعبّي كل النقاط. 400 مستوى، تمرين على التخطيط.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Friday Night"><meta property="og:title" content="🧩 توصيل النقاط · Mind Games"><meta property="og:description" content="وصّل كل لونين ببعض بدون ما تتقاطع الخطوط وعبّي كل النقاط. 400 مستوى، تمرين على التخطيط."><meta property="og:url" content="https://fridaynight-sa.github.io/mind/dots/"><meta property="og:image" content="https://fridaynight-sa.github.io/og-image.jpg"><meta property="og:locale" content="ar_SA"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://fridaynight-sa.github.io/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../mind.css?v=202610271728">
+<style>
+.hero{text-align:center;padding:10px 0 6px}
+.hero img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.5))}
+.hero h1{font-family:var(--f-display);font-size:clamp(34px,9vw,48px);margin:4px 0 0}
+.hero p{margin:0;color:#9fe3ff;font-weight:800}
+.record{display:flex;align-items:center;justify-content:space-around;gap:12px;text-align:center;background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(62,198,255,.25));border-color:rgba(127,224,255,.5)}
+.record small{display:block;color:var(--muted);font-weight:800}
+.record b{font-family:var(--f-display);font-size:28px;direction:ltr;unicode-bidi:isolate}
+.record .of{font-size:16px;color:var(--muted)}
+.prog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prog>div{background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px}
+.prog b{font-family:var(--f-display);font-size:20px}
+.prog small{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:4px}
+.steps{margin:0;padding-inline-start:22px}.steps li{margin:5px 0}
+.note{background:rgba(255,212,59,.1);border:1px solid rgba(255,212,59,.4);border-radius:14px;padding:10px 12px;font-size:14px}
+.done{background:linear-gradient(135deg,rgba(52,211,153,.25),rgba(62,198,255,.2));border-color:rgba(52,211,153,.6)}
+.tip{font-size:13px;color:var(--muted);text-align:center;margin:6px 0 0}
+.big{text-align:center}
+.big .n{font-family:var(--f-display);font-size:64px;line-height:1.1;direction:ltr;unicode-bidi:isolate;background:linear-gradient(90deg,#b7a6ff,#7fe0ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.big .u{color:var(--muted);font-weight:800}
+.stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.stats div{background:rgba(255,255,255,.06);border-radius:12px;padding:6px 14px;text-align:center;font-weight:800}
+.stats small{display:block;color:var(--muted);font-weight:700;font-size:12px}
+.msg{font-weight:700}
+ol.tops{margin:0;padding-inline-start:26px}ol.tops li{display:flex;justify-content:space-between;padding:6px 4px;border-bottom:1px solid var(--line)}ol.tops li:last-child{border:0}
+ol.tops li b{font-family:var(--f-display);direction:ltr;unicode-bidi:isolate}ol.tops li.me{color:var(--gold)}
+ol.tops{list-style-position:outside}
+
+/* playing: the whole screen is the game and nothing moves under your finger */
+body.playing{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:0;background:#1b1350}
+body.playing .gamesbar{display:none}
+body.playing .wrap{max-width:none;height:100%;background:linear-gradient(180deg,#1b1350 0,#211a6b 40%,#123a8a 100%)}
+body.playing #app{height:100%}
+.pl{display:grid;grid-template-columns:100%;grid-template-rows:auto auto auto minmax(0,1fr) auto;grid-template-areas:'top' 'time' 'tools' 'board' 'msg';height:100%;max-width:760px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px));-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ptop{display:flex;align-items:center;gap:8px}
+.ptop .pill{flex:1;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);border-radius:999px;padding:6px 14px;font-weight:800;min-width:0}
+.ptop .pill b{font-family:var(--f-display);font-size:18px;direction:ltr;unicode-bidi:isolate;white-space:nowrap}.ptop .pill b#pi{direction:rtl}
+.ptop .pause{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.16);font-size:20px;display:grid;place-items:center}
+.ptime{height:8px;margin:10px 0 0;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden}.ptime i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff5fd2,#c2187a);border-radius:8px}
+.ptools{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0 4px;font-size:13px;font-weight:800}
+.ptools .hint{background:linear-gradient(135deg,#ff4fa3,#c2187a);border-radius:999px;padding:7px 16px;font-weight:800;font-size:15px}
+.ptop{grid-area:top}.ptime{grid-area:time}.ptools{grid-area:tools}.pmsg{grid-area:msg}
+.pboard{grid-area:board;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}
+/* phone on its side: the buttons go beside the board so the board can use the whole height */
+@media (orientation:landscape) and (max-height:560px){
+  .pl{max-width:none;grid-template-columns:minmax(0,1fr) 250px;grid-template-rows:auto auto auto auto 1fr;grid-template-areas:'board top' 'board time' 'board tools' 'board msg' 'board .';column-gap:16px;padding-inline:calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-right,0px))}
+  .ptools{flex-direction:column;align-items:flex-start}
+  .ptop .pill{padding:6px 10px}.ptop .pill b{font-size:16px}
+  .pmsg{text-align:start}
+}
+.pboard canvas{display:block;touch-action:none;border-radius:12px}
+.pmsg{min-height:1.8em;margin:4px 0 0;text-align:center;font-weight:800;font-size:16px}
+.ov{position:fixed;inset:0;z-index:90;background:rgba(8,10,36,.7);display:grid;place-items:center;padding:16px}
+.ov .box{width:min(360px,100%);background:#1d2160;border:1.5px solid var(--line);border-radius:22px;padding:20px;text-align:center}
+.ov h2{font-family:var(--f-display);margin:0 0 4px}
+</style>
+</head>
+<body class="tv-plain">
+<div class="wrap">
+  <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../../" aria-label="الصفحة الرئيسية"><img src="../../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../../seenjeem/"><img src="../../icons/seenjeem.png" alt="">سين جيم</a><a href="../../outside/"><img src="../../icons/outside.png" alt="">برا السالفة</a><a href="../../sedq/"><img src="../../icons/sedq.png" alt="">صدق ولا كذب</a><a href="../../mf/"><img src="../../icons/mf.png" alt="">مين فينا؟</a><a href="../../draw/"><img src="../../icons/draw.png" alt="">ارسم وخمّن</a><a href="../../dafour/"><img src="../../icons/dafour.png" alt="">الدافور</a><a href="../" class="on"><img src="../../icons/mind.png" alt="">Mind Games</a><a href="../../tv/"><img src="../../icons/tv.png" alt="">شاشة العرض</a></nav>
+  <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../../firebase-config.js?v=202610271728"></script>
+<script src="../../fnfx.js?v=202610271728"></script>
+<script src="../../fnanim.js?v=202610271728"></script>
+<script src="../sync.js?v=202610271728"></script>
+<script src="levels.js?v=202610271728"></script>
+<script src="app.js?v=202610271728"></script>
+</body>
+</html>

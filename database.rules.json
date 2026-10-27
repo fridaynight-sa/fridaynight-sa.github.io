@@ -145,7 +145,23 @@
       "$code": {
         ".read": true,
         ".write": true,
-        ".validate": "$code.matches(/^[A-HJ-NP-Z2-9]{8}$/) && (!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 50000)"
+        ".validate": "$code.matches(/^[A-HJ-NP-Z2-9]{8}$/)",
+        "j": {
+          ".validate": "newData.isString() && newData.val().length < 50000"
+        },
+        "dots": {
+          ".validate": "newData.isString() && newData.val().length < 50000"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "mindu": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.isString() && newData.val().matches(/^[A-HJ-NP-Z2-9]{8}$/)"
       }
     }
   }

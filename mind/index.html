@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
-<link rel="stylesheet" href="mind.css?v=202610251815">
+<link rel="stylesheet" href="mind.css?v=202610271728">
 <style>
 .hero{text-align:center;padding:18px 0 8px}
 .hero img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.55));animation:float 4s ease-in-out infinite}
@@ -40,28 +40,50 @@
   </header>
 
   <a class="mg" href="lamha/">
-    <div class="top"><img src="../icons/lamha.png" alt=""><div><h2>لمحة</h2><p class="sub">تمرين سرعة الالتقاط</p></div><span class="new">جديدة</span></div>
+    <div class="top"><img src="../icons/lamha.png" alt=""><div><h2>لمحة</h2><p class="sub">تمرين سرعة الالتقاط</p></div></div>
     <div class="chips"><span class="chip">⚡ سرعة الالتقاط</span><span class="chip">👀 الانتباه للأطراف</span><span class="chip">⏱️ 3 دقايق</span><span class="chip">👤 لاعب واحد</span></div>
     <div class="best" id="lamhaBest"><span>🏅 ما لعبتها للحين</span></div>
     <span class="go">العب <b>←</b></span>
   </a>
 
+  <a class="mg" href="dots/">
+    <div class="top"><img src="../icons/dots.png" alt=""><div><h2>توصيل النقاط</h2><p class="sub">تمرين التخطيط</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">🧩 التخطيط</span><span class="chip">🗺️ تخيّل الأماكن والطرق</span><span class="chip">⏱️ 10 دقايق</span><span class="chip">👤 لاعب واحد</span></div>
+    <div class="best" id="dotsBest"><span>🏅 ما لعبتها للحين</span><span>📶 400 مستوى</span></div>
+    <span class="go">العب <b>←</b></span>
+  </a>
+
   <div class="card soon">🧩 ألعاب جديدة قريباً</div>
-  <p class="muted small" style="text-align:center">تقدمك ينحفظ في جوالك. وتقدر تاخذ «رمز تقدمك» من داخل كل لعبة عشان ترجعه لو غيّرت جوالك.</p>
+  <div id="sync"></div>
+  <p class="muted small" style="text-align:center">📴 ألعاب Mind Games تشتغل بدون نت بعد ما تفتحها مرة وحدة.</p>
 </div>
-<script src="../fnfx.js?v=202610251815"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../firebase-config.js?v=202610271728"></script>
+<script src="../fnfx.js?v=202610271728"></script>
+<script src="sync.js?v=202610271728"></script>
 <script>
 (function () {
   "use strict";
   // best result of لمحة, read from this phone
   try {
-    const g = JSON.parse(localStorage.getItem("lamha-v1") || "null");
+    // this phone's copy, or one that just came back from «رمز تقدمك» and waits for the game to open
+    const own = JSON.parse(localStorage.getItem("lamha-v1") || "null"), inc = JSON.parse(localStorage.getItem("lamha-v1:in") || "null");
+    const g = own && inc ? { best: Math.min(...[own.best, inc.best].filter(x => x)) || null, days: Object.assign({}, inc.days, own.days) } : (own || inc);
     const el = document.getElementById("lamhaBest");
     if (g && g.best) {
       const mins = Object.values(g.days || {}).reduce((a, b) => a + b, 0);
       el.innerHTML = `<span>🏅 أفضل رقم لك: ${Math.round(g.best)} ملّي ثانية</span><span>📅 ${mins < 60 ? Math.floor(mins) + " دقيقة" : (mins / 60).toFixed(1) + " ساعة"} من 10 ساعات</span>`;
     }
   } catch (e) {}
+  // توصيل النقاط: best score and level
+  try {
+    const own = JSON.parse(localStorage.getItem("dots-v1") || "null"), inc = JSON.parse(localStorage.getItem("dots-v1:in") || "null");
+    const g = own && inc ? { best: Math.max(own.best || 0, inc.best || 0), level: Math.max(own.level || 1, inc.level || 1) } : (own || inc);
+    if (g && (g.best || g.level > 1)) document.getElementById("dotsBest").innerHTML = `<span>🏅 أعلى نتيجة: ${Math.round(g.best || 0).toLocaleString("en-US")}</span><span>📶 المستوى ${Math.min(400, g.level || 1)} من 400</span>`;
+  } catch (e) {}
+  // one «حفظ تقدمك» card for the whole section
+  if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();
   if (self.FX) FX.muteButton();
 })();
 </script>
