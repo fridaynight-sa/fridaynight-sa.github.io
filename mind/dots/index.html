@@ -40,24 +40,24 @@ ol.tops li b{font-family:var(--f-display);direction:ltr;unicode-bidi:isolate}ol.
 ol.tops{list-style-position:outside}
 
 /* playing: the whole screen is the game and nothing moves under your finger */
-body.playing{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:0;background:#1b1350}
+body.playing{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:0;background:#350350}
 body.playing .gamesbar{display:none}
-body.playing .wrap{max-width:none;height:100%;background:linear-gradient(180deg,#1b1350 0,#211a6b 40%,#123a8a 100%)}
+body.playing .wrap{max-width:none;height:100%;background:linear-gradient(180deg,#350350 0,#350350 var(--hh,0px),#42107a var(--hh,0px),#22348c 55%,#0257a0 100%)}
 body.playing #app{height:100%}
 .pl{display:grid;grid-template-columns:100%;grid-template-rows:auto auto auto minmax(0,1fr) auto;grid-template-areas:'top' 'time' 'tools' 'board' 'msg';height:100%;max-width:760px;margin:0 auto;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(10px + env(safe-area-inset-bottom,0px));-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .ptop{display:flex;align-items:center;gap:8px}
 .ptop .pill{flex:1;display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.1);border-radius:999px;padding:6px 14px;font-weight:800;min-width:0}
 .ptop .pill b{font-family:var(--f-display);font-size:18px;direction:ltr;unicode-bidi:isolate;white-space:nowrap}.ptop .pill b#pi{direction:rtl}
-.ptop .pause{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.16);font-size:20px;display:grid;place-items:center}
-.ptime{height:8px;margin:10px 0 0;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden}.ptime i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#ff5fd2,#c2187a);border-radius:8px}
+.ptop .pause{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.22);font-size:20px;display:grid;place-items:center}
+.ptime{height:8px;margin:10px 0 0;background:rgba(255,255,255,.14);border-radius:8px;overflow:hidden}.ptime i{display:block;height:100%;width:100%;background:#c54cb5;border-radius:8px}
 .ptools{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0 4px;font-size:13px;font-weight:800}
-.ptools .hint{background:linear-gradient(135deg,#ff4fa3,#c2187a);border-radius:999px;padding:7px 16px;font-weight:800;font-size:15px}
+.ptools{padding-top:20px}.ptools .hint{background:#cf1073;border-radius:999px;border-start-start-radius:0;border-end-start-radius:0;margin-inline-start:-12px;padding:8px 22px 8px 18px;font-family:var(--f-display);font-weight:800;font-size:17px}
 .ptop{grid-area:top}.ptime{grid-area:time}.ptools{grid-area:tools}.pmsg{grid-area:msg}
 .pboard{grid-area:board;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center}
 /* phone on its side: the buttons go beside the board so the board can use the whole height */
 @media (orientation:landscape) and (max-height:560px){
   .pl{max-width:none;grid-template-columns:minmax(0,1fr) 250px;grid-template-rows:auto auto auto auto 1fr;grid-template-areas:'board top' 'board time' 'board tools' 'board msg' 'board .';column-gap:16px;padding-inline:calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-right,0px))}
-  .ptools{flex-direction:column;align-items:flex-start}
+  .ptools{flex-direction:column;align-items:flex-start;padding-top:12px}.ptools .hint{margin-inline-start:0;border-radius:999px}
   .ptop .pill{padding:6px 10px}.ptop .pill b{font-size:16px}
   .pmsg{text-align:start}
 }

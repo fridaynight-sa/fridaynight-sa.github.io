@@ -9,7 +9,8 @@
   const N = n => Math.round(n).toLocaleString("en-US");
   const rint = n => Math.floor(Math.random() * n);
   const KEY = "dots-v1", PER = 2, TIME = 10 * 60 * 1000, TOTAL = LV.length;
-  const COLORS = ["#ff4d3d", "#ffd43b", "#ff5fd2", "#ff9a1f", "#3ee65a", "#4fe3ff", "#3d8bff", "#a855f7", "#f1f3f5", "#c08457"];
+  // eight bright colours; white and tan only join when a board has 9 or 10 pairs
+  const COLORS = ["#ff4b2b", "#fffd5c", "#ff61e6", "#ff9c00", "#3af31c", "#5df5ff", "#42a8ff", "#a63bff", "#ffffff", "#cf8a52"];
 
   /* ---------------- saved progress ---------------- */
   const fresh = () => ({ v: 1, level: 1, best: 0, top: [], sessions: [], days: {}, first: null });
@@ -43,8 +44,8 @@
   }
 
   /* ---------------- a level ---------------- */
-  function colourMap(lv) {   // the same level always gets the same colours; different levels get different ones
-    const idx = COLORS.map((_, i) => i); let s = (lv * 7919) % 2147483646 + 1;
+  function colourMap(lv, k) {   // the same level always gets the same colours; different levels get different ones
+    const idx = COLORS.slice(0, Math.max(8, k)).map((_, i) => i); let s = (lv * 7919) % 2147483646 + 1;
     for (let i = idx.length - 1; i > 0; i--) { s = (s * 16807) % 2147483647; const j = s % (i + 1); [idx[i], idx[j]] = [idx[j], idx[i]]; }
     return idx;
   }
@@ -58,7 +59,7 @@
       while (cur !== caps[1]) { const nx = nb(cur).find(u => u !== prev && g[u].toLowerCase() === ch); prev = cur; cur = nx; path.push(cur); }
       ends.push(caps); sol.push(path);
     });
-    const map = colourMap(lv);
+    const map = colourMap(lv, k);
     return { lv, n, k, ends, sol, nb, cols: letters.map((_, i) => COLORS[map[i]]) };
   }
 
@@ -145,9 +146,9 @@
   let cv, ctx, CS = 0, dpr = 1;
   function playView() {
     app.innerHTML = `<div class="pl">
-      <div class="ptop"><button type="button" class="pause" data-act="pause" aria-label="إيقاف">⏸️</button><div class="pill"><span>النتيجة</span><b id="sc">0</b></div><div class="pill"><span>لغز</span><b id="pi"></b></div></div>
+      <div class="ptop"><button type="button" class="pause" data-act="pause" aria-label="إيقاف"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="5.5" y="4" width="4.5" height="16" rx="1.6" fill="#fff"/><rect x="14" y="4" width="4.5" height="16" rx="1.6" fill="#fff"/></svg></button><div class="pill"><span>النتيجة</span><b id="sc">0</b></div><div class="pill"><span>لغز</span><b id="pi"></b></div></div>
       <div class="ptime"><i id="tb"></i></div>
-      <div class="ptools"><button type="button" class="hint" data-act="hint">💡 مساعدة</button><span id="lvl" class="muted"></span></div>
+      <div class="ptools"><button type="button" class="hint" data-act="hint">مساعدة</button><span id="lvl" class="muted"></span></div>
       <div class="pboard" id="pb"><canvas id="cv" aria-label="لوحة اللعب"></canvas></div>
       <p class="pmsg" id="pm" role="status"></p></div>`;
     cv = document.getElementById("cv"); ctx = cv.getContext("2d");
@@ -157,7 +158,10 @@
   function fit() {
     const pb = document.getElementById("pb"); if (!pb || !P) return;
     CS = Math.floor(Math.min(pb.clientWidth - 8, pb.clientHeight - 8, 720)); if (CS < 200) CS = Math.min(pb.clientWidth - 8, 300);
-    dpr = Math.min(2, self.devicePixelRatio || 1);
+    dpr = Math.min(3, self.devicePixelRatio || 1);
+    // the dark band behind the top bar (not when the phone is on its side: the bar is beside the board then)
+    const side = matchMedia("(orientation:landscape) and (max-height:560px)").matches, tm = document.querySelector(".ptime");
+    document.body.style.setProperty("--hh", side || !tm ? "0px" : Math.round(tm.getBoundingClientRect().bottom + 10) + "px");
     cv.width = Math.round(CS * dpr); cv.height = Math.round(CS * dpr); cv.style.width = CS + "px"; cv.style.height = CS + "px";
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); draw();
   }
@@ -191,21 +195,20 @@
   /* ---------------- drawing ---------------- */
   function draw() {
     if (!P || !ctx) return;
-    const n = P.n, cs = CS / n, X = i => (i % n) * cs + cs / 2, Y = i => Math.floor(i / n) * cs + cs / 2;
+    // dots and lines the same thickness (a bit less than half a square), like the reference design
+    const n = P.n, cs = CS / n, R = cs * 0.21, X = i => (i % n) * cs + cs / 2, Y = i => Math.floor(i / n) * cs + cs / 2;
     ctx.clearRect(0, 0, CS, CS);
     const occ = occupancy();
-    for (let i = 0; i < n * n; i++) if (occ[i] < 0) { ctx.fillStyle = "rgba(8,10,36,.78)"; ctx.beginPath(); ctx.arc(X(i), Y(i), cs * 0.2, 0, Math.PI * 2); ctx.fill(); }
+    ctx.fillStyle = "rgba(12,20,60,.72)";
+    for (let i = 0; i < n * n; i++) if (occ[i] < 0) { ctx.beginPath(); ctx.arc(X(i), Y(i), R, 0, Math.PI * 2); ctx.fill(); }
     ctx.lineCap = "round"; ctx.lineJoin = "round";
     P.paths.forEach((p, c) => {
       if (p.length < 2) return;
-      ctx.strokeStyle = P.cols[c]; ctx.lineWidth = cs * 0.42; ctx.beginPath();
+      ctx.strokeStyle = P.cols[c]; ctx.lineWidth = R * 2; ctx.beginPath();
       p.forEach((x, j) => j ? ctx.lineTo(X(x), Y(x)) : ctx.moveTo(X(x), Y(x))); ctx.stroke();
     });
-    P.ends.forEach((e, c) => e.forEach(x => {
-      ctx.fillStyle = P.cols[c]; ctx.beginPath(); ctx.arc(X(x), Y(x), cs * 0.33, 0, Math.PI * 2); ctx.fill();
-      if (done(c)) { ctx.strokeStyle = "rgba(255,255,255,.9)"; ctx.lineWidth = Math.max(2, cs * 0.06); ctx.stroke(); }
-    }));
-    if (drag && pt) { ctx.fillStyle = P.cols[drag.c] + "40"; ctx.beginPath(); ctx.arc(pt[0], pt[1], cs * 0.8, 0, Math.PI * 2); ctx.fill(); }
+    P.ends.forEach((e, c) => e.forEach(x => { ctx.fillStyle = P.cols[c]; ctx.beginPath(); ctx.arc(X(x), Y(x), R, 0, Math.PI * 2); ctx.fill(); }));
+    if (drag && pt) { ctx.fillStyle = P.cols[drag.c] + "33"; ctx.beginPath(); ctx.arc(pt[0], pt[1], cs * 0.7, 0, Math.PI * 2); ctx.fill(); }
   }
   function occupancy() {
     const occ = new Int8Array(P.n * P.n).fill(-1);
