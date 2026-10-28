@@ -202,11 +202,13 @@
     } else {
       S.hearts--;
       paintTop();
-      // show all the right squares in green at once (the wrong one stays red if it isn't one of them)
-      $("say").textContent = "❌ غلط، هذي المربعات الصح";
+      // the right order, quickly, one square after another in green (they stay green); the wrong one stays red
+      $("say").textContent = "❌ غلط، هذا الترتيب الصح";
       $("sub").textContent = S.hearts ? `باقي ${S.hearts === 1 ? "قلب واحد" : "قلبين"} · نفس العدد مرة ثانية` : "💔 خلصت القلوب";
-      later(() => S.seq.forEach(p => { const x = tiles()[p]; x.className = "ok"; x.textContent = ""; }), 350);
-      later(() => S.hearts ? trial() : finish(false), 350 + WAIT + 1000);
+      const order = S.back ? S.seq.slice().reverse() : S.seq, FAST = T.fast || 230;
+      tiles().forEach(x => { if (x.className === "ok") x.className = ""; });
+      order.forEach((p, i) => later(() => { const x = tiles()[p]; x.className = "ok pop"; x.textContent = ""; note(p, "sine", 0.14); }, 450 + i * FAST));
+      later(() => S.hearts ? trial() : finish(false), 450 + order.length * FAST + WAIT + 900);
     }
   }
   function finish(top) {
