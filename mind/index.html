@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
-<link rel="stylesheet" href="mind.css?v=202610281750">
+<link rel="stylesheet" href="mind.css?v=202610281854">
 <style>
 .hero{text-align:center;padding:18px 0 8px}
 .hero img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.55));animation:float 4s ease-in-out infinite}
@@ -54,10 +54,10 @@
     <span class="go">العب <b>←</b></span>
   </a>
 
-  <a class="mg" href="nback/">
-    <div class="top"><img src="../icons/nback.png" alt=""><div><h2>تذكّر المربعات</h2><p class="sub">تمرين الذاكرة العاملة</p></div><span class="new">جديدة</span></div>
-    <div class="chips"><span class="chip">🧠 الذاكرة العاملة</span><span class="chip">🎯 التركيز</span><span class="chip">⏱️ 5 دقايق</span><span class="chip">🎧 فيها نسخة مزدوجة</span></div>
-    <div class="best" id="nbBest"><span>🏅 ما لعبتها للحين</span></div>
+  <a class="mg" href="squares/">
+    <div class="top"><img src="../icons/squares.png" alt=""><div><h2>تذكّر المربعات</h2><p class="sub">تمرين ذاكرة الأماكن والترتيب</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">🗺️ ذاكرة الأماكن</span><span class="chip">🔢 تذكّر الترتيب</span><span class="chip">⏱️ 3 دقايق</span><span class="chip">🔁 فيها نسخة بالعكس</span></div>
+    <div class="best" id="sqBest"><span>🏅 ما لعبتها للحين</span></div>
     <span class="go">العب <b>←</b></span>
   </a>
 
@@ -67,9 +67,9 @@
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610281750"></script>
-<script src="../fnfx.js?v=202610281750"></script>
-<script src="sync.js?v=202610281750"></script>
+<script src="../firebase-config.js?v=202610281854"></script>
+<script src="../fnfx.js?v=202610281854"></script>
+<script src="sync.js?v=202610281854"></script>
 <script>
 (function () {
   "use strict";
@@ -97,12 +97,11 @@
     el.textContent = s === "ready" ? "✅ Mind Games جاهزة تشتغل بدون نت على هالجهاز." : s === "wait" ? "⏳ نجهز Mind Games عشان تشتغل بدون نت… خلك على النت لحظات." : "";
   };
   net(); offl(); addEventListener("online", net); addEventListener("offline", net); addEventListener("mindoffline", offl);
-  // تذكّر المربعات: best average for each way of playing
+  // تذكّر المربعات: the longest row for each way of playing
   try {
-    const own = JSON.parse(localStorage.getItem("nback-v1") || "null"), inc = JSON.parse(localStorage.getItem("nback-v1:in") || "null");
+    const own = JSON.parse(localStorage.getItem("squares-v1") || "null"), inc = JSON.parse(localStorage.getItem("squares-v1:in") || "null");
     const b = m => Math.max(((own || {}).best || {})[m] || 0, ((inc || {}).best || {})[m] || 0);
-    const f = x => (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, "");
-    if (b("one") || b("two")) document.getElementById("nbBest").innerHTML = (b("one") ? `<span>🏅 عادية: قبل ${f(b("one"))}</span>` : "") + (b("two") ? `<span>🎧 مزدوجة: قبل ${f(b("two"))}</span>` : "");
+    if (b("one") || b("back")) document.getElementById("sqBest").innerHTML = (b("one") ? `<span>🏅 بنفس الترتيب: ${b("one")} مربعات</span>` : "") + (b("back") ? `<span>🔁 بالعكس: ${b("back")} مربعات</span>` : "");
   } catch (e) {}
   // one «حفظ تقدمك» card for the whole section
   if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();

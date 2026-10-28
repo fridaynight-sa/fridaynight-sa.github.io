@@ -10,7 +10,7 @@
   "use strict";
   const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", OK = /^[A-HJ-NP-Z2-9]{8}$/;
   const CODE = "mind-code", DIRTY = "mind-dirty";
-  const KEYS = { j: "lamha-v1", dots: "dots-v1", nback: "nback-v1" };          // field online → where that game saves on this phone
+  const KEYS = { j: "lamha-v1", dots: "dots-v1", squares: "squares-v1" };          // field online → where that game saves on this phone
   const ls = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
