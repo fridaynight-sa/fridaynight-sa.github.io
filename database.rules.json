@@ -152,8 +152,8 @@
         "dots": {
           ".validate": "newData.isString() && newData.val().length < 50000"
         },
-        "$other": {
-          ".validate": false
+        "$game": {
+          ".validate": "$game.matches(/^[a-z]{2,12}$/) && newData.isString() && newData.val().length < 50000"
         }
       }
     },

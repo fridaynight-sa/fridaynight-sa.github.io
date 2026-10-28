@@ -48,9 +48,16 @@
   </a>
 
   <a class="mg" href="dots/">
-    <div class="top"><img src="../icons/dots.png" alt=""><div><h2>توصيل النقاط</h2><p class="sub">تمرين التخطيط</p></div><span class="new">جديدة</span></div>
+    <div class="top"><img src="../icons/dots.png" alt=""><div><h2>توصيل النقاط</h2><p class="sub">تمرين التخطيط</p></div></div>
     <div class="chips"><span class="chip">🧩 التخطيط</span><span class="chip">🗺️ تخيّل الأماكن والطرق</span><span class="chip">⏱️ 10 دقايق</span><span class="chip">👤 لاعب واحد</span></div>
     <div class="best" id="dotsBest"><span>🏅 ما لعبتها للحين</span><span>📶 400 مستوى</span></div>
+    <span class="go">العب <b>←</b></span>
+  </a>
+
+  <a class="mg" href="nback/">
+    <div class="top"><img src="../icons/nback.png" alt=""><div><h2>قبل كم؟</h2><p class="sub">تمرين الذاكرة العاملة</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">🧠 الذاكرة العاملة</span><span class="chip">🎯 التركيز</span><span class="chip">⏱️ 5 دقايق</span><span class="chip">🎧 فيها نسخة مزدوجة</span></div>
+    <div class="best" id="nbBest"><span>🏅 ما لعبتها للحين</span></div>
     <span class="go">العب <b>←</b></span>
   </a>
 
@@ -90,6 +97,13 @@
     el.textContent = s === "ready" ? "✅ Mind Games جاهزة تشتغل بدون نت على هالجهاز." : s === "wait" ? "⏳ نجهز Mind Games عشان تشتغل بدون نت… خلك على النت لحظات." : "";
   };
   net(); offl(); addEventListener("online", net); addEventListener("offline", net); addEventListener("mindoffline", offl);
+  // قبل كم؟: best average for each way of playing
+  try {
+    const own = JSON.parse(localStorage.getItem("nback-v1") || "null"), inc = JSON.parse(localStorage.getItem("nback-v1:in") || "null");
+    const b = m => Math.max(((own || {}).best || {})[m] || 0, ((inc || {}).best || {})[m] || 0);
+    const f = x => (Math.round(x * 10) / 10).toFixed(1).replace(/\.0$/, "");
+    if (b("one") || b("two")) document.getElementById("nbBest").innerHTML = (b("one") ? `<span>🏅 عادية: قبل ${f(b("one"))}</span>` : "") + (b("two") ? `<span>🎧 مزدوجة: قبل ${f(b("two"))}</span>` : "");
+  } catch (e) {}
   // one «حفظ تقدمك» card for the whole section
   if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();
   if (self.FX) FX.muteButton();

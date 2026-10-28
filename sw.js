@@ -32,9 +32,10 @@ self.addEventListener("fetch", e => {
    With no internet at all, any other page of the site opens Mind Games instead (the group games need internet). */
 const MIND = "mind-v1";
 const MIND_FILES = ["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js",
-  "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js", "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png",
-  ...["mind", "lamha", "dots", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)];
-const MIND_MUST = 9;                     // the first nine files: without them the games can't open offline
+  "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js", "mind/nback/", "mind/nback/app.js",
+  "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png",
+  ...["mind", "lamha", "dots", "nback", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)];
+const MIND_MUST = 11;                    // the first eleven files: without them the games can't open offline
 const MIND_CDN = ["app", "database", "auth"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`);
 async function cacheMind() {
   const c = await caches.open(MIND), root = self.registration.scope;
