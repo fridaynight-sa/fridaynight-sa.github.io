@@ -202,17 +202,11 @@
     } else {
       S.hearts--;
       paintTop();
-      // play the right order again (in the order you had to tap); the ones you missed stay outlined
-      const order = S.back ? S.seq.slice().reverse() : S.seq, k = S.k, step = Math.round(ON * 0.7);
-      $("say").textContent = "❌ غلط، شوف الترتيب الصح";
+      // show all the right squares in green at once (the wrong one stays red if it isn't one of them)
+      $("say").textContent = "❌ غلط، هذي المربعات الصح";
       $("sub").textContent = S.hearts ? `باقي ${S.hearts === 1 ? "قلب واحد" : "قلبين"} · نفس العدد مرة ثانية` : "💔 خلصت القلوب";
-      let t = 600;
-      order.forEach((p, i) => {
-        later(() => { tiles()[p].className = "on"; tiles()[p].textContent = ""; note(p); }, t);
-        later(() => { tiles()[p].className = i < k ? "ok" : "was"; }, t + step);
-        t += step + GAP;
-      });
-      later(() => S.hearts ? trial() : finish(false), t + WAIT);
+      later(() => S.seq.forEach(p => { const x = tiles()[p]; x.className = "ok"; x.textContent = ""; }), 350);
+      later(() => S.hearts ? trial() : finish(false), 350 + WAIT + 1000);
     }
   }
   function finish(top) {
