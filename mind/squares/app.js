@@ -11,7 +11,6 @@
   const T = self.SQ_TEST || {};   // only the automatic tests set this, to play faster
   const KEY = "squares-v1", HEARTS = 3, MAX = 9, FIRST = 3, ON = T.on || 650, GAP = T.gap || 250, WAIT = T.wait || 900;
   const MODES = { one: "بنفس الترتيب", back: "بالعكس" };
-  const AR = n => String(n);   // the numbers on the squares (1 2 3, like the rest of the site)
 
   /* ---------------- saved progress ---------------- */
   const fresh = () => ({ v: 1, mode: "one", best: { one: 0, back: 0 }, last: { one: 0, back: 0 }, sessions: [], days: {}, first: null });
@@ -69,7 +68,7 @@
     </div></div>`;
   }
   function strip(back) {   // the example: 1 → 2 → 3 light up, then you tap them
-    const g = (marks) => `<div class="g">${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => marks[i] ? `<i class="${marks[i][0]}">${marks[i][1]}</i>` : "<i></i>").join("")}</div>`;
+    const g = (marks) => `<div class="g">${[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => marks[i] ? `<i class="${marks[i][0]}"></i>` : "<i></i>").join("")}</div>`;
     const tap = { 0: ["ok", "1"], 7: ["ok", "2"], 4: ["ok", "3"] };
     return `<div class="strip"><div class="s">${g({ 0: ["on", "1"] })}<small>ينوّر 1</small></div><span class="arrow">←</span><div class="s">${g({ 7: ["on", "2"] })}<small>ينوّر 2</small></div><span class="arrow">←</span><div class="s">${g({ 4: ["on", "3"] })}<small>ينوّر 3</small></div><span class="arrow">←</span><div class="s">${g(tap)}<small>${back ? "تضغط 3 ← 2 ← 1" : "تضغط 1 ← 2 ← 3"}</small></div></div>`;
   }
@@ -165,8 +164,8 @@
     tiles().forEach(b => { b.className = ""; b.textContent = ""; b.disabled = true; });
     let t = 700;
     S.seq.forEach((p, i) => {
-      later(() => { const b = tiles()[p]; b.className = "on"; b.textContent = AR(i + 1); note(p); }, t);
-      later(() => { const b = tiles()[p]; b.className = ""; b.textContent = ""; }, t + ON);
+      later(() => { tiles()[p].className = "on"; note(p); }, t);
+      later(() => { tiles()[p].className = ""; }, t + ON);
       t += ON + GAP;
     });
     later(() => {
@@ -181,7 +180,7 @@
     if (!S || S.paused || S.phase !== "input") return;
     const want = S.back ? S.seq[S.seq.length - 1 - S.k] : S.seq[S.k], b = tiles()[p];
     if (p === want) {
-      S.k++; b.className = "ok"; b.textContent = AR(S.seq.indexOf(p) + 1); note(p, "sine", 0.2);
+      S.k++; b.className = "ok"; note(p, "sine", 0.2);
       $("sub").textContent = (S.back ? "من آخر واحد نوّر · " : "") + `ضغطت ${S.k} من ${S.len}`;
       if (S.k === S.len) done(true);
     } else {
@@ -203,12 +202,17 @@
     } else {
       S.hearts--;
       paintTop();
-      // show the right order on the squares you didn't get
-      const order = S.back ? S.seq.slice().reverse() : S.seq;
-      order.forEach((p, i) => { const x = tiles()[p]; if (i >= S.k && x.className !== "bad") { x.className = "was"; x.textContent = AR(S.seq.indexOf(p) + 1); } });
-      $("say").textContent = S.hearts ? "❌ غلط، هذا الترتيب الصح" : "💔 خلصت القلوب";
-      $("sub").textContent = S.hearts ? `باقي ${S.hearts === 1 ? "قلب واحد" : "قلبين"} · نفس العدد مرة ثانية` : "";
-      later(() => S.hearts ? trial() : finish(false), WAIT + 1300);
+      // play the right order again (in the order you had to tap); the ones you missed stay outlined
+      const order = S.back ? S.seq.slice().reverse() : S.seq, k = S.k, step = Math.round(ON * 0.7);
+      $("say").textContent = "❌ غلط، شوف الترتيب الصح";
+      $("sub").textContent = S.hearts ? `باقي ${S.hearts === 1 ? "قلب واحد" : "قلبين"} · نفس العدد مرة ثانية` : "💔 خلصت القلوب";
+      let t = 600;
+      order.forEach((p, i) => {
+        later(() => { tiles()[p].className = "on"; tiles()[p].textContent = ""; note(p); }, t);
+        later(() => { tiles()[p].className = i < k ? "ok" : "was"; }, t + step);
+        t += step + GAP;
+      });
+      later(() => S.hearts ? trial() : finish(false), t + WAIT);
     }
   }
   function finish(top) {
