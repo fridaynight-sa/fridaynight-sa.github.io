@@ -1,4 +1,4 @@
-/* قبل كم؟ — a working-memory exercise (n-back). A square lights up every 2.5 s; press «نفس المكان» when it
+/* تذكّر المربعات — a working-memory exercise (n-back). A square lights up every 2.5 s; press «نفس المكان» when it
    is the same square as N steps back. «مزدوجة» adds a sound with every step: press «نفس الصوت» when the
    sound is the same as N steps back. After each round N goes up (fewer than 3 mistakes in every part) or
    down (more than 5 in any part). No stages: each session starts where the last one ended, and the number
@@ -95,7 +95,7 @@
   };
   function introView() {
     const m = G.mode, best = G.best[m];
-    app.innerHTML = `<header class="hero"><img src="../../icons/nback.png" alt=""><h1>قبل كم؟</h1><p>تمرين الذاكرة العاملة</p></header>
+    app.innerHTML = `<header class="hero"><img src="../../icons/nback.png" alt=""><h1>تذكّر المربعات</h1><p>تمرين الذاكرة العاملة</p></header>
       <div class="card record"><div><small>🏅 رقمك اللي تكسره (${MODES[m]})</small><span class="muted small">أعلى «قبل» عبرتها بأقل من 3 أغلاط</span></div><b>${best ? "قبل " + best : "🎯"}</b></div>
       <div class="seg" role="radiogroup" aria-label="نوع اللعب">
         <button type="button" data-mode="one" class="${m === "one" ? "on" : ""}" aria-pressed="${m === "one"}">عادية<small>تتابع المكان</small></button>

@@ -55,7 +55,7 @@
   </a>
 
   <a class="mg" href="nback/">
-    <div class="top"><img src="../icons/nback.png" alt=""><div><h2>قبل كم؟</h2><p class="sub">تمرين الذاكرة العاملة</p></div><span class="new">جديدة</span></div>
+    <div class="top"><img src="../icons/nback.png" alt=""><div><h2>تذكّر المربعات</h2><p class="sub">تمرين الذاكرة العاملة</p></div><span class="new">جديدة</span></div>
     <div class="chips"><span class="chip">🧠 الذاكرة العاملة</span><span class="chip">🎯 التركيز</span><span class="chip">⏱️ 5 دقايق</span><span class="chip">🎧 فيها نسخة مزدوجة</span></div>
     <div class="best" id="nbBest"><span>🏅 ما لعبتها للحين</span></div>
     <span class="go">العب <b>←</b></span>
@@ -97,7 +97,7 @@
     el.textContent = s === "ready" ? "✅ Mind Games جاهزة تشتغل بدون نت على هالجهاز." : s === "wait" ? "⏳ نجهز Mind Games عشان تشتغل بدون نت… خلك على النت لحظات." : "";
   };
   net(); offl(); addEventListener("online", net); addEventListener("offline", net); addEventListener("mindoffline", offl);
-  // قبل كم؟: best average for each way of playing
+  // تذكّر المربعات: best average for each way of playing
   try {
     const own = JSON.parse(localStorage.getItem("nback-v1") || "null"), inc = JSON.parse(localStorage.getItem("nback-v1:in") || "null");
     const b = m => Math.max(((own || {}).best || {})[m] || 0, ((inc || {}).best || {})[m] || 0);
