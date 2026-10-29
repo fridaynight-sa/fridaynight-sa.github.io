@@ -48,6 +48,9 @@ body.playing #app{height:100%}
 .cw i.f{background:linear-gradient(160deg,#8f75ff,#4a9dff);border-color:rgba(255,255,255,.45);box-shadow:0 4px 12px rgba(80,90,255,.35),inset 0 -3px 0 rgba(0,0,0,.18)}
 .cw i.new{background:linear-gradient(160deg,#ffe066,#ffae1e);color:#2b1745;border-color:#fff;box-shadow:0 0 18px rgba(255,212,59,.6);animation:pop .35s cubic-bezier(.2,1.6,.4,1) both}
 .cw i.h{color:#ffd43b}
+.cw i{position:relative}
+.cw i.j::after{content:"✨";position:absolute;top:calc(var(--cs)*-.18);left:calc(var(--cs)*-.14);font-size:calc(var(--cs)*.36);line-height:1;filter:drop-shadow(0 0 4px rgba(255,212,59,.8))}
+.cw i[data-jw]{cursor:pointer}
 .cw i.h.flash{animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
 .cw i.again{animation:nudge .45s}
 @keyframes pop{from{transform:scale(.4)}}

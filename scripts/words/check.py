@@ -43,6 +43,6 @@ for l in L:
     if len(set(ws)) != len(ws): err.append("word twice")
     if bases[l["base"]] > 1: err.append("base repeated")
     if sets["".join(sorted(l["letters"]))] > 1: err.append("letter set repeated")
-    if set(ws) & set(l["bonus"]): err.append("bonus overlaps grid")
+    if set(ws) & set(l.get("bonus", [])): err.append("bonus overlaps grid")
     if err: bad += 1; print(l["n"], l["base"], err)
 print(len(L), "levels checked,", bad, "with problems")

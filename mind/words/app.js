@@ -10,16 +10,17 @@
   const $ = id => document.getElementById(id);
   const LV = self.WORDS_LEVELS || [], MEAN = self.WORDS_MEAN || [], N = LV.length;
   const DICT = new Set((self.WORDS_DICT || "").split(" "));   // real words: «كلمة إضافية» when they are not in the board
+  const CLUE = self.WORDS_CLUE || {};                          // classical words: their meaning, shown when tapped
   const T = self.WORDS_TEST || {};   // only the automatic tests set this
   const KEY = "words-v1", HINT = 5, START = 10, OWNER = "words-owner";
   // the owner's secret code (5 taps on the level number): only its PBKDF2 hash is here, never the code
   const OWNER_HASH = "a9b74395a868a7860184bb3c80138eea1442f47d6ee1b7263fe0f7c158027ead";
 
   /* ---------------- the levels ---------------- */
-  // "letters|rows|cols|word,r,c,d;word,r,c,d" · d = h (right to left) or v (top to bottom)
+  // "letters|rows|cols|word,r,c,d[,j];…" · d = h (right to left) or v (top to bottom) · j = a classical word
   function parse(n) {
     const [letters, h, w, ws] = LV[n - 1].split("|");
-    const words = ws.split(";").map(x => { const [t, r, c, d] = x.split(","); return { t, r: +r, c: +c, d }; });
+    const words = ws.split(";").map(x => { const [t, r, c, d, j] = x.split(","); return { t, r: +r, c: +c, d, j: j === "j" }; });
     const cells = {};
     words.forEach((wd, i) => {
       wd.keys = [...wd.t].map((ch, k) => {
@@ -28,7 +29,9 @@
         return key;
       });
     });
-    return { n, letters: [...letters], h: +h, w: +w, words, cells };
+    // a classical word shows its first letter from the start (✨), and its meaning when you tap it
+    const given = new Set(words.filter(x => x.j).map(x => x.keys[0]));
+    return { n, letters: [...letters], h: +h, w: +w, words, cells, given, sig: letters + "|" + ws };
   }
 
   /* ---------------- saved progress ---------------- */
@@ -119,6 +122,7 @@
         <li>إذا الكلمة من كلمات اللوحة، تنكتب في مكانها. عبّي اللوحة كلها وتخلص المستوى.</li>
         <li>إذا هي كلمة صحيحة بس مو في اللوحة، تنحسب لك <b>كلمة إضافية</b> وتاخذ ⭐.</li>
         <li>💡 المساعدة تكشف لك حرف بـ ${HINT} ⭐، و🔀 يخلط الحروف عشان تشوفها بشكل جديد.</li>
+        <li>✨ من المستوى 101 تجيك كلمات فصيحة جزلة: أول حرف منها ظاهر، واضغط على مربعاتها تشوف معناها ببلاش.</li>
         <li>كل مستوى تخلّصه يعطيك ⭐، وبعده تتعلم <b>كلمة ومعناها</b>.</li>
         <li>على الكمبيوتر: تقدر تكتب الحروف بالكيبورد وتضغط Enter.</li></ul></div>
       ${self.MindSync ? MindSync.card() : ""}`;
@@ -137,6 +141,7 @@
       ${self.MindSync && MindSync.code() ? `<p class="tip">🔑 رمز تقدمك: <b style="direction:ltr;unicode-bidi:isolate">${MindSync.show(MindSync.code())}</b></p>` : ""}</div>`;
   }
   function render() {
+    document.querySelectorAll(".toast").forEach(x => x.remove());   // a message from the last screen
     document.body.classList.toggle("playing", view === "play");
     if (view === "play") return playView();
     (view === "end" ? endView : introView)();
@@ -147,7 +152,10 @@
     if (allDone()) { view = "intro"; render(); return; }
     ac();
     const L = parse(G.level);
+    // a level half done on this phone, but the level itself changed since (an update): start it again
+    if (G.cur && G.cur.n === L.n && (G.cur.k ? G.cur.k !== L.sig : L.n > 100)) G.cur = null;
     if (!G.cur || G.cur.n !== L.n) G.cur = { n: L.n, f: [], b: [], h: [] };
+    G.cur.k = L.sig;
     const pos = L.letters.map((_, i) => i);
     S = { L, pos, sel: [], ptr: null, lock: false, paused: false, taps: [] };
     if (!G.first) G.first = dayKey();
@@ -157,6 +165,8 @@
     setTimeout(fit, 350); setTimeout(fit, 1200);   // iPhone: the toolbars finish moving after the page changes
     // a level the phone left half done: words that were already complete count again
     autoFound();
+    if (L.given.size) { let seen = null; try { seen = localStorage.getItem("words-tip-j"); } catch (e) {}
+      if (!seen) { setTimeout(() => toast("✨ كلمة فصيحة! أول حرف منها ظاهر، واضغط على مربعاتها تشوف معناها.", 6000), 700); try { localStorage.setItem("words-tip-j", "1"); } catch (e) {} } }
   }
   function playView() {
     app.innerHTML = `<div class="pl">
@@ -174,8 +184,8 @@
     w.addEventListener("pointerdown", down); w.addEventListener("pointermove", move);
     w.addEventListener("pointerup", up); w.addEventListener("pointercancel", up);
   }
-  const shown = () => {   // cells you can read: in a found word, or opened by a hint
-    const s = new Set(G.cur.h);
+  const shown = () => {   // cells you can read: in a found word, opened by a hint, or a classical word's first letter
+    const s = new Set([...G.cur.h, ...S.L.given]);
     G.cur.f.forEach(i => S.L.words[i].keys.forEach(k => s.add(k)));
     return s;
   };
@@ -189,8 +199,11 @@
       if (!cell) { h += "<i></i>"; continue; }
       if (fr.has(k)) h += `<i class="c f new" style="animation-delay:${L.words[neu].keys.indexOf(k) * 70}ms">${esc(cell.ch)}</i>`;
       else if (found.has(k)) h += `<i class="c f${ag.has(k) ? " again" : ""}">${esc(cell.ch)}</i>`;
-      else if (vis.has(k)) h += `<i class="c h">${esc(cell.ch)}</i>`;
-      else h += `<i class="c" data-cell="${k}"></i>`;
+      else {
+        const jw = cell.ws.find(i => L.words[i].j && !G.cur.f.includes(i));   // part of a classical word: tap for its meaning
+        const tag = jw != null ? ` data-jw="${jw}"` : "", star = L.given.has(k) && jw != null ? " j" : "";
+        h += vis.has(k) ? `<i class="c h${star}"${tag}>${esc(cell.ch)}</i>` : `<i class="c${star}" data-cell="${k}"${tag}></i>`;
+      }
     }
     el.style.gridTemplateColumns = `repeat(${L.w},var(--cs))`;
     el.innerHTML = h;
@@ -464,7 +477,16 @@
   }
 
   /* ---------------- buttons and keys ---------------- */
+  function clue(i) {
+    const w = S.L.words[i], m = CLUE[w.t];
+    if (!m) return;
+    const n = [...w.t].length;
+    toast(`✨ كلمة فصيحة من ${n} ${n <= 10 ? "حروف" : "حرف"}: ${m}`, 4200);
+    tone(880, 0, 0.15, "sine", 0.08);
+  }
   document.addEventListener("click", e => {
+    const jc = view === "play" && S && e.target.closest("#cw [data-jw]");
+    if (jc) { clue(+jc.dataset.jw); return; }
     const b = e.target.closest("[data-act]"); if (!b) return;
     const a = b.dataset.act;
     if (a === "start") startLevel();
