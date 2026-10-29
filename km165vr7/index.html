@@ -90,6 +90,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .hide img{width:30px;height:30px;object-fit:contain;flex:none}.hide span{flex:1}
 .hide button{border:2px solid var(--ink);background:#dcf7ea;border-radius:999px;padding:2px 10px;font:800 13px var(--f-body);cursor:pointer;white-space:nowrap}
 .hide button[aria-pressed=true]{background:var(--ink);color:#fff}.hide button:disabled{opacity:.55}
+.card.rules{border-color:var(--purple);box-shadow:5px 5px 0 var(--purple)}
+.msg a{color:inherit;text-decoration:underline}
 /* text and picture next to a name */
 .tagl{color:var(--purple)}.mine{font:800 12px var(--f-body);color:var(--muted);background:#f1e8ff;border-radius:999px;padding:0 8px}
 .me .row input{font:800 18px var(--f-body);letter-spacing:0}
@@ -105,7 +107,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291546"></script>
+<script src="../firebase-config.js?v=202610291555"></script>
 <script>
 (function () {
   "use strict";
@@ -126,7 +128,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     return `${DAYS[t.getUTCDay()]} <bdi>${t.getUTCDate()}/${t.getUTCMonth() + 1}</bdi> الساعة <bdi>${h % 12 || 12}:${String(m).padStart(2, "0")}</bdi> ${h < 12 ? "ص" : "م"}`; };
 
   let auth = null, user = null, data = null, dur = "day", flash = null;
-  let editing = null, banning = null, tagging = null, allDev = false;   // «مين دخل»: the phone being named / stopped / given a text, show every phone
+  let editing = null, banning = null, tagging = null, allDev = false, rflash = null;   // «مين دخل»: the phone being named / stopped / given a text, show every phone
   const myDev = (() => { try { return (JSON.parse(localStorage.getItem("fn-dev") || "null") || {}).id || ""; } catch (e) { return ""; } })();
   const glyphs = v => self.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(v)].length : [...v].length;
   const cleanTag = v => String(v || "").replace(/[\u2060·]/g, "").replace(/\s+/g, " ").trim();
@@ -149,11 +151,13 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg, tags, users] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), call("cfg").catch(() => null), soft("tag"), soft("users")]);
+    const [dev, names, bans, cfg0, tags, users] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users")]);
+    const cfg = cfg0 === NO ? null : cfg0;
     const byDev = {};                                             // phone → the Google account signed in on it
     Object.entries(users && users !== NO ? users : {}).forEach(([uid, u]) => Object.keys((u && u.d) || {}).forEach(d => { if (!byDev[d] || (u.t || 0) > (byDev[d].t || 0)) byDev[d] = Object.assign({ uid }, u); }));
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
-      bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev };
+      bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev,
+      need: [dev, names, bans, cfg0, tags, users].includes(NO) };
   }
 
   /* ---------- screens ---------- */
@@ -223,6 +227,35 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   }
   const paintWho = () => { const el = $("who"); if (el) el.innerHTML = who(); const i = $("nmIn") || $("tgIn"); if (i) i.focus(); };
 
+  /* ---------- the database rules in one tap ---------- */
+  // Google gives this page, for this one time, the right to change the database settings (the owner's account owns the
+  // project); the page sends database.rules.json from the site. Nothing of it is kept. If it can't, the steps by hand.
+  const MANUAL = "https://raw.githubusercontent.com/fridaynight-sa/fridaynight-sa.github.io/main/database.rules.json";
+  function rulesCard() {
+    return `<button type="button" class="btn" data-a="rules">طبّق القواعد (ضغطة وحدة)</button>
+      <p class="small">بيطلع لك Google يسألك تسمح للوحة تعدّل قاعدة البيانات، وافق. ولو طلع «التطبيق مو موثّق»، اضغط «Advanced» أو «خيارات متقدمة» وبعدها كمّل، لأنه مشروعك أنت.</p>
+      <p class="msg" id="rmsg" role="status"></p>`;
+  }
+  async function applyRules(b) {
+    const m = $("rmsg"), say = (t, ok) => { m.innerHTML = t; m.className = "msg " + (ok ? "ok" : "err"); };
+    b.disabled = true; say("لحظة…", true);
+    try {
+      const p = new firebase.auth.GoogleAuthProvider();
+      p.addScope("https://www.googleapis.com/auth/firebase.database"); p.addScope("https://www.googleapis.com/auth/userinfo.email");
+      const res = await user.reauthenticateWithPopup(p);
+      const tok = res && res.credential && res.credential.accessToken; if (!tok) throw "token";
+      const text = await fetch("../database.rules.json?t=" + Date.now(), { cache: "no-store" }).then(r => r.ok ? r.text() : Promise.reject("file"));
+      JSON.parse(text);
+      const r = await fetch(DB + "/.settings/rules.json?access_token=" + encodeURIComponent(tok), { method: "PUT", body: text });
+      if (!r.ok) throw "put " + r.status;
+      say("✅ انطبقت القواعد.", true); rflash = "✅ انطبقت القواعد."; setTimeout(open, 1000);
+    } catch (err) {
+      b.disabled = false;
+      if (/popup-closed|cancelled-popup/.test((err && err.code) || "")) { say(""); return; }
+      say(`ما ضبطت بالضغطة. الصقها بيدك: افتح <a href="${MANUAL}" target="_blank" rel="noopener">هذا الرابط</a>، وانسخ كل اللي فيه، والصقه في Firebase ← Realtime Database ← Rules ← Publish.`);
+    }
+  }
+
   /* ---------- «اسمك في الألعاب»: the owner's text and picture ---------- */
   function meCard() {
     const t = data.me.t || "", img = typeof data.me.img === "string" ? data.me.img : "";
@@ -272,6 +305,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const n = live(d.notice) ? d.notice : null;
     app.innerHTML = `<h1>🔐 لوحة المدير</h1>
       <div class="who">✅ داخل بحسابك <button type="button" data-a="out">اطلع</button></div>
+      ${rflash ? `<p class="msg ok">${esc(rflash)}${d.need ? " بس فيه أقسام للحين ما اشتغلت، جرّب مرة ثانية بعد دقيقة." : " كل الأقسام شغالة."}</p>` : ""}
+      ${d.need ? `<section class="card rules"><h2>🛠️ فيه قواعد جديدة ما انطبقت</h2>${rulesCard()}</section>` : ""}
 
       <section class="card"><h2>📊 الزوار <button type="button" class="re" data-a="re">🔄 حدّث</button></h2>
         <div class="nums">
@@ -320,8 +355,10 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <div class="row"><input id="lv" inputmode="numeric" maxlength="3" aria-label="رقم المستوى" placeholder="300"><button type="button" class="btn" data-a="jump">انتقل</button></div>
         <p class="msg err" id="lmsg" role="status"></p>
       </section>
+      <section class="card rules"><h2>🛠️ قواعد قاعدة البيانات</h2>${d.need ? `<p class="small" style="margin:0">فوق في أول الصفحة.</p>` : `<p class="small" style="margin:0 0 4px">✅ كل الأقسام شغالة. لو قلت لك «فيه قواعد جديدة»، اضغط هنا:</p>${rulesCard()}`}</section>
       <a class="home" href="../">الصفحة الرئيسية</a>`;
     if (flash) { const m = $("nmsg"); m.textContent = flash; m.className = "msg ok"; flash = null; }
+    rflash = null;
   }
   function preview() {
     const v = ($("nt") || {}).value || "", pv = $("pv"); if (!pv) return;
@@ -360,6 +397,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     }
     else if (a === "out") { if (auth) await auth.signOut().catch(() => {}); }
     else if (a === "re") open();
+    else if (a === "rules") applyRules(b);
     else if (a === "copy") {
       const m = $("cmsg");
       try { await navigator.clipboard.writeText(user.uid); m.textContent = "✅ انتسخ. الصقه في رسالتك لكلود."; }
