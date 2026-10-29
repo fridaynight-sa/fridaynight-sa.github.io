@@ -100,6 +100,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .av .none{display:grid;place-items:center;font-size:28px}
 .av .btns{display:flex;flex-direction:column;gap:6px;flex:1}.av .btn{margin:0;padding:8px;font-size:15px}
 .look{margin-top:12px;background:var(--bg);border:2px dashed var(--ink);border-radius:14px;padding:8px 12px;font-weight:800}
+.fn-tag{display:inline-block;margin-inline-start:.15em;padding:0 .55em;border-radius:999px;font-size:.78em;font-weight:800;line-height:1.55;vertical-align:.12em;background:#efe7ff;color:#5b21b6;border:1.5px solid #5b21b6;white-space:nowrap}
+.fn-tag.own{background:#ffb21e;color:#2b1745;border-color:#2b1745}
 .look img{width:2em;height:2em;border-radius:50%;object-fit:cover;vertical-align:-.6em;margin-inline:.25em;border:2px solid var(--gold)}
 </style>
 </head>
@@ -107,7 +109,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291606"></script>
+<script src="../firebase-config.js?v=202610291624"></script>
 <script>
 (function () {
   "use strict";
@@ -131,7 +133,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   let editing = null, banning = null, tagging = null, allDev = false, rflash = null;   // «مين دخل»: the phone being named / stopped / given a text, show every phone
   const myDev = (() => { try { return (JSON.parse(localStorage.getItem("fn-dev") || "null") || {}).id || ""; } catch (e) { return ""; } })();
   const glyphs = v => self.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(v)].length : [...v].length;
-  const cleanTag = v => String(v || "").replace(/[\u2060·]/g, "").replace(/\s+/g, " ").trim();
+  const cleanTag = v => String(v || "").replace(/[\u2060\u2063\u2064·]/g, "").replace(/\s+/g, " ").trim();
   const MARK = "\u2060";        // a phone whose text is this mark is the owner's (see fnstats.js)
   const NO = "no-rules";                                          // a part the database rules don't open yet
   const NEED = "هذا القسم يحتاج لصق قواعد Firebase الجديدة.";
@@ -209,7 +211,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const tagLine = tagging === id
       ? `<div class="nf" style="margin-top:6px"><input id="tgIn" maxlength="30" value="${esc(tg || "")}" placeholder="مثلاً: الهداف ⚽" aria-label="الكلام اللي جنب اسمه"><button type="button" class="mini go" data-a="tgsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="tgx">إلغاء</button></div>`
       : me ? `<li><b>✨</b>اسمك يطلع فيه بكلامك وصورتك${tg === MARK ? `&nbsp;<button type="button" class="mini" data-a="notme" data-id="${id}">مو أنا</button>` : " (داخل بحسابك)"}</li>`
-      : `<li><b>✨</b>${tg ? `جنب اسمه: <span class="tagl">${esc(tg)}</span>` : `<span style="color:var(--muted)">ما فيه كلام جنب اسمه</span>`}&nbsp;<button type="button" class="mini" data-a="tg" data-id="${id}">${tg ? "غيّره" : "اكتب جنبه"}</button>&nbsp;<button type="button" class="mini" data-a="isme" data-id="${id}">📌 هذا أنا</button></li>`;
+      : `<li><b>✨</b>${tg ? `جنب اسمه: <span class="fn-tag">${esc(tg)}</span>` : `<span style="color:var(--muted)">ما فيه كلام جنب اسمه</span>`}&nbsp;<button type="button" class="mini" data-a="tg" data-id="${id}">${tg ? "غيّره" : "اكتب جنبه"}</button>&nbsp;<button type="button" class="mini" data-a="isme" data-id="${id}">📌 هذا أنا</button></li>`;
     const acts = banning === id
       ? `كم مدة الحظر؟ ${[["h", "ساعة"], ["d", "يوم"], ["w", "أسبوع"]].map(([k, l]) => `<button type="button" class="mini red" data-a="bango" data-id="${id}" data-t="${k}">${l}</button>`).join("")}<button type="button" class="mini" data-a="banx">إلغاء</button>`
       : banned ? `🚫 محظور لين ${at(b.u)} <button type="button" class="mini" data-a="unban" data-id="${id}">فك الحظر</button>`
@@ -265,7 +267,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       <div class="av">${img ? `<img src="${esc(img)}" alt="صورتك">` : `<span class="none">🖼️</span>`}<div class="btns">
         <label class="btn alt" style="cursor:pointer">${img ? "غيّر الصورة" : "اختار صورة"}<input type="file" id="meImg" accept="image/*" hidden></label>
         ${img ? `<button type="button" class="btn stop" data-a="menoimg">شيل الصورة</button>` : ""}</div></div>
-      <div class="look">كذا يطلع: اسمك${t ? " · " + esc(t) : ""}${img ? `<img src="${esc(img)}" alt="">` : ""}</div>
+      <div class="look">كذا يطلع: اسمك${t ? ` <span class="fn-tag own">${esc(t)}</span>` : ""}${img ? `<img src="${esc(img)}" alt="">` : ""}</div>
       <p class="msg" id="memsg" role="status"></p>
       <p class="small">يطلع من أول غرفة تدخلها بعد الحفظ. لو تلعب من أيقونة الموقع أو من متصفح ثاني، اضغط «📌 هذا أنا» عند جوالك في «مين دخل».</p>`;
   }

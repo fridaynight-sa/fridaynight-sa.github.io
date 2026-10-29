@@ -6,9 +6,9 @@
    3) The owner's controls: a phone the owner stopped for a while (ban/<id>) sees «موقوف مؤقتاً»;
       a game the owner hid (cfg/hide/<game>) disappears from the lists, and its page says it is closed for now.
    4) Text next to a name: the owner writes it for any phone (tag/<id>) and for himself (cfg/me/t). It is added to
-      the name when the player joins a room, so every game, the TV and the night show it. The owner's own picture
-      (cfg/me/img) shows next to his name everywhere: his name carries an invisible mark (U+2060) that this file
-      turns into the picture on every phone.
+      the name when the player joins a room, so every game, the TV and the night show it. It sits between two
+      invisible marks (U+2063 … U+2064) that this file turns into a small badge on every phone, so it never looks like
+      part of the name. The owner's name also ends with an invisible mark (U+2060) that becomes his picture (cfg/me/img).
    Days follow Saudi time; the week starts on Sunday. Needs firebase-config.js before it. */
 (function () {
   "use strict";
@@ -190,8 +190,8 @@
   checkBan();
 
   /* ---------- 4) text and picture next to a name ---------- */
-  const MARK = "\u2060";                                          // invisible: «this is the owner»
-  function base(n) { return String(n || "").replace(/\u2060/g, "").split("·")[0].trim(); }
+  const MARK = "\u2060", T0 = "\u2063", T1 = "\u2064";          // invisible: «this is the owner»; the text sits between T0 and T1
+  function base(n) { return String(n || "").replace(/[\u2060\u2064]/g, "").split(/[·\u2063]/)[0].trim(); }
   // the owner's phone: opened the owner's page here, or the owner marked it «هذا أنا» (its tag is the mark itself).
   // A home-screen icon keeps its own storage apart from Safari, so the mark from the owner's page is what makes it sure.
   const isOwner = () => { try { if (localStorage.getItem("fn-owner") === "1") return true; } catch (e) {} return ls.get("fn-tag") === MARK; };
@@ -199,7 +199,7 @@
   function show(n) {
     const b = base(n); if (!b) return b;
     const t = isOwner() ? mine().t : ls.get("fn-tag");
-    return b + (t ? " · " + t : "") + (isOwner() ? MARK : "");
+    return b + (t ? " " + T0 + t + T1 : "") + (isOwner() ? MARK : "");
   }
   // the name box of every game: what was typed, plus the text (the games read the box right after this)
   const BOX = ["fName", "jName"];
@@ -218,33 +218,48 @@
   }
   renameKept();
   getTag(); function getTag() { get("tag/" + D.id).then(t => { ls.set("fn-tag", typeof t === "string" ? t : null); renameKept(); }).catch(() => {}); }
-  // the owner's picture wherever his name is written
+  // wherever a name is written: its text becomes a badge, and the owner's mark becomes his picture
   const pic = () => { const i = mine().img; return typeof i === "string" && i.startsWith("data:image/") ? i : ""; };
+  const SKIP = /^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/;
   function decorate(root) {
-    const src = pic(); if (!src || !root) return;
-    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes(MARK) && n.parentNode && !/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(n.parentNode.nodeName) ? 1 : 3 });
+    if (!root || !root.nodeType) return;
+    const src = pic();
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.nodeValue.includes(T0) || n.nodeValue.includes(MARK)) && n.parentNode && !SKIP.test(n.parentNode.nodeName) ? 1 : 3 });
     const found = []; while (w.nextNode()) found.push(w.currentNode);
     for (let t of found) {
-      let i;
-      while ((i = t.nodeValue.indexOf(MARK)) >= 0) {
-        const rest = t.splitText(i); rest.nodeValue = rest.nodeValue.slice(1);
-        const img = document.createElement("img"); img.className = "fn-av"; img.src = src; img.alt = "";
-        rest.parentNode.insertBefore(img, rest); t = rest;
+      for (let guard = 0; guard < 20; guard++) {
+        const v = t.nodeValue, a = v.indexOf(T0), m = v.indexOf(MARK);
+        if (a < 0 && m < 0) break;
+        if (a >= 0 && (m < 0 || a < m)) {                         // «… T0 text T1 …» → a badge
+          let e = v.indexOf(T1, a); if (e < 0) e = v.length;
+          const mid = t.splitText(a), rest = mid.splitText(e - a);
+          const own = rest.nodeValue.startsWith(T1 + MARK);
+          rest.nodeValue = rest.nodeValue.replace(/^\u2064/, "");
+          const sp = document.createElement("span"); sp.className = "fn-tag" + (own ? " own" : ""); sp.textContent = mid.nodeValue.slice(1);
+          mid.parentNode.replaceChild(sp, mid); t = rest;
+        } else {                                                  // the owner's mark → his picture
+          const rest = t.splitText(m); rest.nodeValue = rest.nodeValue.slice(1);
+          if (src) { const img = document.createElement("img"); img.className = "fn-av"; img.src = src; img.alt = ""; rest.parentNode.insertBefore(img, rest); }
+          t = rest;
+        }
       }
     }
   }
-  function pictures() {
-    if (!pic() || pictures.on || !self.MutationObserver) return;
-    pictures.on = true;
+  function marks() {
+    if (marks.on || !self.MutationObserver) return;
+    marks.on = true;
     const st = document.createElement("style");
-    // twice the text everywhere, bigger again in the players list (the owner's choice)
+    // the picture: twice the text everywhere, bigger again in the players list (the owner's choice); the text: a small badge
     st.textContent = ".fn-av{display:inline-block;width:2em;height:2em;border-radius:50%;object-fit:cover;vertical-align:-.6em;margin-inline:.25em;border:2px solid #ffb21e;background:#fff}" +
-      ".plist .fn-av{width:2.8em;height:2.8em;vertical-align:-.95em}";
+      ".plist .fn-av{width:2.8em;height:2.8em;vertical-align:-.95em}" +
+      ".fn-tag{display:inline-block;margin-inline-start:.15em;padding:0 .55em;border-radius:999px;font-size:.78em;font-weight:800;line-height:1.55;vertical-align:.12em;background:#efe7ff;color:#5b21b6;border:1.5px solid #5b21b6;white-space:nowrap;text-shadow:none}" +
+      ".fn-tag.own{background:#ffb21e;color:#2b1745;border-color:#2b1745}";
     (document.head || document.documentElement).appendChild(st);
     const run = () => { decorate(document.body); new MutationObserver(ms => ms.forEach(m => decorate(m.type === "characterData" ? m.target.parentNode : m.target))).observe(document.body, { childList: true, subtree: true, characterData: true }); };
     document.body ? run() : addEventListener("DOMContentLoaded", run);
   }
-  pictures();
+  const pictures = () => { if (document.body) decorate(document.body); };   // a picture that arrives later: redo the page
+  marks();
   self.FNT = { base, show };
 
   function start() { setTimeout(() => { count(); visit(); }, 800); setInterval(beat, 60e3); }
