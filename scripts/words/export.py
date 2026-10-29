@@ -19,7 +19,14 @@ for l in L:
     l["letters"] = order(l)
     ws = ";".join(f"{w},{r},{c},{d}" for w, r, c, d in l["words"])
     lines.append(f'{l["letters"]}|{l["h"]}|{l["w"]}|{ws}')
-union = sorted({w for l in L for w in l["bonus"]})
+# «كلمة إضافية»: only hand-checked words (the board words + bonus_extra.json), never block.json
+import collections
+HERE = os.path.dirname(os.path.abspath(__file__))
+pick = lambda f: json.load(open(f if os.path.exists(f) else os.path.join(HERE, f)))
+OK = (set(pick("grid_words.json")) | set(pick("bonus_extra.json"))) - set(pick("block.json"))
+C = collections.Counter
+fits = lambda w, cb: all(cb[k] >= v for k, v in C(w).items())
+union = sorted({w for l in L for w in OK if len(w) <= len(l["letters"]) and fits(w, C(l["letters"])) and w not in {x for x, *_ in l["words"]}})
 mean = json.load(open("meanings.json")) if os.path.exists("meanings.json") else {}
 M = [mean.get(str(i + 1)) for i in range(len(L))]
 js = ("/* لوحة الكلمات: 400 levels made by scripts/words/gen.py — letters|rows|cols|word,row,col,h/v;…\n"

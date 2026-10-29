@@ -152,7 +152,9 @@
     S = { L, pos, sel: [], ptr: null, lock: false, paused: false, taps: [] };
     if (!G.first) G.first = dayKey();
     save();
+    scrollTo(0, 0);
     view = "play"; render();
+    setTimeout(fit, 350); setTimeout(fit, 1200);   // iPhone: the toolbars finish moving after the page changes
     // a level the phone left half done: words that were already complete count again
     autoFound();
   }
@@ -203,14 +205,22 @@
   let geo = null;
   function fit() {
     if (view !== "play" || !S || !$("wheel")) return;
+    const pl = document.querySelector(".pl"), vv = self.visualViewport;
+    // only the part of the screen you can really see: iPhone Safari can lay the page out taller than that
+    const H = Math.floor(Math.min(innerHeight, vv && vv.height ? vv.height : innerHeight)), W = app.clientWidth || innerWidth, n = S.L.letters.length;
+    pl.style.height = H + "px";
     const land = matchMedia("(orientation:landscape) and (max-height:560px)").matches;
-    const W = app.clientWidth || innerWidth, H = innerHeight, n = S.L.letters.length;
     const big = H >= 900 && W >= 700;   // computer or TV: everything a bit larger
-    let D = land ? Math.min(H - 100, W / 2 - 130, 300) : Math.min(W - 124, H * 0.36, big ? 430 : 330);
-    D = Math.max(180, Math.floor(D));
+    let D = land ? Math.min(H - 100, W / 2 - 130, 300) : Math.min(W - 130, H * 0.34, big ? 430 : 330);
+    D = Math.max(160, Math.floor(D));
     const wheel = $("wheel"), wb = $("wb");
-    wheel.style.width = wheel.style.height = D + "px";
-    wb.style.height = D + 16 + "px"; wb.style.width = Math.min(W - 24, D + 124) + "px";
+    for (let k = 0; k < 4; k++) {
+      wheel.style.width = wheel.style.height = D + "px";
+      wb.style.height = D + 16 + "px"; wb.style.width = Math.min(W - 24, D + 124) + "px";
+      const over = pl.scrollHeight - pl.clientHeight;       // the board can shrink; the rest must fit
+      if (over <= 0 || D <= 160) break;
+      D = Math.max(160, D - over - 6);
+    }
     const ks = Math.round(Math.min(84, D * (n <= 4 ? 0.28 : n === 5 ? 0.26 : n === 6 ? 0.24 : 0.22))), R = D / 2 - ks / 2 - D * 0.05;
     geo = { D, ks, R, c: [] };
     for (let j = 0; j < n; j++) { const a = -Math.PI / 2 + j * 2 * Math.PI / n; geo.c.push([D / 2 + R * Math.cos(a), D / 2 + R * Math.sin(a)]); }
@@ -219,6 +229,7 @@
       el.style.left = x + "px"; el.style.top = y + "px"; el.style.width = el.style.height = ks + "px"; el.style.fontSize = Math.round(ks * 0.52) + "px";
     });
     $("trail").setAttribute("width", D); $("trail").setAttribute("height", D);
+    $("cw").style.setProperty("--cs", "1px");      // measure the free space without the old board in it
     const b = $("board"), L = S.L, bw = b.clientWidth, bh = b.clientHeight - 12;
     const MAXC = big ? 76 : 58;
     let gap = 5, cs = Math.floor(Math.min((bw - (L.w - 1) * gap) / L.w, (bh - (L.h - 1) * gap) / L.h, MAXC));
@@ -226,6 +237,7 @@
     $("cw").style.setProperty("--cs", Math.max(16, cs) + "px"); $("cw").style.setProperty("--gap", gap + "px");
     drawTrail();
   }
+  if (self.visualViewport) visualViewport.addEventListener("resize", () => requestAnimationFrame(fit));
   addEventListener("resize", () => requestAnimationFrame(fit));
 
   /* ---------------- swiping ---------------- */

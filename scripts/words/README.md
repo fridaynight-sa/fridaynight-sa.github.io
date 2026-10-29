@@ -4,6 +4,8 @@ Files here:
 - `grid_words.json` — the words allowed in a board (about 7,000). Every one was read and kept by hand: correct spelling
   (hamza, ة/ه, ى/ي), no names, no slang, nothing unsuitable for a family. Sources: the most frequent words of
   FrequencyWords (MIT) that are also in the Ayaspell Arabic spell-checker.
+- `bonus_extra.json` — more real words (verb forms, plurals…) that count as «كلمة إضافية». Also checked one by one:
+  no names, no foreign words, no slang, no word glued to و/ب/ل or to a pronoun.
 - `block.json` — words never accepted, even as «كلمة إضافية».
 - `mean/m*.txt` — «كلمة ومعناها» for each level: `level|word with vowels|meaning|example`.
 
