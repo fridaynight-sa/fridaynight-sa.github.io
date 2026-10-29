@@ -101,6 +101,13 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 /* a message from the owner to everyone (from the owner's page) */
 .notice{max-width:520px;margin:18px auto 0;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;box-shadow:4px 4px 0 var(--gold);font-weight:800;animation:rise .5s both}
 .notice span{font-size:22px;flex:none}.notice p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+/* «ادخل بحساب Google» (optional) */
+.acct{display:flex;justify-content:center;align-items:center;gap:8px;margin:16px auto 0;font-weight:800;font-size:15px}
+.acct button{display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--ink);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:999px;padding:6px 14px;font-weight:800;font-size:15px;cursor:pointer}
+.acct button:active{transform:translate(3px,3px);box-shadow:none}
+.acct .g{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--ink);font:800 13px var(--f-display);color:var(--blue)}
+.acct button.out{padding:2px 12px;font-size:13px;box-shadow:2px 2px 0 var(--ink)}
+.amsg{text-align:center;color:#e03131;font-weight:700;font-size:14px;margin:6px 0 0}
 
 /* tv */
 .tv{display:flex;align-items:center;gap:14px;margin-top:18px;padding:18px 20px;border-radius:24px;background:var(--ink);color:#fff;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);transition:transform .2s}
@@ -150,6 +157,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
   </header>
 
   <div class="notice" id="notice" role="status" hidden><span aria-hidden="true">📢</span><p></p></div>
+  <div class="acct" id="acct"></div><p class="amsg" id="amsg" role="status" hidden></p>
   <form class="join" id="join" autocomplete="off">
     <label for="code">عندك رمز غرفة من صاحبك؟</label>
     <div class="row"><input id="code" maxlength="5" placeholder="ABCD" aria-describedby="jmsg"><button type="submit" id="jgo">ادخل</button></div>
@@ -219,12 +227,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610291528"></script>
-<script src="fninstall.js?v=202610291528"></script>
+<script src="fnfx.js?v=202610291546"></script>
+<script src="fninstall.js?v=202610291546"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610291528"></script>
-<script src="fnstats.js?v=202610291528"></script>
+<script src="firebase-config.js?v=202610291546"></script>
+<script src="fnstats.js?v=202610291546"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -256,6 +264,53 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
       if (!best) { say("ما لقيت غرفة بهالرمز. تأكد منه مع صاحبك.", true); go.disabled = false; return; }
       location.href = GAMES[best] + "#" + c;
     } catch (err) { say("ما قدرت أتصل. تأكد من النت.", true); go.disabled = false; }
+  });
+})();
+/* «ادخل بحساب Google» (optional): the site knows you on any phone. Keeps your first name for the games' name box,
+   links this phone to your account for the owner's page (users/<uid>), and recognises the owner's own account. */
+(function () {
+  "use strict";
+  const C = self.FIREBASE_CONFIG, box = document.getElementById("acct"), msg = document.getElementById("amsg");
+  if (!box) return;
+  if (!C || !C.apiKey || !C.authDomain || !C.databaseURL || !self.firebase) { box.hidden = true; return; }
+  const DB = C.databaseURL.replace(/\/$/, "");
+  const ls = { get(k) { try { return JSON.parse(localStorage.getItem(k) || "null"); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }, del(k) { try { localStorage.removeItem(k); } catch (e) {} } };
+  const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const first = u => String((u && (u.displayName || String(u.email || "").split("@")[0])) || "").trim().split(/\s+/)[0].slice(0, 18);
+  const say = t => { msg.textContent = t || ""; msg.hidden = !t; };
+  const paint = name => { box.innerHTML = name != null ? `<span>✅ أهلاً ${esc(name)}</span><button type="button" class="out" data-g="out">اطلع</button>`
+    : `<button type="button" data-g="in"><span class="g" aria-hidden="true">G</span>ادخل بحساب Google</button>`; };
+  paint(ls.get("fn-gname"));                                       // last known, until the account answers
+  let auth = null;
+  async function linked(u) {
+    ls.set("fn-gname", first(u));
+    try {
+      const tok = await u.getIdToken(), q = "?auth=" + encodeURIComponent(tok), dev = (ls.get("fn-dev") || {}).id;
+      const up = { n: String(u.displayName || "").slice(0, 80), e: String(u.email || "").slice(0, 120), t: Date.now() };
+      if (/^[a-z0-9]{16}$/.test(dev || "")) up["d/" + dev] = true;
+      fetch(DB + "/users/" + u.uid + ".json" + q, { method: "PATCH", body: JSON.stringify(up) }).catch(() => {});
+      // only the owner's account may read the visitor count: if it can, this phone is the owner's
+      const r = await fetch(DB + "/stats/month/" + new Date(Date.now() + 3 * 36e5).toISOString().slice(0, 7) + ".json" + q);
+      if (r.ok) { localStorage.setItem("fn-owner", "1"); localStorage.setItem("words-owner", "1"); }
+    } catch (e) {}
+  }
+  function start() {
+    try { auth = firebase.auth(); } catch (e) { return; }
+    auth.onAuthStateChanged(u => { if (u) { paint(first(u)); linked(u); } else { ls.del("fn-gname"); paint(null); } });
+  }
+  addEventListener("load", () => {
+    if (typeof firebase.auth === "function") { start(); return; }
+    const sc = document.createElement("script"); sc.src = "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"; sc.onload = start; document.head.appendChild(sc);
+  });
+  box.addEventListener("click", async e => {
+    const b = e.target.closest("[data-g]"); if (!b) return;
+    say("");
+    if (!auth) { say("لحظة، جرّب بعد ثواني."); return; }
+    if (b.dataset.g === "in") {
+      try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+      catch (err) { if (!/popup-closed|cancelled-popup/.test((err && err.code) || "")) say("ما ضبط الدخول. افتح الموقع في Safari أو Chrome نفسه وجرّب مرة ثانية."); }
+    } else await auth.signOut().catch(() => {});
   });
 })();
 /* a message from the owner to everyone: shown above «عندك رمز غرفة» until it ends */

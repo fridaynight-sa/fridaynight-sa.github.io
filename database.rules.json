@@ -223,6 +223,19 @@
         ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
       }
     },
+    "users": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        "n": { ".validate": "newData.isString() && newData.val().length <= 80" },
+        "e": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "t": { ".validate": "newData.isNumber()" },
+        "d": {
+          "$id": { ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.isBoolean()" }
+        },
+        "$other": { ".validate": false }
+      }
+    },
     "cfg": {
       ".read": true,
       ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",

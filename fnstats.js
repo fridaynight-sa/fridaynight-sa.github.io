@@ -204,12 +204,13 @@
   // the name box of every game: what was typed, plus the text (the games read the box right after this)
   const BOX = ["fName", "jName"];
   const fix = el => { if (el && typeof el.value === "string" && el.value.trim()) el.value = show(el.value); };
+  const gname = el => { const g = ls.get("fn-gname"); if (el && !String(el.value || "").trim() && typeof g === "string" && g) el.value = g; };   // signed in with Google: the first name
   document.addEventListener("click", e => {
     const b = e.target && e.target.closest && e.target.closest('[data-act="docreate"],[data-act="dojoin"],#jGo');
-    if (b) BOX.forEach(id => fix(document.getElementById(id)));
+    if (b) BOX.forEach(id => { const el = document.getElementById(id); gname(el); fix(el); });
   }, true);
   document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target && BOX.includes(e.target.id)) fix(e.target); }, true);
-  document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id) && t.value) t.value = base(t.value); }, true);
+  document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id)) { if (t.value) t.value = base(t.value); else gname(t); } }, true);
   // the names the games keep on this phone get the text too, so going back into a room (without the name box) shows it
   const KEPT = ["bs-me-v1", "sq-me-v1", "mf-me-v1", "draw-me-v1", "df-me-v1", "fn-night-v1", "seenjeem-remote-v1"];
   function renameKept() {
