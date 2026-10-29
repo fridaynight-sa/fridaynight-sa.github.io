@@ -237,7 +237,9 @@
     if (!pic() || pictures.on || !self.MutationObserver) return;
     pictures.on = true;
     const st = document.createElement("style");
-    st.textContent = ".fn-av{display:inline-block;width:1.35em;height:1.35em;border-radius:50%;object-fit:cover;vertical-align:-.32em;margin-inline:.25em;border:2px solid #ffb21e;background:#fff}";
+    // twice the text everywhere, bigger again in the players list (the owner's choice)
+    st.textContent = ".fn-av{display:inline-block;width:2em;height:2em;border-radius:50%;object-fit:cover;vertical-align:-.6em;margin-inline:.25em;border:2px solid #ffb21e;background:#fff}" +
+      ".plist .fn-av{width:2.8em;height:2.8em;vertical-align:-.95em}";
     (document.head || document.documentElement).appendChild(st);
     const run = () => { decorate(document.body); new MutationObserver(ms => ms.forEach(m => decorate(m.type === "characterData" ? m.target.parentNode : m.target))).observe(document.body, { childList: true, subtree: true, characterData: true }); };
     document.body ? run() : addEventListener("DOMContentLoaded", run);
