@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>لوحة المدير · Friday Night</title>
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* the owner's page: only the owner's Google account can read the numbers or post a message
+   (the database rules check it, not this page) */
+:root{--bg:#fff6e9;--ink:#2b1745;--muted:#6b5a80;--card:#fff;--purple:#7c3aed;--pink:#f03e7a;--green:#12a874;--gold:#ffb21e;--red:#e03131;
+  --f-display:"Almarai","Tajawal",system-ui,sans-serif;--f-body:"Tajawal","Segoe UI",Tahoma,system-ui,sans-serif;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;padding:env(safe-area-inset-top,0) 16px calc(40px + env(safe-area-inset-bottom,0))}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:10px}
+.wrap{max-width:560px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:26px;margin:18px 0 2px;text-align:center;line-height:1.3}
+.who{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;align-items:center;font-weight:800;font-size:14px;color:var(--muted);margin-bottom:14px}
+.who button{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:1px 10px;font:800 13px var(--f-body);cursor:pointer}
+.card{background:var(--card);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:22px;padding:16px;margin-bottom:18px}
+.card.c{text-align:center;margin-top:40px}
+.card h2{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-size:20px;margin:0 0 10px}
+.card h2 .re{margin-inline-start:auto;border:2px solid var(--ink);background:#fff;border-radius:999px;padding:0 10px;font:800 13px var(--f-body);cursor:pointer}
+.card h3{font-family:var(--f-display);font-size:17px;margin:16px 0 0}
+.big{font-size:50px;line-height:1.2}
+.nums{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nums div{background:var(--bg);border:2px solid var(--ink);border-radius:16px;padding:8px 12px}
+.nums b{display:block;font-family:var(--f-display);font-size:28px;line-height:1.2}
+.nums small{color:var(--muted);font-weight:800}
+.nums .up{color:var(--green);font-weight:800;font-size:13px}.nums .dn{color:var(--red);font-weight:800;font-size:13px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:120px;margin:26px 4px 4px}
+.bars div{flex:1;background:var(--purple);border:2px solid var(--ink);border-radius:8px 8px 3px 3px;position:relative;min-height:6px}
+.bars div.t{background:var(--pink)}
+.bars div b{position:absolute;top:-22px;left:-4px;right:-4px;text-align:center;font-size:12px}
+.days{display:flex;gap:8px;margin:0 4px;font-size:11px;font-weight:800;color:var(--muted)}.days span{flex:1;text-align:center;white-space:nowrap}
+.top{margin:8px 0 0;padding:0;list-style:none}
+.top li{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:2px dashed #eadff5;font-weight:800}
+.top li:last-child{border:0}
+.top img{width:30px;height:30px;object-fit:contain;flex:none}
+.top .nm{min-width:7.5em}
+.top .bar{flex:1;height:10px;background:#f1e8ff;border-radius:9px;overflow:hidden}.top .bar i{display:block;height:100%;background:var(--purple)}
+.top b{min-width:28px;text-align:left}
+textarea{display:block;width:100%;min-height:80px;border:2px solid var(--ink);border-radius:14px;padding:10px;font:700 17px var(--f-body);background:var(--bg);resize:vertical}
+textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
+.seg{display:flex;gap:6px;margin:10px 0}
+.seg button{flex:1;text-align:center;border:2px solid var(--ink);border-radius:999px;padding:4px 0;font-weight:800;font-size:14px;background:#fff;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+.btn{display:block;width:100%;text-align:center;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:14px;padding:11px;font:800 17px var(--f-body);background:var(--purple);color:#fff;margin-top:10px;cursor:pointer;text-decoration:none}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
+.btn:disabled{opacity:.6}
+.btn.alt{background:#fff;color:var(--ink)}
+.btn.stop{background:#fff;color:var(--red);border-color:var(--red);box-shadow:3px 3px 0 var(--red)}
+.prev{margin:12px 0 0;font-size:13px;font-weight:800;color:var(--muted)}
+.banner{margin-top:6px;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;box-shadow:4px 4px 0 var(--gold);font-weight:800}
+.banner span{font-size:22px;flex:none}.banner p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.banner.empty p{opacity:.6}
+.now{background:var(--bg);border:2px dashed var(--ink);border-radius:16px;padding:10px 12px 12px;margin-bottom:14px}
+.row{display:flex;gap:8px}.row input{flex:1;min-width:0;border:2px solid var(--ink);border-radius:14px;padding:8px;text-align:center;font:800 20px var(--f-display);background:var(--bg)}
+.row .btn{width:auto;margin:0;padding:8px 18px}
+.small{font-size:13px;color:var(--muted);font-weight:700;margin:8px 0 0}
+.msg{min-height:1.4em;font-size:14px;font-weight:800;margin:8px 0 0;text-align:center}
+.msg.err{color:var(--red)}.msg.ok{color:var(--green)}
+.setup{background:var(--bg);border:2px dashed var(--ink);border-radius:16px;padding:10px;margin:14px 0 4px}
+.setup code{display:block;direction:ltr;font:800 15px ui-monospace,Menlo,monospace;overflow-wrap:anywhere;margin:6px 0;user-select:all}
+.home{display:block;text-align:center;font-weight:800;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="../firebase-config.js?v=202610291307"></script>
+<script>
+(function () {
+  "use strict";
+  const C = self.FIREBASE_CONFIG || {}, DB = (C.databaseURL || "").replace(/\/$/, "");
+  const app = document.getElementById("app"), $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const num = n => (n || 0).toLocaleString("en-US");
+  const digits = s => String(s || "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
+  const SETUP = location.hash === "#setup";
+  const GAMES = { words: "لوحة الكلمات", dots: "توصيل النقاط", squares: "تذكّر المربعات", lamha: "لمحة", seenjeem: "سين جيم", outside: "برا السالفة",
+    sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور", tv: "شاشة العرض" };
+  const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+  // days and weeks in Saudi time, the same way fnstats.js counts them
+  const sa = ms => new Date(ms + 3 * 36e5);
+  const dayKey = ms => sa(ms).toISOString().slice(0, 10);
+  const weekKey = ms => { const t = sa(ms); return new Date(t.getTime() - t.getUTCDay() * 864e5).toISOString().slice(0, 10); };
+  const when = ms => { const t = sa(ms), h = t.getUTCHours(), m = t.getUTCMinutes();
+    return `${DAYS[t.getUTCDay()]} <bdi>${t.getUTCDate()}/${t.getUTCMonth() + 1}</bdi> الساعة <bdi>${h % 12 || 12}:${String(m).padStart(2, "0")}</bdi> ${h < 12 ? "ص" : "م"}`; };
+
+  let auth = null, user = null, data = null, dur = "day", flash = null;
+
+  /* ---------- the database (its own web address; the account's key goes with each request) ---------- */
+  async function call(path, opt, q) {
+    const tok = await user.getIdToken();
+    const r = await fetch(DB + "/" + path + ".json?auth=" + encodeURIComponent(tok) + (q || ""), opt);
+    if (r.status === 401 || r.status === 403) throw "denied";
+    if (!r.ok) throw "net";
+    return r.json();
+  }
+  async function load() {
+    const now = Date.now(), today = dayKey(now);
+    const [days, week, month, games, notice] = await Promise.all([
+      call("stats/day", {}, "&orderBy=%22$key%22&startAt=%22" + dayKey(now - 6 * 864e5) + "%22"),
+      call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
+    data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice };
+  }
+
+  /* ---------- screens ---------- */
+  function signInView(msg) {
+    app.innerHTML = `<div class="card c"><div class="big">🔐</div><h1>لوحة المدير</h1>
+      <p class="small">ادخل بحساب Google حقك.</p>
+      <button type="button" class="btn" data-a="in">ادخل بحساب Google</button>
+      <p class="msg err" role="status">${esc(msg || "")}</p></div><a class="home" href="../">الصفحة الرئيسية</a>`;
+  }
+  function deniedView() {
+    app.innerHTML = `<div class="card c"><div class="big">🔒</div><h1>هذي الصفحة لصاحب الموقع بس</h1>
+      <p class="small">حسابك ما عنده صلاحية.</p>
+      ${SETUP ? `<div class="setup"><p class="small" style="margin:0">رمز حسابك:</p><code id="uid">${esc(user.uid)}</code>
+        <button type="button" class="btn alt" data-a="copy" style="margin-top:4px">انسخ الرمز</button>
+        <p class="small">أرسل هذا الرمز لكلود عشان تنفتح لك اللوحة.</p><p class="msg ok" id="cmsg" role="status"></p></div>` : ""}
+      <a class="btn" href="../">الصفحة الرئيسية</a><button type="button" class="btn alt" data-a="out">اطلع من الحساب</button></div>`;
+  }
+  function errorView() {
+    app.innerHTML = `<div class="card c"><div class="big">📶</div><h1>ما قدرت أتصل</h1><p class="small">تأكد من النت وجرّب مرة ثانية.</p>
+      <button type="button" class="btn" data-a="re">جرّب مرة ثانية</button></div>`;
+  }
+  const live = n => n && typeof n.t === "string" && n.t.trim() && (!n.e || n.e > Date.now());
+  function panel() {
+    const d = data, today = dayKey(d.now), yest = dayKey(d.now - 864e5);
+    const t = d.days[today] || 0, y = d.days[yest] || 0, diff = t - y;
+    const seven = Array.from({ length: 7 }, (_, i) => { const ms = d.now - (6 - i) * 864e5, k = dayKey(ms); return { k, n: d.days[k] || 0, name: i === 6 ? "اليوم" : i === 5 ? "أمس" : DAYS[sa(ms).getUTCDay()] }; });
+    const max = Math.max(1, ...seven.map(x => x.n));
+    const top = Object.entries(d.games).filter(([k, n]) => GAMES[k] && n > 0).sort((a, b) => b[1] - a[1]);
+    const tmax = top.length ? top[0][1] : 1;
+    const n = live(d.notice) ? d.notice : null;
+    app.innerHTML = `<h1>🔐 لوحة المدير</h1>
+      <div class="who">✅ داخل بحسابك <button type="button" data-a="out">اطلع</button></div>
+
+      <section class="card"><h2>📊 الزوار <button type="button" class="re" data-a="re">🔄 حدّث</button></h2>
+        <div class="nums">
+          <div><small>اليوم</small><b>${num(t)}</b>${diff ? `<span class="${diff > 0 ? "up" : "dn"}">${diff > 0 ? "▲" : "▼"} ${num(Math.abs(diff))} عن أمس</span>` : ""}</div>
+          <div><small>أمس</small><b>${num(y)}</b></div>
+          <div><small>هالأسبوع</small><b>${num(d.week)}</b></div>
+          <div><small>هالشهر</small><b>${num(d.month)}</b></div>
+        </div>
+        <div class="bars">${seven.map((x, i) => `<div class="${i === 6 ? "t" : ""}" style="height:${Math.round(x.n / max * 100)}%"><b>${num(x.n)}</b></div>`).join("")}</div>
+        <div class="days">${seven.map(x => `<span>${x.name}</span>`).join("")}</div>
+        <p class="small">الزائر ينحسب مرة وحدة باليوم، حتى لو فتح الموقع أكثر من مرة. والأسبوع يبدأ من الأحد.</p>
+        <h3>🎮 أكثر الألعاب اليوم</h3>
+        ${top.length ? `<ul class="top">${top.map(([k, c]) => `<li><img src="../icons/${k}.png" alt=""><span class="nm">${esc(GAMES[k])}</span><span class="bar"><i style="width:${Math.round(c / tmax * 100)}%"></i></span><b>${num(c)}</b></li>`).join("")}</ul>`
+          : `<p class="small">ما أحد فتح لعبة اليوم للحين.</p>`}
+      </section>
+
+      <section class="card"><h2>📢 رسالة للكل</h2>
+        ${n ? `<div class="now"><p class="small" style="margin:0">الرسالة اللي طالعة الحين (${n.e ? "تنتهي " + when(n.e) : "لين توقفها"}):</p>
+          <div class="banner"><span>📢</span><p>${esc(n.t.trim())}</p></div>
+          <button type="button" class="btn stop" data-a="stop">أوقف الرسالة الحالية</button></div>`
+          : `<p class="small" style="margin:0 0 10px">ما فيه رسالة طالعة الحين.</p>`}
+        <textarea id="nt" maxlength="200" placeholder="اكتب رسالتك هنا…" aria-label="الرسالة"></textarea>
+        <div class="seg" role="group" aria-label="مدة الرسالة">${[["day", "يوم"], ["week", "أسبوع"], ["on", "لين أوقفها"]].map(([k, l]) => `<button type="button" data-d="${k}" aria-pressed="${dur === k}">${l}</button>`).join("")}</div>
+        <p class="prev">كذا بتطلع فوق الصفحة الرئيسية لكل الزوار:</p>
+        <div class="banner empty" id="pv"><span>📢</span><p>رسالتك تطلع هنا</p></div>
+        <button type="button" class="btn" data-a="pub">${n ? "انشرها بدال الحالية" : "انشرها"}</button>
+        <p class="msg" id="nmsg" role="status"></p>
+      </section>
+
+      <section class="card"><h2>🚀 لوحة الكلمات</h2>
+        <p class="small" style="margin:0 0 8px">انتقل لأي مستوى من 1 إلى 400 على هالجوال (بدال الرمز السري).</p>
+        <div class="row"><input id="lv" inputmode="numeric" maxlength="3" aria-label="رقم المستوى" placeholder="300"><button type="button" class="btn" data-a="jump">انتقل</button></div>
+        <p class="msg err" id="lmsg" role="status"></p>
+      </section>
+      <a class="home" href="../">الصفحة الرئيسية</a>`;
+    if (flash) { const m = $("nmsg"); m.textContent = flash; m.className = "msg ok"; flash = null; }
+  }
+  function preview() {
+    const v = ($("nt") || {}).value || "", pv = $("pv"); if (!pv) return;
+    pv.classList.toggle("empty", !v.trim());
+    pv.querySelector("p").textContent = v.trim() || "رسالتك تطلع هنا";
+  }
+
+  async function open() {
+    app.innerHTML = `<div class="card c"><div class="big">⏳</div><p>لحظة…</p></div>`;
+    try {
+      await load();
+      try { localStorage.setItem("words-owner", "1"); } catch (e) {}   // this phone is the owner's: لوحة الكلمات opens its level jump without the code
+      panel();
+    } catch (e) { if (e === "denied") deniedView(); else errorView(); }
+  }
+
+  /* ---------- buttons ---------- */
+  document.addEventListener("input", e => { if (e.target.id === "nt") preview(); });
+  document.addEventListener("click", async e => {
+    const s = e.target.closest("[data-d]");
+    if (s) { dur = s.dataset.d; document.querySelectorAll("[data-d]").forEach(b => b.setAttribute("aria-pressed", b === s)); return; }
+    const b = e.target.closest("[data-a]"); if (!b) return;
+    const a = b.dataset.a;
+    if (a === "in") {
+      if (!auth) return;
+      try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+      catch (err) { if (!/popup-closed|cancelled-popup/.test((err && err.code) || "")) signInView("ما ضبط الدخول بـ Google. جرّب مرة ثانية، أو افتح الرابط في Safari أو Chrome نفسه."); }
+    }
+    else if (a === "out") { if (auth) await auth.signOut().catch(() => {}); }
+    else if (a === "re") open();
+    else if (a === "copy") {
+      const m = $("cmsg");
+      try { await navigator.clipboard.writeText(user.uid); m.textContent = "✅ انتسخ. الصقه في رسالتك لكلود."; }
+      catch (err) { const r = document.createRange(); r.selectNodeContents($("uid")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); m.textContent = "حدّدته لك: اضغط نسخ."; }
+    }
+    else if (a === "pub") {
+      const t = ($("nt").value || "").trim(), m = $("nmsg");
+      if (!t) { m.textContent = "اكتب الرسالة أول."; m.className = "msg err"; return; }
+      b.disabled = true; m.textContent = "ينشرها…"; m.className = "msg";
+      const now = Date.now(), e2 = dur === "day" ? now + 864e5 : dur === "week" ? now + 7 * 864e5 : 0;
+      try { await call("notice", { method: "PUT", body: JSON.stringify({ t, s: now, e: e2 }) }); data.notice = { t, s: now, e: e2 }; flash = "✅ انتشرت. تطلع الحين لكل اللي يفتح الصفحة الرئيسية."; panel(); }
+      catch (err) { b.disabled = false; m.textContent = err === "denied" ? "حسابك ما عنده صلاحية." : "ما قدرت أنشرها. تأكد من النت."; m.className = "msg err"; }
+    }
+    else if (a === "stop") {
+      b.disabled = true;
+      try { await call("notice", { method: "DELETE" }); data.notice = null; flash = "✅ وقفت الرسالة."; panel(); }
+      catch (err) { b.disabled = false; const m = $("nmsg"); m.textContent = "ما قدرت أوقفها. تأكد من النت."; m.className = "msg err"; }
+    }
+    else if (a === "jump") {
+      const n = parseInt(digits($("lv").value), 10);
+      if (!(n >= 1 && n <= 400)) { $("lmsg").textContent = "اكتب رقم من 1 إلى 400."; return; }
+      try { localStorage.setItem("words-owner", "1"); } catch (err) {}
+      location.href = "../mind/words/#jump=" + n;
+    }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "lv") { e.preventDefault(); const j = document.querySelector("[data-a=jump]"); if (j) j.click(); } });
+
+  /* ---------- start ---------- */
+  try {
+    if (!DB || !C.apiKey || !self.firebase) throw 0;
+    if (!firebase.apps.length) firebase.initializeApp(C);
+    auth = firebase.auth();
+  } catch (e) { errorView(); return; }
+  auth.onAuthStateChanged(u => { user = u || null; if (user) open(); else signInView(); });
+})();
+</script>
+</body>
+</html>

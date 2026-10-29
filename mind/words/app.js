@@ -517,8 +517,20 @@
   document.addEventListener("touchmove", e => { if (view === "play") e.preventDefault(); }, { passive: false });
   document.addEventListener("visibilitychange", () => { if (document.hidden) { save(); if (view === "play" && S && !S.paused) pause(); } });
 
+  // from the owner's page: mind/words/#jump=300 opens that level (only on a phone marked as the owner's)
+  function hashJump() {
+    const m = /^#jump=(\d{1,4})$/.exec(location.hash || "");
+    if (!m) return false;
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    const n = +m[1];
+    if (!isOwner() || !(n >= 1 && n <= N)) return false;
+    G.level = n; G.cur = null; save(); backup();
+    startLevel();
+    return true;
+  }
+
   if (!N) app.innerHTML = `<div class="card">ما قدرت أفتح المستويات. حدّث الصفحة.</div>`;
-  else render();
+  else if (!hashJump()) render();
   if (self.FX && !document.querySelector(".fx-mute")) FX.muteButton();
   self.WORDS = { get G() { return G; }, get S() { return S; }, submit, parse, hint, startLevel, get geo() { return geo; } };   // test hook
 })();

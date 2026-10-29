@@ -81,6 +81,19 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 .go b{font-size:20px;transition:transform .2s}.game:hover .go b{transform:translateX(-5px)}
 .new{position:absolute;top:14px;left:14px;background:var(--pink);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:800;animation:wiggle 2s infinite}
 
+/* the two kinds of games: للجمعات (together) and لحالك (on your own) */
+.lead{margin:-4px 4px 14px;color:var(--muted);font-weight:700}
+.grp{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 4px 12px;font-family:var(--f-display);font-weight:800;font-size:17px}
+.grp img{width:30px;height:30px;object-fit:contain}
+.grp small{font:700 13px var(--f-body);color:var(--muted)}
+.game.mg{--c:#3b2380;background:linear-gradient(160deg,#1d2366,#3b2380);color:#fff;box-shadow:6px 6px 0 #3ec6ff}
+.game.mg:hover{box-shadow:10px 10px 0 #3ec6ff}.game.mg:active{box-shadow:2px 2px 0 #3ec6ff}
+.game.mg .sub,.game.mg .go{color:#9fe3ff}.game.mg .desc{color:#d8dcff}
+.game.mg .tags span{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.5);color:#fff}
+/* a message from the owner to everyone (from the owner's page) */
+.notice{max-width:520px;margin:18px auto 0;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;box-shadow:4px 4px 0 var(--gold);font-weight:800;animation:rise .5s both}
+.notice span{font-size:22px;flex:none}.notice p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+
 /* tv */
 .tv{display:flex;align-items:center;gap:14px;margin-top:18px;padding:18px 20px;border-radius:24px;background:var(--ink);color:#fff;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--gold);transition:transform .2s}
 .tv:hover{transform:translateY(-3px)}
@@ -128,13 +141,14 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     <p>ألعاب جماعية للجمعة مع الشلة والأهل. كل واحد يلعب من جواله، والتلفزيون يعرض للكل 🎉</p>
   </header>
 
+  <div class="notice" id="notice" role="status" hidden><span aria-hidden="true">📢</span><p></p></div>
   <form class="join" id="join" autocomplete="off">
     <label for="code">عندك رمز غرفة من صاحبك؟</label>
     <div class="row"><input id="code" maxlength="5" placeholder="ABCD" aria-describedby="jmsg"><button type="submit" id="jgo">ادخل</button></div>
     <p class="msg" id="jmsg" role="status"></p>
   </form>
 
-  <h2 class="sec">اختاروا لعبة</h2>
+  <h2 class="sec">للجمعات 👨‍👩‍👧‍👦</h2><p class="lead">تلعبونها مع بعض: كل واحد من جواله، والتلفزيون يعرض للكل.</p>
   <div class="games">
     <a class="game" href="seenjeem/" style="--c:var(--purple);--i:0">
       <div class="top"><span class="ic"><img src="icons/seenjeem.png" alt=""></span><div><h3>سين جيم</h3><p class="sub">مسلسلات وأفلام</p></div></div>
@@ -181,9 +195,38 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     <span class="arrow">←</span>
   </a>
 
+  <h2 class="sec" style="margin-top:40px">لحالك 🧠</h2><p class="lead">ألعاب تلعبها بروحك، على راحتك.</p>
+  <p class="grp"><img src="icons/mind.png" alt="">Mind Games<small>تمارين قصيرة للعقل، تشتغل بدون نت وتقدمك محفوظ</small></p>
+  <div class="games solo">
+    <a class="game mg" href="mind/words/" style="--i:0">
+      <span class="new">جديدة</span>
+      <div class="top"><span class="ic"><img src="icons/words.png" alt=""></span><div><h3>لوحة الكلمات</h3><p class="sub">تمرين المفردات</p></div></div>
+      <p class="desc">اسحب إصبعك على الحروف وكوّن كلمات تعبّي اللوحة. وبعد كل مستوى كلمة فصيحة ومعناها.</p>
+      <div class="tags"><span id="wordsTag">📶 400 مستوى</span><span>على راحتك</span></div>
+      <span class="go">العب <b>←</b></span>
+    </a>
+    <a class="game mg" href="mind/dots/" style="--i:1">
+      <div class="top"><span class="ic"><img src="icons/dots.png" alt=""></span><div><h3>توصيل النقاط</h3><p class="sub">تمرين التخطيط</p></div></div>
+      <p class="desc">وصّل كل لونين ببعض بدون ما تتقاطع الخطوط، وعبّي كل المربعات. 400 مستوى.</p>
+      <div class="tags"><span id="dotsTag">📶 400 مستوى</span><span>10 دقايق</span></div>
+      <span class="go">العب <b>←</b></span>
+    </a>
+    <a class="game mg" href="mind/squares/" style="--i:2">
+      <div class="top"><span class="ic"><img src="icons/squares.png" alt=""></span><div><h3>تذكّر المربعات</h3><p class="sub">تمرين ذاكرة الأماكن</p></div></div>
+      <p class="desc">مربعات تنوّر وحدة ورا الثانية، وأنت تضغطها بنفس الترتيب. كل ما جبتها صح يزيد مربع.</p>
+      <div class="tags"><span id="sqTag">🏅 ما لعبتها للحين</span><span>3 دقايق</span></div>
+      <span class="go">العب <b>←</b></span>
+    </a>
+    <a class="game mg" href="mind/lamha/" style="--i:3">
+      <div class="top"><span class="ic"><img src="icons/lamha.png" alt=""></span><div><h3>لمحة</h3><p class="sub">تمرين سرعة الالتقاط</p></div></div>
+      <p class="desc">شي يظهر لجزء من الثانية، وأنت تلتقطه. كل ما صرت أسرع، صار أصعب.</p>
+      <div class="tags"><span id="lamhaTag">🏅 ما لعبتها للحين</span><span>3 دقايق</span></div>
+      <span class="go">العب <b>←</b></span>
+    </a>
+  </div>
   <a class="tv mind" href="mind/">
     <span class="ic"><img src="icons/mind.png" alt=""></span>
-    <div><h3>Mind Games</h3><p>ألعاب قصيرة تدرّب عقلك وتلعبها لحالك: «لمحة» ⚡ و«توصيل النقاط» 🧩 و«تذكّر المربعات» 🧠 و«لوحة الكلمات» 📚</p></div>
+    <div><h3>صفحة Mind Games</h3><p>تقدمك في كل الألعاب، ورمز حفظ التقدم.</p></div>
     <span class="arrow">←</span>
   </a>
 
@@ -196,11 +239,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610290834"></script>
-<script src="fninstall.js?v=202610290834"></script>
+<script src="fnfx.js?v=202610291307"></script>
+<script src="fninstall.js?v=202610291307"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610290834"></script>
+<script src="firebase-config.js?v=202610291307"></script>
+<script src="fnstats.js?v=202610291307"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -233,6 +277,47 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
       location.href = GAMES[best] + "#" + c;
     } catch (err) { say("ما قدرت أتصل. تأكد من النت.", true); go.disabled = false; }
   });
+})();
+/* لحالك: your progress in each game, read from this phone (same as the Mind Games page) */
+(function () {
+  "use strict";
+  const read = k => { const own = JSON.parse(localStorage.getItem(k) || "null"), inc = JSON.parse(localStorage.getItem(k + ":in") || "null"); return [own, inc]; };
+  const put = (id, t, more) => {
+    const el = document.getElementById(id); if (!el) return;
+    el.textContent = t;
+    const go = more && el.closest(".game").querySelector(".go");
+    if (go && go.firstChild) go.firstChild.textContent = "كمّل ";   // a level game you already started
+  };
+  try {
+    const [own, inc] = read("words-v1");
+    const g = own && inc ? ((inc.round || 0) * 1000 + (inc.level || 1) > (own.round || 0) * 1000 + (own.level || 1) ? inc : own) : (own || inc);
+    if (g && (g.level > 1 || g.round)) put("wordsTag", g.level > 400 ? "🏆 خلّصت الـ400 مستوى" : "📶 المستوى " + g.level + " من 400", g.level <= 400);
+  } catch (e) {}
+  try {
+    const [own, inc] = read("dots-v1");
+    const lv = Math.max((own || {}).level || 1, (inc || {}).level || 1);
+    if (lv > 1) put("dotsTag", "📶 المستوى " + Math.min(400, lv) + " من 400", lv <= 400);
+  } catch (e) {}
+  try {
+    const [own, inc] = read("squares-v1");
+    const b = Math.max(...["one", "back"].map(m => Math.max(((own || {}).best || {})[m] || 0, ((inc || {}).best || {})[m] || 0)));
+    if (b) put("sqTag", "🏅 أعلى رقم: " + b);
+  } catch (e) {}
+  try {
+    const [own, inc] = read("lamha-v1");
+    const best = Math.min(...[(own || {}).best, (inc || {}).best].filter(x => x));
+    if (isFinite(best)) put("lamhaTag", "🏅 أفضل رقم: " + Math.round(best) + " ملّي ثانية");
+  } catch (e) {}
+})();
+/* a message from the owner to everyone: shown above «عندك رمز غرفة» until it ends */
+(function () {
+  "use strict";
+  const C = self.FIREBASE_CONFIG, el = document.getElementById("notice");
+  if (!C || !C.databaseURL || !self.fetch || !el) return;
+  fetch(C.databaseURL.replace(/\/$/, "") + "/notice.json").then(r => r.ok ? r.json() : null).then(n => {
+    if (!n || typeof n.t !== "string" || !n.t.trim() || (n.e && n.e < Date.now())) return;
+    el.querySelector("p").textContent = n.t.trim(); el.hidden = false;
+  }).catch(() => {});
 })();
 /* motion: sounds, card tilt, and the colour wipe when a game opens */
 (function () {
