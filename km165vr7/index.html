@@ -105,7 +105,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291510"></script>
+<script src="../firebase-config.js?v=202610291528"></script>
 <script>
 (function () {
   "use strict";
@@ -130,6 +130,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   const myDev = (() => { try { return (JSON.parse(localStorage.getItem("fn-dev") || "null") || {}).id || ""; } catch (e) { return ""; } })();
   const glyphs = v => self.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(v)].length : [...v].length;
   const cleanTag = v => String(v || "").replace(/[\u2060·]/g, "").replace(/\s+/g, " ").trim();
+  const MARK = "\u2060";        // a phone whose text is this mark is the owner's (see fnstats.js)
   const NO = "no-rules";                                          // a part the database rules don't open yet
   const NEED = "هذا القسم يحتاج لصق قواعد Firebase الجديدة.";
 
@@ -197,11 +198,12 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const head = editing === id
       ? `<div class="nf"><input id="nmIn" maxlength="40" value="${esc(nm || "")}" placeholder="اسمه" aria-label="اسمه"><button type="button" class="mini go" data-a="nmsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="nmx">إلغاء</button></div>`
       : `<span class="nm">${nm ? "🏷️ " + esc(nm) : "❔ جهاز بدون اسم"}</span><button type="button" class="mini${nm ? "" : " go"}" data-a="nm" data-id="${id}">${nm ? "غيّر الاسم" : "سمّه"}</button>`;
-    const pills = (id === myDev ? `<span class="mine">📌 هذا جوالك</span>` : "") + (on ? `<span class="pill on">🟢 داخل الحين</span>` : "") + (banned ? `<span class="pill ban">🚫 محظور</span>` : "");
-    const tg = data.tags[id];
+    const tg = data.tags[id], me = tg === MARK;
+    const pills = (me ? `<span class="mine">📌 هذا أنت</span>` : "") + (on ? `<span class="pill on">🟢 داخل الحين</span>` : "") + (banned ? `<span class="pill ban">🚫 محظور</span>` : "");
     const tagLine = tagging === id
       ? `<div class="nf" style="margin-top:6px"><input id="tgIn" maxlength="30" value="${esc(tg || "")}" placeholder="مثلاً: الهداف ⚽" aria-label="الكلام اللي جنب اسمه"><button type="button" class="mini go" data-a="tgsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="tgx">إلغاء</button></div>`
-      : id === myDev ? "" : `<li><b>✨</b>${tg ? `جنب اسمه: <span class="tagl">${esc(tg)}</span>` : `<span style="color:var(--muted)">ما فيه كلام جنب اسمه</span>`}&nbsp;<button type="button" class="mini" data-a="tg" data-id="${id}">${tg ? "غيّره" : "اكتب جنبه"}</button></li>`;
+      : me ? `<li><b>✨</b>اسمك يطلع فيه بكلامك وصورتك&nbsp;<button type="button" class="mini" data-a="notme" data-id="${id}">مو أنا</button></li>`
+      : `<li><b>✨</b>${tg ? `جنب اسمه: <span class="tagl">${esc(tg)}</span>` : `<span style="color:var(--muted)">ما فيه كلام جنب اسمه</span>`}&nbsp;<button type="button" class="mini" data-a="tg" data-id="${id}">${tg ? "غيّره" : "اكتب جنبه"}</button>&nbsp;<button type="button" class="mini" data-a="isme" data-id="${id}">📌 هذا أنا</button></li>`;
     const acts = banning === id
       ? `كم مدة الحظر؟ ${[["h", "ساعة"], ["d", "يوم"], ["w", "أسبوع"]].map(([k, l]) => `<button type="button" class="mini red" data-a="bango" data-id="${id}" data-t="${k}">${l}</button>`).join("")}<button type="button" class="mini" data-a="banx">إلغاء</button>`
       : banned ? `🚫 محظور لين ${at(b.u)} <button type="button" class="mini" data-a="unban" data-id="${id}">فك الحظر</button>`
@@ -229,7 +231,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         ${img ? `<button type="button" class="btn stop" data-a="menoimg">شيل الصورة</button>` : ""}</div></div>
       <div class="look">كذا يطلع: اسمك${t ? " · " + esc(t) : ""}${img ? `<img src="${esc(img)}" alt="">` : ""}</div>
       <p class="msg" id="memsg" role="status"></p>
-      <p class="small">يطلع من أول غرفة تدخلها بعد الحفظ، على أي جوال فتحت منه هذي اللوحة.</p>`;
+      <p class="small">يطلع من أول غرفة تدخلها بعد الحفظ. لو تلعب من أيقونة الموقع أو من متصفح ثاني، اضغط «📌 هذا أنا» عند جوالك في «مين دخل».</p>`;
   }
   const paintMe = (m, ok) => { const el = $("me"); if (el) el.innerHTML = meCard(); if (m) { const x = $("memsg"); x.textContent = m; x.className = "msg " + (ok ? "ok" : "err"); } };
   // the picture: cut to a square from the middle, made small (about 10 KB)
@@ -329,6 +331,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     try {
       await load();
       try { localStorage.setItem("words-owner", "1"); localStorage.setItem("fn-owner", "1"); } catch (e) {}   // this phone is the owner's: its name gets his text and picture, لوحة الكلمات opens its level jump without the code
+      // and mark it in the database too, so it stays the owner's even where this page's storage is not the games' storage
+      if (myDev && data.tags[myDev] !== MARK && !data.tagsNo) call("tag/" + myDev, { method: "PUT", body: JSON.stringify(MARK) }).then(() => { data.tags[myDev] = MARK; paintWho(); }).catch(() => {});
       panel();
     } catch (e) { if (e === "denied") deniedView(); else errorView(); }
   }
@@ -382,6 +386,11 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     }
     else if (a === "tg") { tagging = b.dataset.id; editing = banning = null; paintWho(); }
     else if (a === "tgx") { tagging = null; paintWho(); }
+    else if (a === "isme" || a === "notme") {
+      const id = b.dataset.id; b.disabled = true;
+      try { await call("tag/" + id, a === "isme" ? { method: "PUT", body: JSON.stringify(MARK) } : { method: "DELETE" }); if (a === "isme") data.tags[id] = MARK; else delete data.tags[id]; paintWho(); }
+      catch (err) { b.disabled = false; alert(err === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
+    }
     else if (a === "tgsave") {
       const id = b.dataset.id, v = cleanTag($("tgIn").value);
       if (glyphs(v) > 15) { alert("بالكثير 15 حرف."); return; }

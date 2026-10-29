@@ -181,7 +181,7 @@
   hide((ls.get("fn-cfg") || {}).hide);
   get("cfg").then(c => {
     ls.set("fn-cfg", c || {});
-    pictures();
+    pictures(); renameKept();
     const off = hide((c || {}).hide);
     cover("fn-closed", off.includes(game) ? `<div style="font-size:64px;line-height:1.2">🚧</div><h1 style="font-size:28px;margin:10px 0 6px">هذي اللعبة مقفلة مؤقتاً</h1>
       <p style="font-size:17px;font-weight:700;opacity:.9;margin:0 0 18px">جرّب لعبة ثانية من الصفحة الرئيسية.</p>
@@ -192,7 +192,9 @@
   /* ---------- 4) text and picture next to a name ---------- */
   const MARK = "\u2060";                                          // invisible: «this is the owner»
   function base(n) { return String(n || "").replace(/\u2060/g, "").split("·")[0].trim(); }
-  const isOwner = () => { try { return localStorage.getItem("fn-owner") === "1"; } catch (e) { return false; } };
+  // the owner's phone: opened the owner's page here, or the owner marked it «هذا أنا» (its tag is the mark itself).
+  // A home-screen icon keeps its own storage apart from Safari, so the mark from the owner's page is what makes it sure.
+  const isOwner = () => { try { if (localStorage.getItem("fn-owner") === "1") return true; } catch (e) {} return ls.get("fn-tag") === MARK; };
   const mine = () => ((ls.get("fn-cfg") || {}).me || {});
   function show(n) {
     const b = base(n); if (!b) return b;
@@ -208,7 +210,13 @@
   }, true);
   document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target && BOX.includes(e.target.id)) fix(e.target); }, true);
   document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id) && t.value) t.value = base(t.value); }, true);
-  getTag(); function getTag() { get("tag/" + D.id).then(t => ls.set("fn-tag", typeof t === "string" ? t : null)).catch(() => {}); }
+  // the names the games keep on this phone get the text too, so going back into a room (without the name box) shows it
+  const KEPT = ["bs-me-v1", "sq-me-v1", "mf-me-v1", "draw-me-v1", "df-me-v1", "fn-night-v1", "seenjeem-remote-v1"];
+  function renameKept() {
+    KEPT.forEach(k => { const v = ls.get(k); if (v && typeof v.name === "string" && v.name.trim()) { const n = show(v.name); if (n !== v.name) { v.name = n; ls.set(k, v); } } });
+  }
+  renameKept();
+  getTag(); function getTag() { get("tag/" + D.id).then(t => { ls.set("fn-tag", typeof t === "string" ? t : null); renameKept(); }).catch(() => {}); }
   // the owner's picture wherever his name is written
   const pic = () => { const i = mine().img; return typeof i === "string" && i.startsWith("data:image/") ? i : ""; };
   function decorate(root) {
