@@ -141,6 +141,44 @@
         }
       }
     },
+    "stats": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "day": {
+        "$d": {
+          ".write": "newData.exists()",
+          ".validate": "$d.matches(/^20[0-9][0-9]-[01][0-9]-[0-3][0-9]$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+        }
+      },
+      "week": {
+        "$w": {
+          ".write": "newData.exists()",
+          ".validate": "$w.matches(/^20[0-9][0-9]-[01][0-9]-[0-3][0-9]$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+        }
+      },
+      "month": {
+        "$m": {
+          ".write": "newData.exists()",
+          ".validate": "$m.matches(/^20[0-9][0-9]-[01][0-9]$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+        }
+      },
+      "game": {
+        "$d": {
+          ".validate": "$d.matches(/^20[0-9][0-9]-[01][0-9]-[0-3][0-9]$/)",
+          "$g": {
+            ".write": "newData.exists()",
+            ".validate": "$g.matches(/^[a-z]{2,12}$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+          }
+        }
+      }
+    },
+    "notice": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      ".validate": "newData.hasChildren(['t', 's', 'e']) && newData.child('t').isString() && newData.child('t').val().length > 0 && newData.child('t').val().length <= 300 && newData.child('s').isNumber() && newData.child('e').isNumber()",
+      "$other": {
+        ".validate": "$other === 't' || $other === 's' || $other === 'e'"
+      }
+    },
     "mind": {
       "$code": {
         ".read": true,
