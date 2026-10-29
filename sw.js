@@ -33,9 +33,10 @@ self.addEventListener("fetch", e => {
 const MIND = "mind-v1";
 const MIND_FILES = ["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js",
   "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js", "mind/squares/", "mind/squares/app.js",
+  "mind/words/", "mind/words/app.js", "mind/words/levels.js",
   "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png",
-  ...["mind", "lamha", "dots", "squares", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)];
-const MIND_MUST = 11;                    // the first eleven files: without them the games can't open offline
+  ...["mind", "lamha", "dots", "squares", "words", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv"].map(x => `icons/${x}.png`)];
+const MIND_MUST = 14;                    // the first fourteen files: without them the games can't open offline
 const MIND_CDN = ["app", "database", "auth"].map(x => `https://www.gstatic.com/firebasejs/10.12.2/firebase-${x}-compat.js`);
 async function cacheMind() {
   const c = await caches.open(MIND), root = self.registration.scope;

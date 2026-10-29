@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="../../favicon-32.png"><link rel="icon" type="image/png" sizes="64x64" href="../../favicon-64.png"><link rel="shortcut icon" href="../../favicon.ico"><link rel="apple-touch-icon" href="../../apple-touch-icon.png"><link rel="manifest" href="../../site.webmanifest"><meta name="theme-color" content="#0d1230">
+<title>لوحة الكلمات · Mind Games</title>
+<meta name="description" content="لوحة الكلمات: اسحب إصبعك على الحروف وكوّن كلمات تعبّي اللوحة. 400 مستوى، وبعد كل مستوى كلمة فصيحة ومعناها.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Friday Night"><meta property="og:title" content="📚 لوحة الكلمات · Mind Games"><meta property="og:description" content="اسحب إصبعك على الحروف وكوّن كلمات تعبّي اللوحة. 400 مستوى، وبعد كل مستوى كلمة فصيحة ومعناها."><meta property="og:url" content="https://fridaynight-sa.github.io/mind/words/"><meta property="og:image" content="https://fridaynight-sa.github.io/og-image.jpg"><meta property="og:locale" content="ar_SA"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://fridaynight-sa.github.io/og-image.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="../mind.css?v=202610281923">
+<style>
+.hero{text-align:center;padding:10px 0 6px}
+.hero img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.5))}
+.hero h1{font-family:var(--f-display);font-size:clamp(34px,9vw,48px);margin:4px 0 0}
+.hero p{margin:0;color:#9fe3ff;font-weight:800}
+.record{display:flex;align-items:center;justify-content:space-around;gap:12px;text-align:center;background:linear-gradient(135deg,rgba(124,92,255,.35),rgba(62,198,255,.25));border-color:rgba(127,224,255,.5)}
+.record small{display:block;color:var(--muted);font-weight:800}
+.record b{font-family:var(--f-display);font-size:28px}
+.record .of{font-size:16px;color:var(--muted)}
+.prog{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prog>div{background:rgba(255,255,255,.05);border-radius:14px;padding:10px 12px}
+.prog b{font-family:var(--f-display);font-size:20px}
+.prog small{display:block;color:var(--muted);font-size:13px;font-weight:700;margin-bottom:4px}
+.note{background:rgba(255,212,59,.1);border:1px solid rgba(255,212,59,.4);border-radius:14px;padding:10px 12px;font-size:14px}
+.tip{font-size:13px;color:var(--muted);text-align:center;margin:6px 0 0}
+.chips{justify-content:center}
+
+/* playing: the whole screen is the game and nothing moves under your finger */
+body.playing{position:fixed;inset:0;overflow:hidden;overscroll-behavior:none;touch-action:none;padding:0}
+body.playing .gamesbar{display:none}
+body.playing .fx-mute{display:none!important}   /* the pause menu has the sound switch */
+body.playing .wrap{max-width:none;height:100%;background:radial-gradient(circle at 15% -5%,#2e3b94 0,transparent 45%),radial-gradient(circle at 100% 100%,#5a2a8a 0,transparent 45%),#0d1230}
+body.playing #app{height:100%}
+.pl{height:100%;max-width:min(760px,100%);margin:0 auto;display:grid;grid-template-columns:100%;grid-template-rows:auto auto minmax(0,1fr) auto auto;grid-template-areas:'top' 'prog' 'board' 'say' 'wheel';padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(12px + env(safe-area-inset-bottom,0px));-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.ptop{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:800}
+.ptop .x{flex:none;width:44px;height:44px;border-radius:50%;background:var(--card2);display:grid;place-items:center}
+.ptop .n{background:linear-gradient(135deg,var(--a1),var(--a2));border-radius:999px;padding:4px 16px;font-family:var(--f-display);font-size:18px;white-space:nowrap}
+.ptop .st{min-width:44px;background:rgba(255,212,59,.14);border:1.5px solid rgba(255,212,59,.55);border-radius:999px;padding:3px 12px;font-family:var(--f-display);font-size:17px;color:#ffe27a;white-space:nowrap;transition:box-shadow .3s}
+.ptop .st.glow{box-shadow:0 0 20px rgba(255,212,59,.8)}
+.pprog{grid-area:prog;text-align:center;color:var(--muted);font-weight:800;font-size:13px;margin:6px 0 0;min-height:1.6em}
+.board{grid-area:board;min-height:0;min-width:0;display:grid;place-items:center;padding:6px 0}
+.cw{display:grid;gap:var(--gap,5px);direction:ltr}
+.cw i{width:var(--cs);height:var(--cs);border-radius:calc(var(--cs)*.24);font-style:normal;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:calc(var(--cs)*.56);line-height:1;color:#fff}
+.cw i.c{background:rgba(255,255,255,.09);border:1.5px solid rgba(255,255,255,.16);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+.cw i.f{background:linear-gradient(160deg,#8f75ff,#4a9dff);border-color:rgba(255,255,255,.45);box-shadow:0 4px 12px rgba(80,90,255,.35),inset 0 -3px 0 rgba(0,0,0,.18)}
+.cw i.new{background:linear-gradient(160deg,#ffe066,#ffae1e);color:#2b1745;border-color:#fff;box-shadow:0 0 18px rgba(255,212,59,.6);animation:pop .35s cubic-bezier(.2,1.6,.4,1) both}
+.cw i.h{color:#ffd43b}
+.cw i.h.flash{animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.cw i.again{animation:nudge .45s}
+@keyframes pop{from{transform:scale(.4)}}
+@keyframes nudge{30%{transform:scale(1.15)}60%{transform:scale(.95)}}
+.say{grid-area:say;height:50px;display:grid;place-items:center;text-align:center}
+.say b{display:inline-block;font-family:var(--f-display);font-size:26px;background:linear-gradient(135deg,#ffe066,#ffae1e);color:#2b1745;border-radius:14px;padding:2px 18px;box-shadow:0 6px 20px rgba(255,180,30,.35);line-height:1.5}
+.say b.ok{background:linear-gradient(135deg,#7cf0c0,#34d399)}
+.say b.no{background:rgba(255,255,255,.16);color:#fff;box-shadow:none;animation:shake .4s}
+.say b.old{background:rgba(127,224,255,.25);color:#fff;box-shadow:none}
+.say small{display:block;font-size:12px;font-weight:800;margin-top:-2px}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.wheelbox{grid-area:wheel;position:relative;display:grid;place-items:center;margin:0 auto;width:100%;max-width:420px}
+.wheel{position:relative;border-radius:50%;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.12),rgba(255,255,255,.04) 70%);border:2px solid rgba(255,255,255,.18);box-shadow:0 0 0 8px rgba(124,92,255,.10),0 20px 50px rgba(0,0,0,.35);touch-action:none}
+.wheel svg{position:absolute;inset:0;overflow:visible;pointer-events:none}
+.wheel .k{position:absolute;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;line-height:1;color:#fff;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);transform:translate(-50%,-50%);transition:left .35s,top .35s,background .1s;pointer-events:none}
+.wheel .k.on{background:radial-gradient(circle at 35% 30%,#fff7c2,#ffd43b 55%,#e09a00);color:#2b1745;border-color:#fff;box-shadow:0 0 22px rgba(255,212,59,.7)}
+.side{position:absolute;width:52px;height:52px;border-radius:50%;background:var(--card2);border:1.5px solid var(--line);display:grid;place-items:center;font-size:22px;z-index:2}
+.side small{position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);background:#2b1745;color:#ffe27a;border:1.5px solid #ffd43b;border-radius:999px;padding:0 8px;font-size:12px;font-weight:800;white-space:nowrap;line-height:1.5;direction:ltr}
+.side.sh{left:0;top:0}.side.hi{right:0;top:0}.side.bo{left:0;bottom:4px}
+.fly{position:fixed;z-index:80;font-size:26px;pointer-events:none;filter:drop-shadow(0 0 8px #ffd43b);transition:transform .7s cubic-bezier(.5,-0.3,.6,1),opacity .7s}
+.toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:85;background:#1d2160;border:1.5px solid var(--line);border-radius:14px;padding:8px 16px;font-weight:800;font-size:15px;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:calc(100% - 32px);text-align:center}
+.ov{position:fixed;inset:0;z-index:90;background:rgba(8,10,36,.75);display:grid;place-items:center;padding:16px}
+.ov .box{width:min(380px,100%);max-height:calc(100% - 20px);overflow:auto;background:#1d2160;border:1.5px solid var(--line);border-radius:22px;padding:20px;text-align:center}
+.ov h2{font-family:var(--f-display);margin:0 0 4px}
+.ov input{width:100%;background:rgba(0,0,0,.25);border:1.5px solid var(--line);border-radius:12px;color:var(--ink);font:inherit;font-size:22px;padding:8px 12px;text-align:center;margin:8px 0 12px;direction:ltr}
+.blist{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 14px}
+.blist span{background:rgba(52,211,153,.18);border:1px solid rgba(52,211,153,.55);border-radius:999px;padding:2px 12px;font-weight:800}
+
+/* level done */
+.end h1{font-family:var(--f-display);text-align:center;font-size:30px;margin:0}
+.end .sub{text-align:center;color:#9fe3ff;font-weight:800;margin:0 0 10px}
+.stats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 14px}
+.stats div{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:14px;padding:6px 14px;text-align:center;font-weight:800;font-family:var(--f-display);font-size:20px}
+.stats small{display:block;color:var(--muted);font-weight:700;font-size:12px;font-family:var(--f-body)}
+.mean{background:linear-gradient(160deg,rgba(124,92,255,.35),rgba(62,198,255,.18));border:1.5px solid rgba(127,224,255,.5);border-radius:22px;padding:16px 18px;text-align:center;margin-bottom:14px}
+.mean .lb{display:inline-block;background:rgba(0,0,0,.25);border-radius:999px;padding:1px 12px;font-weight:800;font-size:13px;color:#9fe3ff}
+.mean .w{font-family:"Tajawal",var(--f-display);font-weight:800;font-size:clamp(34px,11vw,50px);overflow-wrap:anywhere;line-height:1.5;margin:4px 0 0;color:#ffe27a;text-shadow:0 4px 18px rgba(255,200,40,.35)}
+.mean p{margin:4px 0 0;font-size:17px;font-weight:700}
+.mean .ex{color:var(--muted);font-size:14px;margin-top:8px}
+.found{font-size:14px;color:var(--muted);text-align:center;margin:0 0 14px}
+.found b{color:#7cf0c0}
+
+/* phone on its side: the board on one side, the letters on the other */
+@media (orientation:landscape) and (max-height:560px){
+  .pl{max-width:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto;grid-template-areas:'top wheel' 'prog wheel' 'board wheel' 'board say';column-gap:16px;padding-inline:calc(12px + env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-right,0px))}
+  .wheelbox{align-self:center}
+}
+</style>
+</head>
+<body class="tv-plain">
+<div class="wrap">
+  <nav class="gamesbar" aria-label="الألعاب"><a class="site" href="../../" aria-label="الصفحة الرئيسية"><img src="../../favicon-64.png" alt="" width="22" height="22">Friday Night</a><a href="../../seenjeem/"><img src="../../icons/seenjeem.png" alt="">سين جيم</a><a href="../../outside/"><img src="../../icons/outside.png" alt="">برا السالفة</a><a href="../../sedq/"><img src="../../icons/sedq.png" alt="">صدق ولا كذب</a><a href="../../mf/"><img src="../../icons/mf.png" alt="">مين فينا؟</a><a href="../../draw/"><img src="../../icons/draw.png" alt="">ارسم وخمّن</a><a href="../../dafour/"><img src="../../icons/dafour.png" alt="">الدافور</a><a href="../" class="on"><img src="../../icons/mind.png" alt="">Mind Games</a><a href="../../tv/"><img src="../../icons/tv.png" alt="">شاشة العرض</a></nav>
+  <main id="app"><div class="card" style="text-align:center">لحظة… ⏳</div></main>
+</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="../../firebase-config.js?v=202610281923"></script>
+<script src="../../fnfx.js?v=202610281923"></script>
+<script src="../../fnanim.js?v=202610281923"></script>
+<script src="../sync.js?v=202610281923"></script>
+<script src="levels.js?v=202610281923"></script>
+<script src="app.js?v=202610281923"></script>
+</body>
+</html>

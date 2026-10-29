@@ -61,6 +61,13 @@
     <span class="go">العب <b>←</b></span>
   </a>
 
+  <a class="mg" href="words/">
+    <div class="top"><img src="../icons/words.png" alt=""><div><h2>لوحة الكلمات</h2><p class="sub">تمرين المفردات</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">📚 المفردات</span><span class="chip">⚡ سرعة تذكّر الكلمات</span><span class="chip">⏱️ على راحتك</span><span class="chip">📖 كلمة ومعناها</span></div>
+    <div class="best" id="wordsBest"><span>🏅 ما لعبتها للحين</span><span>📶 400 مستوى</span></div>
+    <span class="go">العب <b>←</b></span>
+  </a>
+
   <div class="card soon">🧩 ألعاب جديدة قريباً</div>
   <div id="sync"></div>
   <p class="muted small" id="offl" style="text-align:center"></p>
@@ -102,6 +109,12 @@
     const own = JSON.parse(localStorage.getItem("squares-v1") || "null"), inc = JSON.parse(localStorage.getItem("squares-v1:in") || "null");
     const b = m => Math.max(((own || {}).best || {})[m] || 0, ((inc || {}).best || {})[m] || 0);
     if (b("one") || b("back")) document.getElementById("sqBest").innerHTML = (b("one") ? `<span>🏅 بنفس الترتيب: ${b("one")} مربعات</span>` : "") + (b("back") ? `<span>🔁 بالعكس: ${b("back")} مربعات</span>` : "");
+  } catch (e) {}
+  // لوحة الكلمات: the level you reached and your stars
+  try {
+    const own = JSON.parse(localStorage.getItem("words-v1") || "null"), inc = JSON.parse(localStorage.getItem("words-v1:in") || "null");
+    const g = own && inc ? ((inc.round || 0) * 1000 + (inc.level || 1) > (own.round || 0) * 1000 + (own.level || 1) ? inc : own) : (own || inc);
+    if (g && (g.level > 1 || g.round)) document.getElementById("wordsBest").innerHTML = `<span>📶 ${g.level > 400 ? "🏆 خلّصت الـ400 مستوى" : "المستوى " + g.level + " من 400"}</span><span>⭐ ${g.stars || 0} نجمة</span>`;
   } catch (e) {}
   // one «حفظ تقدمك» card for the whole section
   if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();
