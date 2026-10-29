@@ -215,11 +215,24 @@
         "$other": { ".validate": false }
       }
     },
+    "tag": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$id": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+        ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 40"
+      }
+    },
     "cfg": {
       ".read": true,
       ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "hide": {
         "$g": { ".validate": "$g.matches(/^[a-z]{2,12}$/) && newData.isBoolean()" }
+      },
+      "me": {
+        "t": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
+        "img": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 60000" },
+        "$other": { ".validate": false }
       },
       "$other": { ".validate": false }
     },

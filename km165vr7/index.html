@@ -90,13 +90,22 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .hide img{width:30px;height:30px;object-fit:contain;flex:none}.hide span{flex:1}
 .hide button{border:2px solid var(--ink);background:#dcf7ea;border-radius:999px;padding:2px 10px;font:800 13px var(--f-body);cursor:pointer;white-space:nowrap}
 .hide button[aria-pressed=true]{background:var(--ink);color:#fff}.hide button:disabled{opacity:.55}
+/* text and picture next to a name */
+.tagl{color:var(--purple)}.mine{font:800 12px var(--f-body);color:var(--muted);background:#f1e8ff;border-radius:999px;padding:0 8px}
+.me .row input{font:800 18px var(--f-body);letter-spacing:0}
+.av{display:flex;align-items:center;gap:12px;margin-top:8px}
+.av img,.av .none{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);background:var(--bg);flex:none}
+.av .none{display:grid;place-items:center;font-size:28px}
+.av .btns{display:flex;flex-direction:column;gap:6px;flex:1}.av .btn{margin:0;padding:8px;font-size:15px}
+.look{margin-top:12px;background:var(--bg);border:2px dashed var(--ink);border-radius:14px;padding:8px 12px;font-weight:800}
+.look img{width:1.35em;height:1.35em;border-radius:50%;object-fit:cover;vertical-align:-.32em;margin-inline:.25em;border:2px solid var(--gold)}
 </style>
 </head>
 <body>
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291443"></script>
+<script src="../firebase-config.js?v=202610291510"></script>
 <script>
 (function () {
   "use strict";
@@ -117,7 +126,10 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     return `${DAYS[t.getUTCDay()]} <bdi>${t.getUTCDate()}/${t.getUTCMonth() + 1}</bdi> الساعة <bdi>${h % 12 || 12}:${String(m).padStart(2, "0")}</bdi> ${h < 12 ? "ص" : "م"}`; };
 
   let auth = null, user = null, data = null, dur = "day", flash = null;
-  let editing = null, banning = null, allDev = false;             // «مين دخل»: the phone being named / stopped, show every phone
+  let editing = null, banning = null, tagging = null, allDev = false;   // «مين دخل»: the phone being named / stopped / given a text, show every phone
+  const myDev = (() => { try { return (JSON.parse(localStorage.getItem("fn-dev") || "null") || {}).id || ""; } catch (e) { return ""; } })();
+  const glyphs = v => self.Intl && Intl.Segmenter ? [...new Intl.Segmenter().segment(v)].length : [...v].length;
+  const cleanTag = v => String(v || "").replace(/[\u2060·]/g, "").replace(/\s+/g, " ").trim();
   const NO = "no-rules";                                          // a part the database rules don't open yet
   const NEED = "هذا القسم يحتاج لصق قواعد Firebase الجديدة.";
 
@@ -136,9 +148,9 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), call("cfg").catch(() => null)]);
+    const [dev, names, bans, cfg, tags] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), call("cfg").catch(() => null), soft("tag")]);
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
-      bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {} };
+      bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO };
   }
 
   /* ---------- screens ---------- */
@@ -185,7 +197,11 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const head = editing === id
       ? `<div class="nf"><input id="nmIn" maxlength="40" value="${esc(nm || "")}" placeholder="اسمه" aria-label="اسمه"><button type="button" class="mini go" data-a="nmsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="nmx">إلغاء</button></div>`
       : `<span class="nm">${nm ? "🏷️ " + esc(nm) : "❔ جهاز بدون اسم"}</span><button type="button" class="mini${nm ? "" : " go"}" data-a="nm" data-id="${id}">${nm ? "غيّر الاسم" : "سمّه"}</button>`;
-    const pills = (on ? `<span class="pill on">🟢 داخل الحين</span>` : "") + (banned ? `<span class="pill ban">🚫 محظور</span>` : "");
+    const pills = (id === myDev ? `<span class="mine">📌 هذا جوالك</span>` : "") + (on ? `<span class="pill on">🟢 داخل الحين</span>` : "") + (banned ? `<span class="pill ban">🚫 محظور</span>` : "");
+    const tg = data.tags[id];
+    const tagLine = tagging === id
+      ? `<div class="nf" style="margin-top:6px"><input id="tgIn" maxlength="30" value="${esc(tg || "")}" placeholder="مثلاً: الهداف ⚽" aria-label="الكلام اللي جنب اسمه"><button type="button" class="mini go" data-a="tgsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="tgx">إلغاء</button></div>`
+      : id === myDev ? "" : `<li><b>✨</b>${tg ? `جنب اسمه: <span class="tagl">${esc(tg)}</span>` : `<span style="color:var(--muted)">ما فيه كلام جنب اسمه</span>`}&nbsp;<button type="button" class="mini" data-a="tg" data-id="${id}">${tg ? "غيّره" : "اكتب جنبه"}</button></li>`;
     const acts = banning === id
       ? `كم مدة الحظر؟ ${[["h", "ساعة"], ["d", "يوم"], ["w", "أسبوع"]].map(([k, l]) => `<button type="button" class="mini red" data-a="bango" data-id="${id}" data-t="${k}">${l}</button>`).join("")}<button type="button" class="mini" data-a="banx">إلغاء</button>`
       : banned ? `🚫 محظور لين ${at(b.u)} <button type="button" class="mini" data-a="unban" data-id="${id}">فك الحظر</button>`
@@ -197,9 +213,39 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       ${games ? `<li><b>🎮</b>${games}</li>` : ""}
       ${typed ? `<li><b>✏️</b>كتب في الألعاب: ${typed}</li>` : ""}
       ${visits ? `<li><b>📅</b>${unit(visits, "مرة وحدة", "مرتين", "مرات", "مرة")} هالشهر</li>` : ""}
-    </ul><div class="acts">${acts}</div></div>`;
+      ${tagLine.startsWith("<li") ? tagLine : ""}
+    </ul>${tagLine.startsWith("<div") ? tagLine : ""}<div class="acts">${acts}</div></div>`;
   }
-  const paintWho = () => { const el = $("who"); if (el) el.innerHTML = who(); const i = $("nmIn"); if (i) i.focus(); };
+  const paintWho = () => { const el = $("who"); if (el) el.innerHTML = who(); const i = $("nmIn") || $("tgIn"); if (i) i.focus(); };
+
+  /* ---------- «اسمك في الألعاب»: the owner's text and picture ---------- */
+  function meCard() {
+    const t = data.me.t || "", img = typeof data.me.img === "string" ? data.me.img : "";
+    return `<p class="small" style="margin:0 0 6px">اكتب كلام يطلع جنب اسمك في كل لعبة (بالكثير 15 حرف):</p>
+      <div class="row"><input id="meT" maxlength="30" value="${esc(t)}" placeholder="مثلاً: المدير 🎖️" aria-label="الكلام اللي جنب اسمك"><button type="button" class="btn" data-a="mesave">حفظ</button></div>
+      <p class="small">صورتك تطلع جنب اسمك في كل مكان. قاعدة الموقع: بدون ذوات أرواح (شعار أو رمز أو صورة شي).</p>
+      <div class="av">${img ? `<img src="${esc(img)}" alt="صورتك">` : `<span class="none">🖼️</span>`}<div class="btns">
+        <label class="btn alt" style="cursor:pointer">${img ? "غيّر الصورة" : "اختار صورة"}<input type="file" id="meImg" accept="image/*" hidden></label>
+        ${img ? `<button type="button" class="btn stop" data-a="menoimg">شيل الصورة</button>` : ""}</div></div>
+      <div class="look">كذا يطلع: اسمك${t ? " · " + esc(t) : ""}${img ? `<img src="${esc(img)}" alt="">` : ""}</div>
+      <p class="msg" id="memsg" role="status"></p>
+      <p class="small">يطلع من أول غرفة تدخلها بعد الحفظ، على أي جوال فتحت منه هذي اللوحة.</p>`;
+  }
+  const paintMe = (m, ok) => { const el = $("me"); if (el) el.innerHTML = meCard(); if (m) { const x = $("memsg"); x.textContent = m; x.className = "msg " + (ok ? "ok" : "err"); } };
+  // the picture: cut to a square from the middle, made small (about 10 KB)
+  async function shrink(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+      const S = 160, c = document.createElement("canvas"); c.width = c.height = S;
+      const k = Math.min(im.naturalWidth, im.naturalHeight), g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, S, S);
+      g.drawImage(im, (im.naturalWidth - k) / 2, (im.naturalHeight - k) / 2, k, k, 0, 0, S, S);
+      let q = 0.85, out = c.toDataURL("image/jpeg", q);
+      while (out.length > 50000 && q > 0.4) { q -= 0.15; out = c.toDataURL("image/jpeg", q); }
+      return out;
+    } finally { URL.revokeObjectURL(url); }
+  }
 
   /* ---------- «إخفاء لعبة» ---------- */
   const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv", "mind", "words", "dots", "squares", "lamha"];
@@ -262,6 +308,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <p class="msg" id="nmsg" role="status"></p>
       </section>
 
+      <section class="card me"><h2>✨ اسمك في الألعاب</h2><div id="me">${meCard()}</div></section>
+
       <section class="card"><h2>🚀 لوحة الكلمات</h2>
         <p class="small" style="margin:0 0 8px">انتقل لأي مستوى من 1 إلى 400 على هالجوال (بدال الرمز السري).</p>
         <div class="row"><input id="lv" inputmode="numeric" maxlength="3" aria-label="رقم المستوى" placeholder="300"><button type="button" class="btn" data-a="jump">انتقل</button></div>
@@ -280,13 +328,19 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     app.innerHTML = `<div class="card c"><div class="big">⏳</div><p>لحظة…</p></div>`;
     try {
       await load();
-      try { localStorage.setItem("words-owner", "1"); } catch (e) {}   // this phone is the owner's: لوحة الكلمات opens its level jump without the code
+      try { localStorage.setItem("words-owner", "1"); localStorage.setItem("fn-owner", "1"); } catch (e) {}   // this phone is the owner's: its name gets his text and picture, لوحة الكلمات opens its level jump without the code
       panel();
     } catch (e) { if (e === "denied") deniedView(); else errorView(); }
   }
 
   /* ---------- buttons ---------- */
   document.addEventListener("input", e => { if (e.target.id === "nt") preview(); });
+  document.addEventListener("change", async e => {
+    if (e.target.id !== "meImg" || !e.target.files || !e.target.files[0]) return;
+    paintMe("يجهّز الصورة…", true);
+    try { const img = await shrink(e.target.files[0]); await call("cfg/me", { method: "PATCH", body: JSON.stringify({ img }) }); data.me.img = img; paintMe("✅ انحفظت الصورة.", true); }
+    catch (err) { paintMe(err === "denied" ? NEED : "ما قدرت أحفظ الصورة. جرّب صورة ثانية."); }
+  });
   document.addEventListener("click", async e => {
     const s = e.target.closest("[data-d]");
     if (s) { dur = s.dataset.d; document.querySelectorAll("[data-d]").forEach(b => b.setAttribute("aria-pressed", b === s)); return; }
@@ -325,6 +379,27 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       b.disabled = true;
       try { await call("devname/" + id, v ? { method: "PUT", body: JSON.stringify(v) } : { method: "DELETE" }); if (v) data.names[id] = v; else delete data.names[id]; editing = null; paintWho(); }
       catch (err) { b.disabled = false; alert(err === "denied" ? NEED : "ما قدرت أحفظ. تأكد من النت."); }
+    }
+    else if (a === "tg") { tagging = b.dataset.id; editing = banning = null; paintWho(); }
+    else if (a === "tgx") { tagging = null; paintWho(); }
+    else if (a === "tgsave") {
+      const id = b.dataset.id, v = cleanTag($("tgIn").value);
+      if (glyphs(v) > 15) { alert("بالكثير 15 حرف."); return; }
+      b.disabled = true;
+      try { await call("tag/" + id, v ? { method: "PUT", body: JSON.stringify(v) } : { method: "DELETE" }); if (v) data.tags[id] = v; else delete data.tags[id]; tagging = null; paintWho(); }
+      catch (err) { b.disabled = false; alert(err === "denied" ? NEED : "ما قدرت أحفظ. تأكد من النت."); }
+    }
+    else if (a === "mesave") {
+      const v = cleanTag($("meT").value);
+      if (glyphs(v) > 15) { paintMe("بالكثير 15 حرف."); return; }
+      b.disabled = true;
+      try { await call("cfg/me" + (v ? "" : "/t"), v ? { method: "PATCH", body: JSON.stringify({ t: v }) } : { method: "DELETE" }); if (v) data.me.t = v; else delete data.me.t; paintMe("✅ انحفظ.", true); }
+      catch (err) { b.disabled = false; paintMe(err === "denied" ? NEED : "ما قدرت أحفظ. تأكد من النت."); }
+    }
+    else if (a === "menoimg") {
+      b.disabled = true;
+      try { await call("cfg/me/img", { method: "DELETE" }); delete data.me.img; paintMe("✅ انشالت الصورة.", true); }
+      catch (err) { b.disabled = false; paintMe(err === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
     }
     else if (a === "ban") { banning = b.dataset.id; editing = null; paintWho(); }
     else if (a === "banx") { banning = null; paintWho(); }

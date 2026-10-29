@@ -5,6 +5,10 @@
       when it came and for how long, which games, the names it typed in the games.
    3) The owner's controls: a phone the owner stopped for a while (ban/<id>) sees «موقوف مؤقتاً»;
       a game the owner hid (cfg/hide/<game>) disappears from the lists, and its page says it is closed for now.
+   4) Text next to a name: the owner writes it for any phone (tag/<id>) and for himself (cfg/me/t). It is added to
+      the name when the player joins a room, so every game, the TV and the night show it. The owner's own picture
+      (cfg/me/img) shows next to his name everywhere: his name carries an invisible mark (U+2060) that this file
+      turns into the picture on every phone.
    Days follow Saudi time; the week starts on Sunday. Needs firebase-config.js before it. */
 (function () {
   "use strict";
@@ -85,7 +89,7 @@
   function names() {
     const out = [];
     ["bs-me-v1", "sq-me-v1", "mf-me-v1", "draw-me-v1", "df-me-v1", "fn-night-v1", "seenjeem-remote-v1"].forEach(k => {
-      const v = ls.get(k), n = v && typeof v.name === "string" ? v.name.trim().slice(0, 30) : "";
+      const v = ls.get(k), n = v && typeof v.name === "string" ? base(v.name).slice(0, 30) : "";
       if (n && !out.includes(n)) out.push(n);
     });
     return out.slice(0, 6).join("، ");
@@ -177,12 +181,60 @@
   hide((ls.get("fn-cfg") || {}).hide);
   get("cfg").then(c => {
     ls.set("fn-cfg", c || {});
+    pictures();
     const off = hide((c || {}).hide);
     cover("fn-closed", off.includes(game) ? `<div style="font-size:64px;line-height:1.2">🚧</div><h1 style="font-size:28px;margin:10px 0 6px">هذي اللعبة مقفلة مؤقتاً</h1>
       <p style="font-size:17px;font-weight:700;opacity:.9;margin:0 0 18px">جرّب لعبة ثانية من الصفحة الرئيسية.</p>
       <a href="${root}" style="display:inline-block;background:#ffb21e;color:#2b1745;border-radius:14px;padding:10px 22px;font-weight:800;font-size:17px;text-decoration:none">الصفحة الرئيسية</a>` : "");
   }).catch(() => {});
   checkBan();
+
+  /* ---------- 4) text and picture next to a name ---------- */
+  const MARK = "\u2060";                                          // invisible: «this is the owner»
+  function base(n) { return String(n || "").replace(/\u2060/g, "").split("·")[0].trim(); }
+  const isOwner = () => { try { return localStorage.getItem("fn-owner") === "1"; } catch (e) { return false; } };
+  const mine = () => ((ls.get("fn-cfg") || {}).me || {});
+  function show(n) {
+    const b = base(n); if (!b) return b;
+    const t = isOwner() ? mine().t : ls.get("fn-tag");
+    return b + (t ? " · " + t : "") + (isOwner() ? MARK : "");
+  }
+  // the name box of every game: what was typed, plus the text (the games read the box right after this)
+  const BOX = ["fName", "jName"];
+  const fix = el => { if (el && typeof el.value === "string" && el.value.trim()) el.value = show(el.value); };
+  document.addEventListener("click", e => {
+    const b = e.target && e.target.closest && e.target.closest('[data-act="docreate"],[data-act="dojoin"],#jGo');
+    if (b) BOX.forEach(id => fix(document.getElementById(id)));
+  }, true);
+  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target && BOX.includes(e.target.id)) fix(e.target); }, true);
+  document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id) && t.value) t.value = base(t.value); }, true);
+  getTag(); function getTag() { get("tag/" + D.id).then(t => ls.set("fn-tag", typeof t === "string" ? t : null)).catch(() => {}); }
+  // the owner's picture wherever his name is written
+  const pic = () => { const i = mine().img; return typeof i === "string" && i.startsWith("data:image/") ? i : ""; };
+  function decorate(root) {
+    const src = pic(); if (!src || !root) return;
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.nodeValue.includes(MARK) && n.parentNode && !/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(n.parentNode.nodeName) ? 1 : 3 });
+    const found = []; while (w.nextNode()) found.push(w.currentNode);
+    for (let t of found) {
+      let i;
+      while ((i = t.nodeValue.indexOf(MARK)) >= 0) {
+        const rest = t.splitText(i); rest.nodeValue = rest.nodeValue.slice(1);
+        const img = document.createElement("img"); img.className = "fn-av"; img.src = src; img.alt = "";
+        rest.parentNode.insertBefore(img, rest); t = rest;
+      }
+    }
+  }
+  function pictures() {
+    if (!pic() || pictures.on || !self.MutationObserver) return;
+    pictures.on = true;
+    const st = document.createElement("style");
+    st.textContent = ".fn-av{display:inline-block;width:1.35em;height:1.35em;border-radius:50%;object-fit:cover;vertical-align:-.32em;margin-inline:.25em;border:2px solid #ffb21e;background:#fff}";
+    (document.head || document.documentElement).appendChild(st);
+    const run = () => { decorate(document.body); new MutationObserver(ms => ms.forEach(m => decorate(m.type === "characterData" ? m.target.parentNode : m.target))).observe(document.body, { childList: true, subtree: true, characterData: true }); };
+    document.body ? run() : addEventListener("DOMContentLoaded", run);
+  }
+  pictures();
+  self.FNT = { base, show };
 
   function start() { setTimeout(() => { count(); visit(); }, 800); setInterval(beat, 60e3); }
   document.addEventListener("visibilitychange", () => { if (!document.hidden) beat(); });
