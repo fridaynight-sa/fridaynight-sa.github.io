@@ -69,13 +69,34 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .setup{background:var(--bg);border:2px dashed var(--ink);border-radius:16px;padding:10px;margin:14px 0 4px}
 .setup code{display:block;direction:ltr;font:800 15px ui-monospace,Menlo,monospace;overflow-wrap:anywhere;margin:6px 0;user-select:all}
 .home{display:block;text-align:center;font-weight:800;color:var(--muted);margin-top:6px}
+/* «مين دخل» */
+.warn{background:#fff4d6;border:2px solid #d98f00;border-radius:14px;padding:8px 10px;font-size:13px;font-weight:800;color:#7a4b00;margin:0 0 4px}
+.dev{border:2px solid var(--ink);border-radius:16px;padding:10px 12px;margin-top:10px;background:var(--bg)}
+.dev.anon{border-style:dashed}.dev.banned{border-color:var(--red);background:#fff0f0}
+.dev .h{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;font-family:var(--f-display);font-weight:800;font-size:18px}
+.dev .h .nm{flex:1;min-width:0}.dev .h .mini{flex:none}
+.dev .pills{display:flex;gap:6px;margin-top:2px}
+.pill{font:800 12px var(--f-body);border-radius:999px;padding:0 8px}.pill.on{color:var(--green);background:#dcf7ea}.pill.ban{color:#fff;background:var(--red)}
+.mini{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:0 10px;font:800 13px var(--f-body);cursor:pointer}
+.mini.go{background:var(--purple);color:#fff}.mini.red{color:var(--red);border-color:var(--red)}
+.dev ul{margin:4px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700}
+.dev li{display:flex;gap:6px}.dev li b{flex:none;width:1.4em;text-align:center}
+.dev .acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px;font-weight:800}
+.dev .nf{display:flex;gap:6px;width:100%}.dev .nf input{flex:1;min-width:0;border:2px solid var(--ink);border-radius:12px;padding:4px 8px;font:800 16px var(--f-body);background:#fff}
+/* «إخفاء لعبة» */
+.hide{margin:0;padding:0;list-style:none}
+.hide li{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:2px dashed #eadff5;font-weight:800}.hide li:last-child{border:0}
+.hide li.sub{padding-inline-start:22px;font-size:15px}
+.hide img{width:30px;height:30px;object-fit:contain;flex:none}.hide span{flex:1}
+.hide button{border:2px solid var(--ink);background:#dcf7ea;border-radius:999px;padding:2px 10px;font:800 13px var(--f-body);cursor:pointer;white-space:nowrap}
+.hide button[aria-pressed=true]{background:var(--ink);color:#fff}.hide button:disabled{opacity:.55}
 </style>
 </head>
 <body>
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291355"></script>
+<script src="../firebase-config.js?v=202610291443"></script>
 <script>
 (function () {
   "use strict";
@@ -96,6 +117,9 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     return `${DAYS[t.getUTCDay()]} <bdi>${t.getUTCDate()}/${t.getUTCMonth() + 1}</bdi> الساعة <bdi>${h % 12 || 12}:${String(m).padStart(2, "0")}</bdi> ${h < 12 ? "ص" : "م"}`; };
 
   let auth = null, user = null, data = null, dur = "day", flash = null;
+  let editing = null, banning = null, allDev = false;             // «مين دخل»: the phone being named / stopped, show every phone
+  const NO = "no-rules";                                          // a part the database rules don't open yet
+  const NEED = "هذا القسم يحتاج لصق قواعد Firebase الجديدة.";
 
   /* ---------- the database (its own web address; the account's key goes with each request) ---------- */
   async function call(path, opt, q) {
@@ -110,7 +134,11 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const [days, week, month, games, notice] = await Promise.all([
       call("stats/day", {}, "&orderBy=%22$key%22&startAt=%22" + dayKey(now - 6 * 864e5) + "%22"),
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
-    data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice };
+    // the newer parts: until their rules are pasted they say so, and the rest of the page still works
+    const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
+    const [dev, names, bans, cfg] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), call("cfg").catch(() => null)]);
+    data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
+      bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {} };
   }
 
   /* ---------- screens ---------- */
@@ -133,6 +161,56 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       <button type="button" class="btn" data-a="re">جرّب مرة ثانية</button></div>`;
   }
   const live = n => n && typeof n.t === "string" && n.t.trim() && (!n.e || n.e > Date.now());
+
+  /* ---------- «مين دخل» ---------- */
+  const unit = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : n <= 10 ? n + " " + few : n + " " + many;
+  const mins = ms => { const m = Math.max(1, Math.round(ms / 60e3)); if (m < 60) return unit(m, "دقيقة", "دقيقتين", "دقايق", "دقيقة");
+    const h = Math.floor(m / 60), r = m % 60; return unit(h, "ساعة", "ساعتين", "ساعات", "ساعة") + (r ? " و" + unit(r, "دقيقة", "دقيقتين", "دقايق", "دقيقة") : ""); };
+  const clock = ms => { const t = sa(ms), h = t.getUTCHours(); return `<bdi>${h % 12 || 12}:${String(t.getUTCMinutes()).padStart(2, "0")}</bdi> ${h < 12 ? "ص" : "م"}`; };
+  const at = ms => { const k = dayKey(ms), now = Date.now(), t = sa(ms);
+    return (k === dayKey(now) ? "اليوم" : k === dayKey(now - 864e5) ? "أمس" : now - ms < 6 * 864e5 ? DAYS[t.getUTCDay()] : `<bdi>${t.getUTCDate()}/${t.getUTCMonth() + 1}</bdi>`) + " " + clock(ms); };
+  function who() {
+    if (data.dev === NO) return `<p class="small">${NEED}</p>`;
+    const list = Object.entries(data.dev || {}).filter(([, v]) => v && v.l).sort((a, b) => b[1].l - a[1].l);
+    if (!list.length) return `<p class="small">ما دخل أحد للحين.</p>`;
+    const shown = allDev ? list : list.slice(0, 15);
+    return shown.map(([id, v]) => phoneRow(id, v)).join("") + (list.length > shown.length ? `<button type="button" class="btn alt" data-a="alldev">عرض الكل (${list.length})</button>` : "");
+  }
+  function phoneRow(id, v) {
+    const now = Date.now(), nm = data.names[id], b = data.bans[id], banned = b && b.u > now, on = now - v.l < 150e3;
+    const visits = (v.m || {})[dayKey(now).slice(0, 7)] || 0;
+    const games = Object.entries(v.g || {}).filter(([k, c]) => GAMES[k] && c > 0).sort((x, y) => y[1] - x[1])
+      .map(([k, c]) => esc(GAMES[k]) + " ×" + c + (k === "words" && v.w > 1 ? ` (المستوى ${Math.min(v.w, 401) > 400 ? "خلّصها" : v.w})` : "")).join("، ");
+    const typed = String(v.n || "").split("، ").filter(Boolean).map(x => "«" + esc(x) + "»").join("، ");
+    const head = editing === id
+      ? `<div class="nf"><input id="nmIn" maxlength="40" value="${esc(nm || "")}" placeholder="اسمه" aria-label="اسمه"><button type="button" class="mini go" data-a="nmsave" data-id="${id}">حفظ</button><button type="button" class="mini" data-a="nmx">إلغاء</button></div>`
+      : `<span class="nm">${nm ? "🏷️ " + esc(nm) : "❔ جهاز بدون اسم"}</span><button type="button" class="mini${nm ? "" : " go"}" data-a="nm" data-id="${id}">${nm ? "غيّر الاسم" : "سمّه"}</button>`;
+    const pills = (on ? `<span class="pill on">🟢 داخل الحين</span>` : "") + (banned ? `<span class="pill ban">🚫 محظور</span>` : "");
+    const acts = banning === id
+      ? `كم مدة الحظر؟ ${[["h", "ساعة"], ["d", "يوم"], ["w", "أسبوع"]].map(([k, l]) => `<button type="button" class="mini red" data-a="bango" data-id="${id}" data-t="${k}">${l}</button>`).join("")}<button type="button" class="mini" data-a="banx">إلغاء</button>`
+      : banned ? `🚫 محظور لين ${at(b.u)} <button type="button" class="mini" data-a="unban" data-id="${id}">فك الحظر</button>`
+      : `<button type="button" class="mini red" data-a="ban" data-id="${id}">🚫 احظر مؤقتاً</button>`;
+    return `<div class="dev${nm ? "" : " anon"}${banned ? " banned" : ""}"><div class="h">${head}</div>${pills && editing !== id ? `<div class="pills">${pills}</div>` : ""}<ul>
+      ${v.a ? `<li><b>${/كمبيوتر|ماك|كروم بوك/.test(v.a) ? "💻" : /تلفزيون/.test(v.a) ? "📺" : "📱"}</b>${esc(v.a)}</li>` : ""}
+      ${v.b ? `<li><b>🌐</b>${esc(v.b)}</li>` : ""}
+      <li><b>🕘</b>دخل ${at(v.s || v.l)}، ${on ? "وله" : "وجلس"} ${mins(v.l - (v.s || v.l))}</li>
+      ${games ? `<li><b>🎮</b>${games}</li>` : ""}
+      ${typed ? `<li><b>✏️</b>كتب في الألعاب: ${typed}</li>` : ""}
+      ${visits ? `<li><b>📅</b>${unit(visits, "مرة وحدة", "مرتين", "مرات", "مرة")} هالشهر</li>` : ""}
+    </ul><div class="acts">${acts}</div></div>`;
+  }
+  const paintWho = () => { const el = $("who"); if (el) el.innerHTML = who(); const i = $("nmIn"); if (i) i.focus(); };
+
+  /* ---------- «إخفاء لعبة» ---------- */
+  const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv", "mind", "words", "dots", "squares", "lamha"];
+  const MINDS = ["words", "dots", "squares", "lamha"];
+  function hides() {
+    return HIDE.map(k => {
+      const sub = MINDS.includes(k), viaMind = sub && data.hide.mind, off = !!data.hide[k] || viaMind;
+      return `<li class="${sub ? "sub" : ""}"><img src="../icons/${k}.png" alt=""><span>${k === "mind" ? "Mind Games (كلها)" : esc(GAMES[k])}</span>
+        <button type="button" data-a="hide" data-g="${k}" aria-pressed="${off}" ${viaMind ? "disabled" : ""}>${off ? "🔒 مخفية" : "✅ ظاهرة"}</button></li>`;
+    }).join("");
+  }
   function panel() {
     const d = data, today = dayKey(d.now), yest = dayKey(d.now - 864e5);
     const t = d.days[today] || 0, y = d.days[yest] || 0, diff = t - y;
@@ -157,6 +235,18 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <h3>🎮 أكثر الألعاب اليوم</h3>
         ${top.length ? `<ul class="top">${top.map(([k, c]) => `<li><img src="../icons/${k}.png" alt=""><span class="nm">${esc(GAMES[k])}</span><span class="bar"><i style="width:${Math.round(c / tmax * 100)}%"></i></span><b>${num(c)}</b></li>`).join("")}</ul>`
           : `<p class="small">ما أحد فتح لعبة اليوم للحين.</p>`}
+      </section>
+
+      <section class="card"><h2>📱 مين دخل</h2>
+        <p class="warn">⚠️ للعائلة بس. لو صار الموقع للعامة، هذا القسم ممنوع حسب نظام حماية البيانات الشخصية: شيله قبل النشر.</p>
+        <div id="who">${who()}</div>
+        <p class="small">تعرف كل جوال من نوعه ووقته، وتسمّيه مرة وحدة بس. الحظر يوقف الجوال نفسه: لو مسح بيانات المتصفح أو دخل من متصفح ثاني، يطلع جهاز جديد.</p>
+      </section>
+
+      <section class="card"><h2>🚧 إخفاء لعبة</h2>
+        <p class="small" style="margin:0 0 6px">اللعبة المخفية تختفي من الصفحة الرئيسية ومن شريط الألعاب، واللي يفتح رابطها يطلع له إنها مقفلة مؤقتاً. اللي داخلها الحين يكمّل عادي.</p>
+        <ul class="hide" id="hide">${hides()}</ul>
+        <p class="msg err" id="hmsg" role="status"></p>
       </section>
 
       <section class="card"><h2>📢 رسالة للكل</h2>
@@ -226,6 +316,30 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       b.disabled = true;
       try { await call("notice", { method: "DELETE" }); data.notice = null; flash = "✅ وقفت الرسالة."; panel(); }
       catch (err) { b.disabled = false; const m = $("nmsg"); m.textContent = "ما قدرت أوقفها. تأكد من النت."; m.className = "msg err"; }
+    }
+    else if (a === "alldev") { allDev = true; paintWho(); }
+    else if (a === "nm") { editing = b.dataset.id; banning = null; paintWho(); }
+    else if (a === "nmx") { editing = null; paintWho(); }
+    else if (a === "nmsave") {
+      const id = b.dataset.id, v = ($("nmIn").value || "").trim().slice(0, 40);
+      b.disabled = true;
+      try { await call("devname/" + id, v ? { method: "PUT", body: JSON.stringify(v) } : { method: "DELETE" }); if (v) data.names[id] = v; else delete data.names[id]; editing = null; paintWho(); }
+      catch (err) { b.disabled = false; alert(err === "denied" ? NEED : "ما قدرت أحفظ. تأكد من النت."); }
+    }
+    else if (a === "ban") { banning = b.dataset.id; editing = null; paintWho(); }
+    else if (a === "banx") { banning = null; paintWho(); }
+    else if (a === "bango" || a === "unban") {
+      const id = b.dataset.id, u = a === "unban" ? 0 : Date.now() + { h: 36e5, d: 864e5, w: 7 * 864e5 }[b.dataset.t];
+      b.disabled = true;
+      try { await call("ban/" + id, u ? { method: "PUT", body: JSON.stringify({ u }) } : { method: "DELETE" }); if (u) data.bans[id] = { u }; else delete data.bans[id]; banning = null; paintWho(); }
+      catch (err) { b.disabled = false; alert(err === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
+    }
+    else if (a === "hide") {
+      const k = b.dataset.g, off = !data.hide[k], m = $("hmsg");
+      b.disabled = true; m.textContent = "";
+      try { await call("cfg/hide" + (off ? "" : "/" + k), off ? { method: "PATCH", body: JSON.stringify({ [k]: true }) } : { method: "DELETE" });
+        if (off) data.hide[k] = true; else delete data.hide[k]; $("hide").innerHTML = hides(); }
+      catch (err) { b.disabled = false; m.textContent = err === "denied" ? NEED : "ما قدرت. تأكد من النت."; }
     }
     else if (a === "jump") {
       const n = parseInt(digits($("lv").value), 10);

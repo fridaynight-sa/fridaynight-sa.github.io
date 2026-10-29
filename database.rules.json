@@ -179,6 +179,50 @@
         ".validate": "$other === 't' || $other === 's' || $other === 'e'"
       }
     },
+    "dev": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$id": {
+        ".write": "$id.matches(/^[a-z0-9]{16}$/)",
+        ".validate": "newData.hasChildren(['l'])",
+        "a": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "b": { ".validate": "newData.isString() && newData.val().length <= 120" },
+        "n": { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "f": { ".validate": "newData.isNumber()" },
+        "s": { ".validate": "newData.isNumber()" },
+        "l": { ".validate": "newData.isNumber()" },
+        "w": { ".validate": "newData.isNumber()" },
+        "m": {
+          "$k": { ".validate": "$k.matches(/^20[0-9][0-9]-[01][0-9]$/) && newData.isNumber()" }
+        },
+        "g": {
+          "$k": { ".validate": "$k.matches(/^[a-z]{2,12}$/) && newData.isNumber()" }
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "devname": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$id": { ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.isString() && newData.val().length > 0 && newData.val().length <= 40" }
+    },
+    "ban": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$id": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+        ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.hasChildren(['u'])",
+        "u": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "cfg": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "hide": {
+        "$g": { ".validate": "$g.matches(/^[a-z]{2,12}$/) && newData.isBoolean()" }
+      },
+      "$other": { ".validate": false }
+    },
     "mind": {
       "$code": {
         ".read": true,
