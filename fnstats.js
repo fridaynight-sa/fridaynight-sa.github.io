@@ -32,7 +32,7 @@
   const segs = location.pathname.startsWith(root) ? location.pathname.slice(root.length).split("/").filter(s => s && !/\.html$/.test(s)) : [];
   const game = segs[0] === "mind" && segs[1] ? segs[1] : segs[0] || "home";
   if (!/^[a-z]{2,12}$/.test(game)) return;
-  const MIND = ["lamha", "dots", "squares", "words"];
+  const MIND = ["lamha", "dots", "squares", "words", "search"];
 
   const sa = () => new Date(Date.now() + 3 * 36e5);                   // Saudi time
   const today = () => sa().toISOString().slice(0, 10);

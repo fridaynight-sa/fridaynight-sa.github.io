@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
-<link rel="stylesheet" href="mind.css?v=202610291624">
+<link rel="stylesheet" href="mind.css?v=202610301518">
 <style>
 .hero{text-align:center;padding:18px 0 8px}
 .hero img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.55));animation:float 4s ease-in-out infinite}
@@ -68,16 +68,23 @@
     <span class="go">العب <b>←</b></span>
   </a>
 
+  <a class="mg" href="search/">
+    <div class="top"><img src="../icons/search.png" alt=""><div><h2>دوّر الكلمة</h2><p class="sub">تمرين التركيز</p></div><span class="new">جديدة</span></div>
+    <div class="chips"><span class="chip">🔎 التركيز الانتقائي</span><span class="chip">👀 المسح بالنظر</span><span class="chip">📰 جريدة كل يوم</span><span class="chip">⏱️ على راحتك</span></div>
+    <div class="best" id="searchBest"><span>🏅 ما لعبتها للحين</span><span>📶 400 مستوى</span></div>
+    <span class="go">العب <b>←</b></span>
+  </a>
+
   <div class="card soon">🧩 ألعاب جديدة قريباً</div>
   <div id="sync"></div>
   <p class="muted small" id="offl" style="text-align:center"></p>
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202610291624"></script>
-<script src="../fnstats.js?v=202610291624"></script>
-<script src="../fnfx.js?v=202610291624"></script>
-<script src="sync.js?v=202610291624"></script>
+<script src="../firebase-config.js?v=202610301518"></script>
+<script src="../fnstats.js?v=202610301518"></script>
+<script src="../fnfx.js?v=202610301518"></script>
+<script src="sync.js?v=202610301518"></script>
 <script>
 (function () {
   "use strict";
@@ -116,6 +123,13 @@
     const own = JSON.parse(localStorage.getItem("words-v1") || "null"), inc = JSON.parse(localStorage.getItem("words-v1:in") || "null");
     const g = own && inc ? ((inc.round || 0) * 1000 + (inc.level || 1) > (own.round || 0) * 1000 + (own.level || 1) ? inc : own) : (own || inc);
     if (g && (g.level > 1 || g.round)) document.getElementById("wordsBest").innerHTML = `<span>📶 ${g.level > 400 ? "🏆 خلّصت الـ400 مستوى" : "المستوى " + g.level + " من 400"}</span><span>⭐ ${g.stars || 0} نجمة</span>`;
+  } catch (e) {}
+  // دوّر الكلمة: the level you reached and the newspapers you solved
+  try {
+    const own = JSON.parse(localStorage.getItem("search-v1") || "null"), inc = JSON.parse(localStorage.getItem("search-v1:in") || "null");
+    const g = own && inc ? ((inc.round || 0) * 1000 + (inc.level || 1) > (own.round || 0) * 1000 + (own.level || 1) ? inc : own) : (own || inc);
+    const papers = g && g.paper ? Object.values(g.paper).filter(p => p && p.done).length : 0;
+    if (g && (g.level > 1 || g.round || papers)) document.getElementById("searchBest").innerHTML = `<span>📶 ${g.level > 400 ? "🏆 خلّصت الـ400 مستوى" : "المستوى " + g.level + " من 400"}</span><span>📰 ${papers} ${papers === 1 ? "جريدة" : "جرايد"}</span>`;
   } catch (e) {}
   // one «حفظ تقدمك» card for the whole section
   if (self.MindSync) document.getElementById("sync").innerHTML = MindSync.card();

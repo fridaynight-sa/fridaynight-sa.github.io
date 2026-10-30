@@ -109,7 +109,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202610291624"></script>
+<script src="../firebase-config.js?v=202610301518"></script>
 <script>
 (function () {
   "use strict";
@@ -119,7 +119,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   const num = n => (n || 0).toLocaleString("en-US");
   const digits = s => String(s || "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
   const SETUP = location.hash === "#setup";
-  const GAMES = { words: "لوحة الكلمات", dots: "توصيل النقاط", squares: "تذكّر المربعات", lamha: "لمحة", seenjeem: "سين جيم", outside: "برا السالفة",
+  const GAMES = { words: "لوحة الكلمات", search: "دوّر الكلمة", dots: "توصيل النقاط", squares: "تذكّر المربعات", lamha: "لمحة", seenjeem: "سين جيم", outside: "برا السالفة",
     sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور", tv: "شاشة العرض" };
   const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   // days and weeks in Saudi time, the same way fnstats.js counts them
@@ -153,13 +153,13 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg0, tags, users] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users")]);
+    const [dev, names, bans, cfg0, tags, users, paper] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1")]);
     const cfg = cfg0 === NO ? null : cfg0;
     const byDev = {};                                             // phone → the Google account signed in on it
     Object.entries(users && users !== NO ? users : {}).forEach(([uid, u]) => Object.keys((u && u.d) || {}).forEach(d => { if (!byDev[d] || (u.t || 0) > (byDev[d].t || 0)) byDev[d] = Object.assign({ uid }, u); }));
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
       bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev,
-      need: [dev, names, bans, cfg0, tags, users].includes(NO) };
+      need: [dev, names, bans, cfg0, tags, users, paper].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة
   }
 
   /* ---------- screens ---------- */
@@ -288,8 +288,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   }
 
   /* ---------- «إخفاء لعبة» ---------- */
-  const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv", "mind", "words", "dots", "squares", "lamha"];
-  const MINDS = ["words", "dots", "squares", "lamha"];
+  const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv", "mind", "words", "search", "dots", "squares", "lamha"];
+  const MINDS = ["words", "search", "dots", "squares", "lamha"];
   function hides() {
     return HIDE.map(k => {
       const sub = MINDS.includes(k), viaMind = sub && data.hide.mind, off = !!data.hide[k] || viaMind;

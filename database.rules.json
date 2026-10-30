@@ -249,6 +249,19 @@
       },
       "$other": { ".validate": false }
     },
+    "paper": {
+      "$n": {
+        ".read": true,
+        "$id": {
+          ".write": "$id.matches(/^[a-z0-9]{16}$/) && !data.exists()",
+          ".validate": "$n.matches(/^[0-9]{1,4}$/) && newData.child('n').isString() && newData.child('n').val().length <= 60 && newData.child('s').val() >= 1 && newData.child('s').val() <= 86400",
+          "n": { ".validate": true },
+          "s": { ".validate": true },
+          "at": { ".validate": true },
+          "$other": { ".validate": false }
+        }
+      }
+    },
     "mind": {
       "$code": {
         ".read": true,
