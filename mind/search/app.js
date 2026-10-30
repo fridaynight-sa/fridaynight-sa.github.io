@@ -64,13 +64,18 @@
 
   /* ---------------- the newspaper's day ---------------- */
   const saNow = () => new Date(Date.now() + 3 * 36e5);
+  // each phone has its own paper: the first issue it hasn't solved, and only one a day.
+  // Solved today → today's stays (the next one opens tomorrow); not solved → it stays until it is.
+  const saDay = t => Math.floor((t + 3 * 36e5) / 864e5);
   function issueNo() {
-    const s = Date.parse((self.WS_START || "2026-10-29") + "T00:00:00Z");
-    return Math.max(1, Math.floor((saNow().getTime() - s) / 864e5) + 1);
+    const P = G.paper || {}, max = (self.WS_ISSUES || []).length || 730;
+    let n = 1; while (n < max && P[n] && P[n].done) n++;
+    let last = 0; for (const k in P) if (P[k] && P[k].done && (!last || (P[k].at || 0) > (P[last].at || 0))) last = +k;
+    return last && saDay(P[last].at || 0) >= saDay(Date.now()) ? last : n;
   }
-  const issueDate = n => new Date(Date.parse((self.WS_START || "2026-10-29") + "T12:00:00Z") + (n - 1) * 864e5);
-  function dateLine(n) {
-    const d = issueDate(n), o = { timeZone: "UTC" };
+  const canOpen = n => n === issueNo() || !!((G.paper || {})[n] || {}).done;
+  function dateLine(t) {
+    const d = new Date(saDay(t) * 864e5 + 12 * 36e5), o = { timeZone: "UTC" };
     let h = "", g = "";
     try { h = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", Object.assign({ weekday: "long", day: "numeric", month: "long", year: "numeric" }, o)).format(d); } catch (e) {}
     try { g = new Intl.DateTimeFormat("ar-SA-u-ca-gregory-nu-arab", Object.assign({ day: "numeric", month: "long", year: "numeric" }, o)).format(d); } catch (e) {}
@@ -306,7 +311,7 @@
   async function openPaper(n) {
     app.innerHTML = `<div class="card" style="text-align:center">📰 لحظة… نجيب الجريدة</div>`;
     try { await loadPaper(); } catch (e) { app.innerHTML = `<div class="card" style="text-align:center">ما قدرت أجيب الجريدة. تأكد من النت وجرّب مرة ثانية.<br><button type="button" class="btn" data-act="paper" style="margin-top:12px">جرّب مرة ثانية</button><button type="button" class="btn alt" data-act="menu">رجوع</button></div>`; return; }
-    const today = issueNo(); n = Math.min(n || today, today);
+    if (!n || !canOpen(n)) n = issueNo();
     const L = issue(n), key = String(n);
     G.paper = G.paper || {};
     const P = G.paper[key] && G.paper[key].k === L.sig ? G.paper[key] : (G.paper[key] = { k: L.sig, f: [], h: [], t: 0 });
@@ -319,7 +324,7 @@
   }
   function paperView() {
     const L = S.L, P = S.P, n = S.n, th = TH[L.t] || ["", ""], say0 = (self.WS_SAYINGS || [])[L.x] || ["م", ""];
-    const parts = say0[1].split(/\s+/), { h, g } = dateLine(n), ads = self.WS_ADS || [], next = issue(n + 1);
+    const parts = say0[1].split(/\s+/), { h, g } = dateLine(P.done ? P.at || Date.now() : Date.now()), ads = self.WS_ADS || [], next = issue(n + 1);
     const boxes = parts.map(w => `<span class="aw">${[...w.replace(/[^ء-ي]/g, "")].map(() => `<i></i>`).join("")}</span>`).join("");
     app.innerHTML = `<div class="paperwrap"><div class="ptools"><button type="button" data-act="menu">→ رجوع</button><button type="button" data-act="archive">📚 الأعداد القديمة</button></div>
       <article class="page"><svg class="inkdefs" aria-hidden="true" focusable="false"><filter id="bp" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale=".7" xChannelSelector="R" yChannelSelector="G" result="d"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.05 0 0 0 .45" result="m"/><feComposite in="d" in2="m" operator="in"/></filter></svg>
@@ -338,7 +343,7 @@
     bind($("gw"));
     fillAnswer(P.done);
   }
-  const solvedBox = () => `<p class="solved">✔ حليتها في <b>${AR(clock(S.P.s))}</b>${S.P.g ? " · عرفت الحل قبل ما تخلّص الكلمات ✍️" : ""}</p>`;
+  const solvedBox = () => `<p class="solved">✔ حليتها في <b>${AR(clock(S.P.s))}</b>${S.P.g ? " · عرفت الحل قبل ما تخلّص الكلمات ✍️" : ""}</p>${S.n === issueNo() ? `<p class="pnext">📅 العدد ${AR(S.n + 1)} يفتح لك بكرة</p>` : ""}`;
   // the pen: a hand-drawn ring around a found word
   function ring(cells, i) {
     const svg = $("pen"); if (!svg) return;
@@ -440,10 +445,11 @@
     db.ref("paper/" + n + "/" + id).set({ n: shown.slice(0, 60), s: S.P.s, at: Date.now() }).then(() => loadRank(n)).catch(() => loadRank(n));
   }
   function archiveView() {
-    const today = issueNo(), I = self.WS_ISSUES || [];
+    const P = G.paper || {}, list = Object.keys(P).map(Number).filter(n => P[n] && P[n].done);
+    if (!list.includes(issueNo())) list.push(issueNo());
     let rows = "";
-    for (let n = today; n >= Math.max(1, today - 60); n--) {
-      const L = issue(n), p = (G.paper || {})[n], { h } = dateLine(n);
+    for (const n of list.sort((a, b) => b - a).slice(0, 60)) {
+      const L = issue(n), p = P[n], { h } = dateLine(p && p.done ? p.at || Date.now() : Date.now());
       rows += `<button type="button" class="arow" data-act="open" data-n="${n}"><span class="an">${AR(n)}</span><span class="at"><b>${esc((TH[L.t] || [""])[0])}</b><small>${esc(h)}</small></span><span class="as">${p && p.done ? "✔ " + AR(clock(p.s)) : p && (p.f || []).length ? "✏️" : ""}</span></button>`;
     }
     app.innerHTML = `<div class="paperwrap"><div class="ptools"><button type="button" data-act="paper">→ عدد اليوم</button></div>
