@@ -322,7 +322,7 @@
     const parts = say0[1].split(/\s+/), { h, g } = dateLine(n), ads = self.WS_ADS || [], next = issue(n + 1);
     const boxes = parts.map(w => `<span class="aw">${[...w.replace(/[^ء-ي]/g, "")].map(() => `<i></i>`).join("")}</span>`).join("");
     app.innerHTML = `<div class="paperwrap"><div class="ptools"><button type="button" data-act="menu">→ رجوع</button><button type="button" data-act="archive">📚 الأعداد القديمة</button></div>
-      <article class="page">
+      <article class="page"><svg class="inkdefs" aria-hidden="true" focusable="false"><filter id="bp" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="1.5" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale=".7" xChannelSelector="R" yChannelSelector="G" result="d"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.05 0 0 0 .45" result="m"/><feComposite in="d" in2="m" operator="in"/></filter></svg>
       <div class="mast"><h1>الجـمـعـة</h1><div class="msub">جريدة Friday Night اليومية · صفحة التسلية</div></div>
       <div class="dline"><span>${esc(h)}</span><span>العدد ${AR(n)}</span><span>${esc(g)}</span></div>
       <div class="secbar">تسلية وألغاز</div>
@@ -342,16 +342,26 @@
   // the pen: a hand-drawn ring around a found word
   function ring(cells, i) {
     const svg = $("pen"); if (!svg) return;
-    const [x1, y1] = cellXY(...cells[0]), [x2, y2] = cellXY(...cells[cells.length - 1]), s = S.cs;
-    const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, a = (Math.hypot(x2 - x1, y2 - y1) + s * .95) / 2, b = s * .44, ang = Math.atan2(y2 - y1, x2 - x1);
+    const NS = "http://www.w3.org/2000/svg", [x1, y1] = cellXY(...cells[0]), [x2, y2] = cellXY(...cells[cells.length - 1]), s = S.cs;
     let k = i * 7 + 3; const rnd = () => (((Math.sin(++k * 12.9898) * 43758.5453) % 1) + 1) % 1;
-    let d = "";
-    for (let j = 0; j <= 40; j++) {
-      const t = j / 40 * Math.PI * 2.1, w = 1 + (rnd() - .5) * .06, px = Math.cos(t) * a * w, py = Math.sin(t) * b * w;
-      d += (j ? "L" : "M") + (cx + px * Math.cos(ang) - py * Math.sin(ang)).toFixed(1) + " " + (cy + px * Math.sin(ang) + py * Math.cos(ang)).toFixed(1);
-    }
-    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    p.setAttribute("d", d); p.setAttribute("class", "ring"); svg.appendChild(p);
+    const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2, a = (Math.hypot(x2 - x1, y2 - y1) + s * .95) / 2, b = s * .44, ang = Math.atan2(y2 - y1, x2 - x1) + (rnd() - .5) * .06;
+    // like a ballpoint pen: a turn and a bit more, thin where it lands and lifts off, a little uneven
+    const t0 = -Math.PI * (.2 + rnd() * .5), turn = Math.PI * 2 * (1.08 + rnd() * .08), f1 = rnd() * 6.3, f2 = rnd() * 6.3, sw = Math.max(2, s * .075);
+    const pt = u => { const t = t0 + u * turn, w = 1 + .03 * Math.sin(2 * t + f1) + .02 * Math.sin(3 * t + f2) + .06 * u, px = Math.cos(t) * a * w, py = Math.sin(t) * b * w;
+      return [cx + px * Math.cos(ang) - py * Math.sin(ang), cy + px * Math.sin(ang) + py * Math.cos(ang)]; };
+    const wd = u => sw * Math.min(1, .4 + u * 16) * Math.min(1, .15 + (1 - u) * 6) * (1 + .15 * Math.sin(u * 11 + f1));
+    const band = (u0, u1) => {
+      const L = [], R = [], n = Math.ceil((u1 - u0) * 140) + 2;
+      for (let j = 0; j <= n; j++) {
+        const u = u0 + (u1 - u0) * j / n, [x, y] = pt(u), [xa, ya] = pt(Math.max(0, u - .002)), [xb, yb] = pt(Math.min(1, u + .002)), l = Math.hypot(xb - xa, yb - ya) || 1, h = wd(u) / 2, nx = -(yb - ya) / l * h, ny = (xb - xa) / l * h;
+        L.push((x + nx).toFixed(1) + " " + (y + ny).toFixed(1)); R.push((x - nx).toFixed(1) + " " + (y - ny).toFixed(1));
+      }
+      return "M" + L.join("L") + "L" + R.reverse().join("L") + "Z";
+    };
+    const g = document.createElementNS(NS, "g"), one = 2 * Math.PI / turn;   // the bit after one turn goes over the start: darker there
+    g.setAttribute("class", "ring"); g.setAttribute("filter", "url(#bp)");
+    [band(0, one), band(one - .003, 1)].forEach(d => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); g.appendChild(p); });
+    svg.appendChild(g);
   }
   // the letters no word uses (row by row, right to left): the answer
   function leftCells() {

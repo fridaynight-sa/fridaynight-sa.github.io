@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Tajawal:wght@400;500;700;800&family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Reem+Kufi:wght@600;700&display=swap">
-<link rel="stylesheet" href="../mind.css?v=202610301518">
+<link rel="stylesheet" href="../mind.css?v=202610301532">
 <style>
 .hero{text-align:center;padding:10px 0 6px}
 .hero img{width:110px;height:110px;object-fit:contain;filter:drop-shadow(0 10px 24px rgba(124,92,255,.5))}
@@ -84,10 +84,11 @@ body.playing #app{height:100%}
 body.onpaper{background:#cfc6b2;color:#1d1b18}
 body.onpaper .gamesbar a{background:rgba(255,255,255,.4);border-color:rgba(0,0,0,.2);color:#1d1b18}
 body.onpaper .fx-mute{filter:grayscale(1)}
-.paperwrap{max-width:560px;margin:0 auto}
+.paperwrap{max-width:560px;margin:0 auto;--ink:#1b3794}
+.inkdefs{position:absolute;width:0;height:0;overflow:hidden}
 .ptools{display:flex;justify-content:space-between;gap:8px;margin:4px 0 10px}
 .ptools button{background:#f2ead8;color:#1d1b18;border:1.5px solid #1d1b18;border-radius:999px;padding:4px 14px;font:700 15px Amiri,serif;box-shadow:2px 2px 0 rgba(0,0,0,.25)}
-.page{position:relative;overflow:hidden;padding:14px 14px 18px;font-family:Amiri,serif;color:#1d1b18;background:radial-gradient(circle at 20% 15%,rgba(255,255,255,.55),transparent 40%),radial-gradient(circle at 85% 90%,rgba(120,90,40,.12),transparent 45%),repeating-linear-gradient(0deg,rgba(0,0,0,.018) 0 1px,transparent 1px 3px),#f2ead8;box-shadow:0 10px 30px rgba(40,30,10,.35),inset 0 0 60px rgba(120,90,40,.18)}
+.page{position:relative;overflow:hidden;padding:14px 14px 18px;font-family:Amiri,serif;color:#1d1b18;background:radial-gradient(circle at 20% 15%,rgba(255,255,255,.55),transparent 40%),radial-gradient(circle at 85% 90%,rgba(120,90,40,.12),transparent 45%),url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3 0 0 0 0 .24 0 0 0 0 .14 0 0 0 .22 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='560' height='560'><filter id='t'><feTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='3' seed='9' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .34 0 0 0 0 .15 0 0 0 .5 -.18'/></filter><rect width='100%25' height='100%25' filter='url(%23t)'/></svg>"),#f2ead8;text-shadow:0 0 .5px rgba(29,27,24,.45);box-shadow:0 10px 30px rgba(40,30,10,.35),inset 0 0 60px rgba(120,90,40,.18)}
 .page::after{content:"";position:absolute;left:0;right:0;top:52%;height:18px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.05),rgba(255,255,255,.3),transparent);pointer-events:none}
 .mast{text-align:center;border-bottom:3px double #1d1b18;padding-bottom:4px}
 .mast h1{margin:0;font:700 clamp(38px,12vw,52px) "Reem Kufi",Amiri,serif;letter-spacing:2px;line-height:1.15}
@@ -96,31 +97,33 @@ body.onpaper .fx-mute{filter:grayscale(1)}
 .secbar{text-align:center;font:700 14px Amiri,serif;letter-spacing:3px;background:#1d1b18;color:#f2ead8;padding:1px 0;margin:0 0 8px}
 .page h2{margin:0;font:700 28px Amiri,serif;text-align:center;line-height:1.25}
 .how{font-size:16px;text-align:center;margin:2px 4px 8px;line-height:1.55}
-.ptime{text-align:left;font:700 20px "Aref Ruqaa",Amiri,serif;color:#1f4fb4;margin:-6px 4px 2px;transform:rotate(-4deg)}
+.ptime{text-align:left;font:700 20px "Aref Ruqaa",Amiri,serif;color:var(--ink);text-shadow:0 0 .6px var(--ink);margin:-6px 4px 2px;transform:rotate(-4deg)}
 .pboard{display:block;padding:0}
 .pboard .gw{margin:0 auto;width:max-content;border:2px solid #1d1b18;padding:3px;background:rgba(255,255,255,.25)}
 .pboard .ws i{font:700 calc(var(--cs,34px)*.62) Amiri,serif;color:#1d1b18;background:none;border-radius:0;box-shadow:inset 0 0 0 .5px rgba(29,27,24,.35)}
 .pboard .cap.sel{background:rgba(120,120,120,.28);box-shadow:none}
-svg.pen{position:absolute;inset:3px;z-index:3;pointer-events:none;overflow:visible;width:calc(100% - 6px);height:calc(100% - 6px)}
-svg.pen .ring{fill:none;stroke:#1f4fb4;stroke-width:2.2;stroke-linecap:round;opacity:.85}
+svg.pen{position:absolute;inset:3px;z-index:3;pointer-events:none;overflow:visible;mix-blend-mode:multiply;width:calc(100% - 6px);height:calc(100% - 6px)}
+svg.pen .ring{fill:var(--ink);fill-opacity:.88}
 .pboard .hint{border-radius:0;animation:none;box-shadow:none;background:rgba(31,79,180,.13)}
-.pboard .hint.left::after{content:"";position:absolute;left:18%;right:18%;bottom:12%;height:2px;background:#1f4fb4;border-radius:2px}
+.pboard .hint.left::after{content:"";position:absolute;left:12%;right:12%;bottom:6%;height:6px;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><filter id='g' x='0' y='-20%25' width='100%25' height='140%25'><feTurbulence type='fractalNoise' baseFrequency='.5 1.4' numOctaves='2' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 .5' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in'/></filter><path filter='url(%23g)' fill='%231b3794' fill-opacity='.92' d='M99.0 5.87 L96.5 5.76 L94.1 5.67 L91.7 5.58 L89.2 5.51 L86.8 5.56 L84.3 5.66 L81.8 5.75 L79.4 5.84 L77.0 5.90 L74.5 5.95 L72.0 5.98 L69.6 5.99 L67.2 5.97 L64.7 5.94 L62.2 5.88 L59.8 5.81 L57.4 5.72 L54.9 5.62 L52.5 5.51 L50.0 5.40 L47.5 5.28 L45.1 5.17 L42.7 5.07 L40.2 4.98 L37.8 4.89 L35.3 4.83 L32.8 4.77 L30.4 4.73 L28.0 4.71 L25.5 4.70 L23.0 4.69 L20.6 4.69 L18.2 4.83 L15.7 4.96 L13.2 5.09 L10.8 5.19 L8.3 5.29 L5.9 5.36 L3.5 5.42 L1.0 5.46 L1.0 5.94 L3.5 6.14 L5.9 6.34 L8.3 6.53 L10.8 6.71 L13.2 6.88 L15.7 7.06 L18.2 7.24 L20.6 7.43 L23.0 7.48 L25.5 7.54 L28.0 7.60 L30.4 7.67 L32.8 7.74 L35.3 7.82 L37.8 7.91 L40.2 8.00 L42.7 8.09 L45.1 8.18 L47.5 8.27 L50.0 8.36 L52.5 8.43 L54.9 8.50 L57.4 8.55 L59.8 8.58 L62.2 8.60 L64.7 8.60 L67.2 8.58 L69.6 8.54 L72.0 8.49 L74.5 8.42 L77.0 8.33 L79.4 8.24 L81.8 8.14 L84.3 8.04 L86.8 7.94 L89.2 7.78 L91.7 7.51 L94.1 7.25 L96.5 7.00 L99.0 6.75Z'/></svg>") center/100% 100% no-repeat;mix-blend-mode:multiply}
 .plist{column-count:3;column-gap:10px;column-rule:1px solid rgba(0,0,0,.25);margin:10px 0 0;padding:0;list-style:none;font-size:17px;line-height:1.6}
 .plist li{position:relative;width:max-content;max-width:100%}
-.plist li.x::after{content:"";position:absolute;right:-3px;left:-3px;top:52%;height:2px;background:#1f4fb4;transform:rotate(-4deg);border-radius:2px;opacity:.85}
+.plist li.x::after{content:"";position:absolute;right:-4px;left:-4px;top:calc(54% - 5.5px);height:11px;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><filter id='g' x='0' y='-20%25' width='100%25' height='140%25'><feTurbulence type='fractalNoise' baseFrequency='.5 1.4' numOctaves='2' seed='3' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 .5' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in'/></filter><path filter='url(%23g)' fill='%231b3794' fill-opacity='.92' d='M99.0 4.79 L96.5 4.45 L94.1 4.12 L91.7 3.78 L89.2 3.44 L86.8 3.25 L84.3 3.15 L81.8 3.07 L79.4 3.02 L77.0 2.99 L74.5 2.98 L72.0 3.00 L69.6 3.04 L67.2 3.09 L64.7 3.17 L62.2 3.25 L59.8 3.35 L57.4 3.45 L54.9 3.55 L52.5 3.65 L50.0 3.74 L47.5 3.83 L45.1 3.91 L42.7 3.98 L40.2 4.04 L37.8 4.09 L35.3 4.13 L32.8 4.17 L30.4 4.20 L28.0 4.23 L25.5 4.26 L23.0 4.30 L20.6 4.35 L18.2 4.53 L15.7 4.73 L13.2 4.95 L10.8 5.19 L8.3 5.45 L5.9 5.73 L3.5 6.04 L1.0 6.36 L1.0 6.92 L3.5 6.87 L5.9 6.82 L8.3 6.78 L10.8 6.76 L13.2 6.74 L15.7 6.74 L18.2 6.75 L20.6 6.78 L23.0 6.71 L25.5 6.65 L28.0 6.61 L30.4 6.58 L32.8 6.55 L35.3 6.54 L37.8 6.52 L40.2 6.51 L42.7 6.50 L45.1 6.48 L47.5 6.45 L50.0 6.42 L52.5 6.38 L54.9 6.34 L57.4 6.29 L59.8 6.24 L62.2 6.19 L64.7 6.14 L67.2 6.09 L69.6 6.05 L72.0 6.02 L74.5 6.00 L77.0 6.00 L79.4 6.01 L81.8 6.04 L84.3 6.08 L86.8 6.13 L89.2 6.13 L91.7 6.00 L94.1 5.89 L96.5 5.79 L99.0 5.70Z'/></svg>") center/100% 100% no-repeat;mix-blend-mode:multiply}
+.plist li.x:nth-child(3n+2)::after{background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><filter id='g' x='0' y='-20%25' width='100%25' height='140%25'><feTurbulence type='fractalNoise' baseFrequency='.5 1.4' numOctaves='2' seed='5' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 .5' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in'/></filter><path filter='url(%23g)' fill='%231b3794' fill-opacity='.92' d='M99.0 5.87 L96.5 5.76 L94.1 5.67 L91.7 5.58 L89.2 5.51 L86.8 5.56 L84.3 5.66 L81.8 5.75 L79.4 5.84 L77.0 5.90 L74.5 5.95 L72.0 5.98 L69.6 5.99 L67.2 5.97 L64.7 5.94 L62.2 5.88 L59.8 5.81 L57.4 5.72 L54.9 5.62 L52.5 5.51 L50.0 5.40 L47.5 5.28 L45.1 5.17 L42.7 5.07 L40.2 4.98 L37.8 4.89 L35.3 4.83 L32.8 4.77 L30.4 4.73 L28.0 4.71 L25.5 4.70 L23.0 4.69 L20.6 4.69 L18.2 4.83 L15.7 4.96 L13.2 5.09 L10.8 5.19 L8.3 5.29 L5.9 5.36 L3.5 5.42 L1.0 5.46 L1.0 5.94 L3.5 6.14 L5.9 6.34 L8.3 6.53 L10.8 6.71 L13.2 6.88 L15.7 7.06 L18.2 7.24 L20.6 7.43 L23.0 7.48 L25.5 7.54 L28.0 7.60 L30.4 7.67 L32.8 7.74 L35.3 7.82 L37.8 7.91 L40.2 8.00 L42.7 8.09 L45.1 8.18 L47.5 8.27 L50.0 8.36 L52.5 8.43 L54.9 8.50 L57.4 8.55 L59.8 8.58 L62.2 8.60 L64.7 8.60 L67.2 8.58 L69.6 8.54 L72.0 8.49 L74.5 8.42 L77.0 8.33 L79.4 8.24 L81.8 8.14 L84.3 8.04 L86.8 7.94 L89.2 7.78 L91.7 7.51 L94.1 7.25 L96.5 7.00 L99.0 6.75Z'/></svg>")}
+.plist li.x:nth-child(3n)::after{background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><filter id='g' x='0' y='-20%25' width='100%25' height='140%25'><feTurbulence type='fractalNoise' baseFrequency='.5 1.4' numOctaves='2' seed='8' result='n'/><feColorMatrix in='n' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 .5' result='m'/><feComposite in='SourceGraphic' in2='m' operator='in'/></filter><path filter='url(%23g)' fill='%231b3794' fill-opacity='.92' d='M99.0 4.64 L96.5 4.45 L94.1 4.26 L91.7 4.06 L89.2 3.85 L86.8 3.76 L84.3 3.72 L81.8 3.67 L79.4 3.63 L77.0 3.59 L74.5 3.55 L72.0 3.52 L69.6 3.51 L67.2 3.51 L64.7 3.52 L62.2 3.55 L59.8 3.60 L57.4 3.66 L54.9 3.74 L52.5 3.83 L50.0 3.93 L47.5 4.04 L45.1 4.15 L42.7 4.27 L40.2 4.38 L37.8 4.50 L35.3 4.60 L32.8 4.70 L30.4 4.80 L28.0 4.88 L25.5 4.96 L23.0 5.03 L20.6 5.10 L18.2 5.30 L15.7 5.50 L13.2 5.69 L10.8 5.88 L8.3 6.07 L5.9 6.26 L3.5 6.46 L1.0 6.67 L1.0 7.15 L3.5 7.20 L5.9 7.26 L8.3 7.34 L10.8 7.44 L13.2 7.55 L15.7 7.67 L18.2 7.80 L20.6 7.93 L23.0 7.91 L25.5 7.88 L28.0 7.84 L30.4 7.78 L32.8 7.71 L35.3 7.62 L37.8 7.52 L40.2 7.40 L42.7 7.27 L45.1 7.13 L47.5 6.98 L50.0 6.83 L52.5 6.68 L54.9 6.54 L57.4 6.40 L59.8 6.28 L62.2 6.18 L64.7 6.10 L67.2 6.03 L69.6 5.99 L72.0 5.96 L74.5 5.96 L77.0 5.98 L79.4 6.01 L81.8 6.05 L84.3 6.10 L86.8 6.16 L89.2 6.16 L91.7 6.03 L94.1 5.89 L96.5 5.73 L99.0 5.55Z'/></svg>")}
 .ans{margin-top:10px;border-top:1px solid #1d1b18;padding-top:6px;display:flex;align-items:flex-start;gap:8px;font:700 18px Amiri,serif}
 .ans .al{flex:none;line-height:34px}
 .ab{display:flex;flex-wrap:wrap;gap:6px 10px}
 .aw{display:flex;gap:2px}
-.aw i{font-style:normal;width:24px;height:30px;border:1.5px solid #1d1b18;display:grid;place-items:center;font:700 21px "Aref Ruqaa",Amiri,serif;color:#1f4fb4;background:rgba(255,255,255,.35)}
+.aw i{font-style:normal;width:24px;height:30px;border:1.5px solid #1d1b18;display:grid;place-items:center;font:700 21px "Aref Ruqaa",Amiri,serif;color:var(--ink);text-shadow:0 0 .6px var(--ink);background:rgba(255,255,255,.35)}
 .aw i.on{animation:ink .35s both}
 @keyframes ink{from{opacity:0;transform:scale(.6)}}
 .gbtn{display:block;margin:10px auto 0;background:none;border:1.5px dashed #1d1b18;border-radius:10px;padding:6px 14px;font:700 16px Amiri,serif;color:#1d1b18}
-.gform{display:flex;gap:6px;margin-top:10px}.gform input{flex:1;min-width:0;background:rgba(255,255,255,.6);border:1.5px solid #1d1b18;border-radius:8px;padding:6px 10px;font:700 19px "Aref Ruqaa",Amiri,serif;color:#1f4fb4}
+.gform{display:flex;gap:6px;margin-top:10px}.gform input{flex:1;min-width:0;background:rgba(255,255,255,.6);border:1.5px solid #1d1b18;border-radius:8px;padding:6px 10px;font:700 19px "Aref Ruqaa",Amiri,serif;color:var(--ink)}
 .gform button{background:#1d1b18;color:#f2ead8;border-radius:8px;padding:0 12px;font:700 16px Amiri,serif}
 .gform button[data-act=gx]{background:none;color:#1d1b18;border:1.5px solid #1d1b18}
 .gmsg{margin:6px 0 0;color:#b42318;font-weight:700;text-align:center}
-.solved{margin:10px 0 0;text-align:center;font:700 19px Amiri,serif;color:#1f4fb4}
+.solved{margin:10px 0 0;text-align:center;font:700 19px Amiri,serif;color:var(--ink)}
 .minis{display:flex;gap:8px;margin-top:12px}.minis>div{flex:1;min-width:0;border:1px solid #1d1b18;padding:4px 6px;font-size:14px;line-height:1.45}
 .minis b{display:block;font-size:14px;border-bottom:1px solid #1d1b18;margin-bottom:3px}
 .minis .muted{color:#5d574c}
@@ -143,12 +146,12 @@ svg.pen .ring{fill:none;stroke:#1f4fb4;stroke-width:2.2;stroke-linecap:round;opa
 </div>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../../firebase-config.js?v=202610301518"></script>
-<script src="../../fnstats.js?v=202610301518"></script>
-<script src="../../fnfx.js?v=202610301518"></script>
-<script src="../../fnanim.js?v=202610301518"></script>
-<script src="../sync.js?v=202610301518"></script>
-<script src="levels.js?v=202610301518"></script>
-<script src="app.js?v=202610301518"></script>
+<script src="../../firebase-config.js?v=202610301532"></script>
+<script src="../../fnstats.js?v=202610301532"></script>
+<script src="../../fnfx.js?v=202610301532"></script>
+<script src="../../fnanim.js?v=202610301532"></script>
+<script src="../sync.js?v=202610301532"></script>
+<script src="levels.js?v=202610301532"></script>
+<script src="app.js?v=202610301532"></script>
 </body>
 </html>
