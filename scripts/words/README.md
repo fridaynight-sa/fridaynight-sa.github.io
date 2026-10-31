@@ -27,3 +27,8 @@ python3 export.py out.json ../../mind/words/levels.js .
 If the levels change, `meanings.json` must be redone: its word has to be in that level's board.
 The game starts again a level that changed for a player who was in the middle of it (it keeps a fingerprint of the
 level in `cur.k`).
+
+No verbs like «يلبس» or «يسأل» on a board (the owner's choice, Oct 2026): `fix_verbs.py <data dir>` rebuilt the 107 levels
+that had one (same letters where it could, otherwise a new base), writing `levels_noverbs.json`; the 40 levels whose
+«كلمة ومعناها» word left the board got a new one (in `meanings.json`, also listed at the end of `mean/extra_mean.txt`).
+Those verbs still count as «كلمة إضافية».
