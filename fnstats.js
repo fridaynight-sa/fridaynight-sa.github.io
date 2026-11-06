@@ -9,6 +9,8 @@
       the name when the player joins a room, so every game, the TV and the night show it. It sits between two
       invisible marks (U+2063 … U+2064) that this file turns into a small badge on every phone, so it never looks like
       part of the name. The owner's name also ends with an invisible mark (U+2060) that becomes his picture (cfg/me/img).
+   5) «حسابي» (signed in with Google on the homepage): the name is ready in every game's name box (one tap, or type
+      another), and the picture (av/<key>) travels in the name as 16 invisible marks (U+2061/U+2062: the key's bits).
    Days follow Saudi time; the week starts on Sunday. Needs firebase-config.js before it. */
 (function () {
   "use strict";
@@ -191,7 +193,12 @@
 
   /* ---------- 4) text and picture next to a name ---------- */
   const MARK = "\u2060", T0 = "\u2063", T1 = "\u2064";          // invisible: «this is the owner»; the text sits between T0 and T1
-  function base(n) { return String(n || "").replace(/[\u2060\u2064]/g, "").split(/[·\u2063]/)[0].trim(); }
+  function base(n) { return String(n || "").replace(/[\u2060\u2061\u2062\u2064]/g, "").split(/[·\u2063]/)[0].trim(); }
+  // a signed-in player's picture: its key (4 hex digits) as 16 invisible marks, 0 = U+2061, 1 = U+2062
+  const KEY = /^[0-9a-f]{4}$/, RUN = /[\u2061\u2062]{16}/;
+  const bits = k => [...parseInt(k, 16).toString(2).padStart(16, "0")].map(b => b === "1" ? "\u2062" : "\u2061").join("");
+  const unbits = r => parseInt([...r].map(c => c === "\u2062" ? "1" : "0").join(""), 2).toString(16).padStart(4, "0");
+  const avk = () => { const k = ls.get("fn-avk"); return typeof k === "string" && KEY.test(k) ? k : ""; };
   // the owner's phone: opened the owner's page here, or the owner marked it «هذا أنا» (its tag is the mark itself).
   // A home-screen icon keeps its own storage apart from Safari, so the mark from the owner's page is what makes it sure.
   const isOwner = () => { try { if (localStorage.getItem("fn-owner") === "1") return true; } catch (e) {} return ls.get("fn-tag") === MARK; };
@@ -199,7 +206,7 @@
   function show(n) {
     const b = base(n); if (!b) return b;
     const t = isOwner() ? mine().t : ls.get("fn-tag");
-    return b + (t ? " " + T0 + t + T1 : "") + (isOwner() ? MARK : "");
+    return b + (t ? " " + T0 + t + T1 : "") + (isOwner() ? MARK : avk() ? bits(avk()) : "");
   }
   // the name box of every game: what was typed, plus the text (the games read the box right after this)
   const BOX = ["fName", "jName"];
@@ -209,8 +216,28 @@
     const b = e.target && e.target.closest && e.target.closest('[data-act="docreate"],[data-act="dojoin"],#jGo');
     if (b) BOX.forEach(id => { const el = document.getElementById(id); gname(el); fix(el); });
   }, true);
-  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target && BOX.includes(e.target.id)) fix(e.target); }, true);
-  document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id)) { if (t.value) t.value = base(t.value); else gname(t); } }, true);
+  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target && BOX.includes(e.target.id)) { gname(e.target); fix(e.target); } }, true);
+  document.addEventListener("focusin", e => { const t = e.target; if (t && BOX.includes(t.id)) { if (t.value) t.value = base(t.value); else if (!t.dataset.fnp) gname(t); } }, true);
+  // signed in: the account's name and picture, chosen already, above the box; typing a name there is «another name this time»
+  function pickBox() {
+    const g = ls.get("fn-gname"); if (typeof g !== "string" || !g) return;
+    BOX.forEach(id => {
+      const el = document.getElementById(id); if (!el || el.dataset.fnp || !el.parentNode) return;
+      el.dataset.fnp = "1"; el.value = ""; el.placeholder = "اسم ثاني (اختياري)";
+      const b = document.createElement("button"); b.type = "button"; b.className = "fn-pick on";
+      const src = (() => { const i = ls.get("fn-avi"); return typeof i === "string" && i.startsWith("data:image/") ? i : isOwner() ? pic() : ""; })();
+      const av = src ? document.createElement("img") : document.createElement("span"); av.className = "fn-pav";
+      if (src) { av.src = src; av.alt = ""; } else av.textContent = g.slice(0, 1);
+      const nm = document.createElement("span"); nm.textContent = g;
+      const ok = document.createElement("span"); ok.className = "ok"; ok.textContent = "✅";
+      b.append(av, nm, ok);
+      const or = document.createElement("div"); or.className = "fn-or"; or.textContent = "أو اكتب اسم ثاني لهالمرة:";
+      el.parentNode.insertBefore(b, el); el.parentNode.insertBefore(or, el);
+      const sync = () => b.classList.toggle("on", !el.value.trim());
+      el.addEventListener("input", sync);
+      b.addEventListener("click", () => { el.value = ""; sync(); });
+    });
+  }
   // the names the games keep on this phone get the text too, so going back into a room (without the name box) shows it
   const KEPT = ["bs-me-v1", "sq-me-v1", "mf-me-v1", "draw-me-v1", "df-me-v1", "fn-night-v1", "seenjeem-remote-v1"];
   function renameKept() {
@@ -224,13 +251,16 @@
   function decorate(root) {
     if (!root || !root.nodeType) return;
     const src = pic();
-    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.nodeValue.includes(T0) || n.nodeValue.includes(MARK)) && n.parentNode && !SKIP.test(n.parentNode.nodeName) ? 1 : 3 });
+    const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => (n.nodeValue.includes(T0) || n.nodeValue.includes(MARK) || RUN.test(n.nodeValue)) && n.parentNode && !SKIP.test(n.parentNode.nodeName) ? 1 : 3 });
     const found = []; while (w.nextNode()) found.push(w.currentNode);
     for (let t of found) {
       for (let guard = 0; guard < 20; guard++) {
-        const v = t.nodeValue, a = v.indexOf(T0), m = v.indexOf(MARK);
-        if (a < 0 && m < 0) break;
-        if (a >= 0 && (m < 0 || a < m)) {                         // «… T0 text T1 …» → a badge
+        const v = t.nodeValue, a = v.indexOf(T0), m = v.indexOf(MARK), rm = RUN.exec(v), r = rm ? rm.index : -1;
+        if (a < 0 && m < 0 && r < 0) break;
+        if (r >= 0 && (a < 0 || r < a) && (m < 0 || r < m)) {     // a signed-in player's key → their picture
+          const mid = t.splitText(r), rest = mid.splitText(16);
+          mid.parentNode.replaceChild(avImg(unbits(mid.nodeValue)), mid); t = rest;
+        } else if (a >= 0 && (m < 0 || a < m)) {                         // «… T0 text T1 …» → a badge
           let e = v.indexOf(T1, a); if (e < 0) e = v.length;
           const mid = t.splitText(a), rest = mid.splitText(e - a);
           const own = rest.nodeValue.startsWith(T1 + MARK);
@@ -245,6 +275,23 @@
       }
     }
   }
+  // pictures of signed-in players: kept on this phone, and fetched again once per page in case they changed
+  const AVC = Object.assign({}, ls.get("fn-avc") || {}), asked = {};
+  function avImg(k) {
+    const img = document.createElement("img"); img.className = "fn-av"; img.alt = ""; img.dataset.k = k;
+    if (AVC[k]) img.src = AVC[k]; else img.style.display = "none";
+    if (!asked[k]) {
+      asked[k] = 1;
+      get("av/" + k).then(v => {
+        const i = v && typeof v.i === "string" && v.i.startsWith("data:image/") ? v.i : "";
+        if (i) AVC[k] = i; else delete AVC[k];
+        const ks = Object.keys(AVC); if (ks.length > 40) delete AVC[ks[0]];
+        ls.set("fn-avc", AVC);
+        document.querySelectorAll('img.fn-av[data-k="' + k + '"]').forEach(im => { if (i) { im.src = i; im.style.display = ""; } else im.remove(); });
+      }).catch(() => {});
+    }
+    return img;
+  }
   function marks() {
     if (marks.on || !self.MutationObserver) return;
     marks.on = true;
@@ -253,9 +300,13 @@
     st.textContent = ".fn-av{display:inline-block;width:2em;height:2em;border-radius:50%;object-fit:cover;vertical-align:-.6em;margin-inline:.25em;border:2px solid #ffb21e;background:#fff}" +
       ".plist .fn-av{width:2.8em;height:2.8em;vertical-align:-.95em}" +
       ".fn-tag{display:inline-block;margin-inline-start:.15em;padding:0 .55em;border-radius:999px;font-size:.78em;font-weight:800;line-height:1.55;vertical-align:.12em;background:#efe7ff;color:#5b21b6;border:1.5px solid #5b21b6;white-space:nowrap;text-shadow:none}" +
-      ".fn-tag.own{background:#ffb21e;color:#2b1745;border-color:#2b1745}";
+      ".fn-tag.own{background:#ffb21e;color:#2b1745;border-color:#2b1745}" +
+      ".fn-pick{display:flex;align-items:center;gap:10px;width:100%;box-sizing:border-box;margin:0 0 8px;padding:8px 12px;border:2.5px solid #2b1745;border-radius:16px;background:#fff;color:#2b1745;font:inherit;font-weight:800;font-size:18px;text-align:start;cursor:pointer;opacity:.7}" +
+      ".fn-pick.on{background:#fff6c8;box-shadow:3px 3px 0 #2b1745;opacity:1}.fn-pick .ok{margin-inline-start:auto;visibility:hidden}.fn-pick.on .ok{visibility:visible}" +
+      ".fn-pav{width:40px;height:40px;flex:none;border-radius:50%;object-fit:cover;border:2px solid #2b1745;display:grid;place-items:center;background:#ffb21e;font-size:20px}" +
+      ".fn-or{font-size:13px;font-weight:800;opacity:.75;margin:2px 0 6px}";
     (document.head || document.documentElement).appendChild(st);
-    const run = () => { decorate(document.body); new MutationObserver(ms => ms.forEach(m => decorate(m.type === "characterData" ? m.target.parentNode : m.target))).observe(document.body, { childList: true, subtree: true, characterData: true }); };
+    const run = () => { decorate(document.body); pickBox(); new MutationObserver(ms => { ms.forEach(m => decorate(m.type === "characterData" ? m.target.parentNode : m.target)); pickBox(); }).observe(document.body, { childList: true, subtree: true, characterData: true }); };
     document.body ? run() : addEventListener("DOMContentLoaded", run);
   }
   const pictures = () => { if (document.body) decorate(document.body); };   // a picture that arrives later: redo the page

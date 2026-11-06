@@ -233,6 +233,23 @@
         "d": {
           "$id": { ".validate": "$id.matches(/^[a-z0-9]{16}$/) && newData.isBoolean()" }
         },
+        "p": {
+          ".read": "auth != null && auth.uid === $uid",
+          "g": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 18" },
+          "k": { ".validate": "newData.isString() && newData.val().matches(/^[0-9a-f]{4}$/)" },
+          "$other": { ".validate": false }
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "av": {
+      ".read": true,
+      "$k": {
+        ".write": "auth != null && ((!data.exists() && newData.child('u').val() === auth.uid) || data.child('u').val() === auth.uid || auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52')",
+        ".validate": "$k.matches(/^[0-9a-f]{4}$/) && newData.child('u').isString() && newData.child('i').isString() && newData.child('i').val().beginsWith('data:image/jpeg') && newData.child('i').val().length < 40000",
+        "u": { ".validate": true },
+        "i": { ".validate": true },
+        "t": { ".validate": "newData.isNumber()" },
         "$other": { ".validate": false }
       }
     },

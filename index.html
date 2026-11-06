@@ -107,6 +107,22 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 .acct button:active{transform:translate(3px,3px);box-shadow:none}
 .acct .g{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--ink);font:800 13px var(--f-display);color:var(--blue)}
 .acct button.out{padding:2px 12px;font-size:13px;box-shadow:2px 2px 0 var(--ink)}
+.acct button.me{padding:3px 14px 3px 4px}
+.acct .av{width:32px;height:32px;flex:none;border-radius:50%;object-fit:cover;border:2px solid var(--ink);display:grid;place-items:center;background:#ffb21e;font-size:16px}
+.mesheet{position:fixed;inset:0;z-index:60;background:rgba(43,23,69,.55);display:flex;align-items:flex-end;justify-content:center}
+.mesheet .bx{position:relative;width:100%;max-width:520px;max-height:92vh;overflow:auto;box-sizing:border-box;background:var(--bg,#fff6e9);border:3px solid var(--ink);border-bottom:0;border-radius:26px 26px 0 0;padding:18px 18px 24px;text-align:center;color:var(--ink)}
+.mesheet h2{margin:0 0 12px;font-size:22px}
+.mesheet .x{position:absolute;top:12px;left:12px;width:36px;height:36px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-weight:800;font-size:16px;cursor:pointer}
+.mesheet .big{display:block;position:relative;width:120px;height:120px;margin:0 auto;cursor:pointer}
+.mesheet .pic{width:120px;height:120px;border-radius:50%;object-fit:cover;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--game,#7c3aed);display:grid;place-items:center;background:#ffb21e;font-size:54px;font-weight:800;box-sizing:border-box}
+.mesheet .cam{position:absolute;left:-2px;bottom:-2px;width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--ink);display:grid;place-items:center;font-size:18px}
+.mesheet .row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 6px}
+.mesheet .b{background:#fff;color:var(--ink);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:999px;padding:8px 14px;font-weight:800;font-size:15px;cursor:pointer}
+.mesheet .lbl{display:block;font-weight:800;color:var(--muted);font-size:14px;margin:12px 0 6px;text-align:right}
+.mesheet #meName{width:100%;box-sizing:border-box;border:2px solid var(--ink);border-radius:14px;padding:10px 12px;font:inherit;font-weight:800;font-size:17px;background:#fff;color:var(--ink)}
+.mesheet .save{display:block;width:100%;margin-top:16px;background:#7c3aed;color:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:999px;padding:11px;font-weight:800;font-size:17px;cursor:pointer}
+.mesheet .mmsg{margin:10px 0 0;font-weight:800;color:#b42318;min-height:1em}.mesheet .mmsg.ok{color:#15803d}
+.mesheet .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
 .amsg{text-align:center;color:#e03131;font-weight:700;font-size:14px;margin:6px 0 0}
 
 /* tv */
@@ -227,12 +243,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202610311021"></script>
-<script src="fninstall.js?v=202610311021"></script>
+<script src="fnfx.js?v=202611061416"></script>
+<script src="fninstall.js?v=202611061416"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202610311021"></script>
-<script src="fnstats.js?v=202610311021"></script>
+<script src="firebase-config.js?v=202611061416"></script>
+<script src="fnstats.js?v=202611061416"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -266,8 +282,9 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     } catch (err) { say("ما قدرت أتصل. تأكد من النت.", true); go.disabled = false; }
   });
 })();
-/* «ادخل بحساب Google» (optional): the site knows you on any phone. Keeps your first name for the games' name box,
-   links this phone to your account for the owner's page (users/<uid>), and recognises the owner's own account. */
+/* «ادخل بحساب Google» (optional): the site knows you on any phone. Links this phone to your account for the owner's
+   page (users/<uid>), recognises the owner's own account, and «حسابي»: your name in the games (users/<uid>/p/g) and
+   your picture (av/<key>, the key in users/<uid>/p/k). fnstats.js puts both in every game's name box. */
 (function () {
   "use strict";
   const C = self.FIREBASE_CONFIG, box = document.getElementById("acct"), msg = document.getElementById("amsg");
@@ -279,29 +296,112 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
   const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const first = u => String((u && (u.displayName || String(u.email || "").split("@")[0])) || "").trim().split(/\s+/)[0].slice(0, 18);
   const say = t => { msg.textContent = t || ""; msg.hidden = !t; };
-  const paint = name => { box.innerHTML = name != null ? `<span>✅ أهلاً ${esc(name)}</span><button type="button" class="out" data-g="out">اطلع</button>`
+  const isPic = i => typeof i === "string" && i.startsWith("data:image/");
+  const face = (cls, name, img) => isPic(img) ? `<img class="${cls}" src="${img}" alt="">` : `<span class="${cls}">${esc(String(name || "؟").slice(0, 1))}</span>`;
+  const paint = name => { box.innerHTML = name != null
+    ? `<button type="button" class="me" data-g="me">${face("av", name, ls.get("fn-avi"))}حسابي · ${esc(name)}</button><button type="button" class="out" data-g="out">اطلع</button>`
     : `<button type="button" data-g="in"><span class="g" aria-hidden="true">G</span>ادخل بحساب Google</button>`; };
   paint(ls.get("fn-gname"));                                       // last known, until the account answers
-  let auth = null;
+  let auth = null, user = null, prof = {};
+  const call = async (path, method, body) => {
+    const tok = await user.getIdToken(), r = await fetch(DB + "/" + path + ".json?auth=" + encodeURIComponent(tok), method ? { method, body: body === undefined ? undefined : JSON.stringify(body) } : undefined);
+    if (!r.ok) throw r.status; return r.json();
+  };
+  // what this phone keeps: the name for the games, and the picture with its key (the games put the key in the name)
+  function keep(u, p, img) {
+    ls.set("fn-gname", (p && p.g) || first(u));
+    if (p && p.k && isPic(img)) { ls.set("fn-avk", p.k); ls.set("fn-avi", img); const c = ls.get("fn-avc") || {}; c[p.k] = img; ls.set("fn-avc", c); }
+    else { ls.del("fn-avk"); ls.del("fn-avi"); }
+  }
   async function linked(u) {
-    ls.set("fn-gname", first(u));
     try {
-      const tok = await u.getIdToken(), q = "?auth=" + encodeURIComponent(tok), dev = (ls.get("fn-dev") || {}).id;
+      const dev = (ls.get("fn-dev") || {}).id;
       const up = { n: String(u.displayName || "").slice(0, 80), e: String(u.email || "").slice(0, 120), t: Date.now() };
       if (/^[a-z0-9]{16}$/.test(dev || "")) up["d/" + dev] = true;
-      fetch(DB + "/users/" + u.uid + ".json" + q, { method: "PATCH", body: JSON.stringify(up) }).catch(() => {});
+      call("users/" + u.uid, "PATCH", up).catch(() => {});
+      prof = (await call("users/" + u.uid + "/p").catch(() => null)) || {};
+      const av = prof.k ? await fetch(DB + "/av/" + prof.k + ".json").then(r => r.ok ? r.json() : null).catch(() => null) : null;
+      keep(u, prof, av && av.i); if (user === u) paint(ls.get("fn-gname"));
       // only the owner's account may read the visitor count: if it can, this phone is the owner's
-      const r = await fetch(DB + "/stats/month/" + new Date(Date.now() + 3 * 36e5).toISOString().slice(0, 7) + ".json" + q);
-      if (r.ok) { localStorage.setItem("fn-owner", "1"); localStorage.setItem("words-owner", "1"); }
+      const r = await call("stats/month/" + new Date(Date.now() + 3 * 36e5).toISOString().slice(0, 7)).then(() => true, () => false);
+      if (r) { localStorage.setItem("fn-owner", "1"); localStorage.setItem("words-owner", "1"); }
     } catch (e) {}
   }
   function start() {
     try { auth = firebase.auth(); } catch (e) { return; }
-    auth.onAuthStateChanged(u => { if (u) { paint(first(u)); linked(u); } else { ls.del("fn-gname"); paint(null); } });
+    auth.onAuthStateChanged(u => {
+      user = u || null;
+      if (u) { if (!ls.get("fn-gname")) ls.set("fn-gname", first(u)); paint(ls.get("fn-gname")); linked(u); }
+      else { ["fn-gname", "fn-avk", "fn-avi"].forEach(ls.del); paint(null); closeSheet(); }
+    });
   }
   addEventListener("load", () => {
     if (typeof firebase.auth === "function") { start(); return; }
     const sc = document.createElement("script"); sc.src = "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"; sc.onload = start; document.head.appendChild(sc);
+  });
+
+  /* ---------- «حسابي» ---------- */
+  let draft = null;                                                // the picture chosen but not saved yet ("" = take it off)
+  const closeSheet = () => { const x = document.getElementById("mesheet"); if (x) x.remove(); draft = null; document.body.style.overflow = ""; };
+  function sheet(note, ok) {
+    const name = ls.get("fn-gname") || "", img = draft !== null ? draft : ls.get("fn-avi"), old = document.getElementById("mesheet");
+    const typed = old ? (old.querySelector("#meName") || {}).value : null;
+    if (old) old.remove();
+    const d = document.createElement("div"); d.className = "mesheet"; d.id = "mesheet";
+    d.innerHTML = `<div class="bx" role="dialog" aria-modal="true" aria-label="حسابي"><button type="button" class="x" data-m="close" aria-label="سكّر">✕</button><h2>حسابي</h2>
+      <label class="big">${face("pic", name, img)}<span class="cam" aria-hidden="true">📷</span><input type="file" id="mePic" accept="image/*" hidden></label>
+      <div class="row"><label class="b">📷 صورة من جوالك<input type="file" id="mePic2" accept="image/*" hidden></label>${isPic(img) ? `<button type="button" class="b" data-m="nopic">🗑️ شيل الصورة</button>` : ""}</div>
+      <label class="lbl" for="meName">اسمك في الألعاب:</label><input id="meName" maxlength="18" autocomplete="off" value="${esc(typed != null ? typed : name)}">
+      <button type="button" class="save" data-m="save">احفظ</button>
+      <p class="mmsg${ok ? " ok" : ""}" role="status">${esc(note || "")}</p>
+      <p class="note">صورتك تطلع جنب اسمك في كل الألعاب، على كل الجوالات. بدون صور ذوات أرواح.<br>اسمك يطلع لك جاهز في الألعاب، وتقدر تكتب غيره وقتها.</p></div>`;
+    document.body.appendChild(d); document.body.style.overflow = "hidden";
+  }
+  // the picture: cut to a square from the middle, made small
+  async function shrink(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+      const S = 160, c = document.createElement("canvas"); c.width = c.height = S;
+      const k = Math.min(im.naturalWidth, im.naturalHeight), g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, S, S);
+      g.drawImage(im, (im.naturalWidth - k) / 2, (im.naturalHeight - k) / 2, k, k, 0, 0, S, S);
+      let q = 0.85, out = c.toDataURL("image/jpeg", q);
+      while (out.length > 36000 && q > 0.3) { q -= 0.15; out = c.toDataURL("image/jpeg", q); }
+      return out.length < 40000 ? out : "";
+    } finally { URL.revokeObjectURL(url); }
+  }
+  async function save() {
+    const u = user; if (!u) return;
+    const g = String((document.getElementById("meName") || {}).value || "").replace(/[⁠-⁤]/g, "").trim().slice(0, 18) || first(u);
+    const b = document.querySelector("#mesheet .save"); if (b) { b.disabled = true; b.textContent = "لحظة…"; }
+    try {
+      let k = prof.k || null, img = ls.get("fn-avi");
+      if (draft) {                                                 // a new picture: under the key it had, or a new free key
+        let done = false;
+        for (let n = 0; n < 8 && !done; n++) {
+          if (!k) k = Math.floor(Math.random() * 65536).toString(16).padStart(4, "0");
+          try { await call("av/" + k, "PUT", { u: u.uid, i: draft, t: Date.now() }); done = true; } catch (e) { if (prof.k && k === prof.k) throw e; k = null; }
+        }
+        if (!done) throw 0;
+        img = draft;
+        if (localStorage.getItem("fn-owner") === "1") call("cfg/me", "PATCH", { img: draft }).catch(() => {});   // the owner: his picture everywhere
+      } else if (draft === "" && k) { await call("av/" + k, "DELETE"); k = null; img = ""; }
+      prof = { g, k: k || null };
+      await call("users/" + u.uid + "/p", "PATCH", { g, k: k || null });
+      if (!k) delete prof.k;
+      keep(u, prof, img); draft = null; paint(g); sheet("✅ انحفظ. يطلع من أول غرفة تدخلها.", true);
+    } catch (e) { sheet("ما انحفظ. تأكد من النت وجرّب مرة ثانية."); }
+  }
+  document.addEventListener("change", async e => {
+    const t = e.target; if (!t || (t.id !== "mePic" && t.id !== "mePic2") || !t.files || !t.files[0]) return;
+    try { const out = await shrink(t.files[0]); if (!out) throw 0; draft = out; sheet("اضغط «احفظ» عشان تثبت الصورة."); }
+    catch (err) { sheet("ما قدرت أفتح هالصورة. جرّب صورة ثانية."); }
+  });
+  document.addEventListener("click", e => {
+    const m = e.target.closest && e.target.closest("[data-m]");
+    if (m) { if (m.dataset.m === "close") closeSheet(); else if (m.dataset.m === "nopic") { draft = ""; sheet("اضغط «احفظ» عشان تنشال الصورة."); } else if (m.dataset.m === "save") save(); return; }
+    if (e.target.id === "mesheet") closeSheet();
   });
   box.addEventListener("click", async e => {
     const b = e.target.closest("[data-g]"); if (!b) return;
@@ -310,7 +410,8 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     if (b.dataset.g === "in") {
       try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
       catch (err) { if (!/popup-closed|cancelled-popup/.test((err && err.code) || "")) say("ما ضبط الدخول. افتح الموقع في Safari أو Chrome نفسه وجرّب مرة ثانية."); }
-    } else await auth.signOut().catch(() => {});
+    } else if (b.dataset.g === "me") { if (user) sheet(); else say("لحظة، جرّب بعد ثواني."); }
+    else await auth.signOut().catch(() => {});
   });
 })();
 /* a message from the owner to everyone: shown above «عندك رمز غرفة» until it ends */
