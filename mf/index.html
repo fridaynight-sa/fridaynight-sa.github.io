@@ -154,6 +154,22 @@ td.plus{color:var(--good)}
 .titles li{display:flex;flex-direction:column;background:var(--soft);border-radius:14px;padding:10px 14px}
 .titles li b{font-family:var(--f-display);font-size:18px}
 .titles li span{color:var(--muted);font-weight:700;font-size:14px}
+
+/* 📱 جوال واحد */
+.offl{display:inline-block;background:#12a874;color:#fff;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:800;vertical-align:2px;margin-inline-start:4px}
+.onames{display:flex;flex-wrap:wrap;gap:8px}.onames span{display:inline-flex;align-items:center;gap:4px;background:var(--soft);border-radius:999px;padding:5px 6px 5px 14px;font-weight:800}
+.onames span button{color:var(--danger);font-weight:800;font-size:14px;padding:2px 6px}
+.oadd{display:flex;gap:8px;margin-top:10px}.oadd .inp{flex:1;min-width:0}.oadd .btn{width:auto;padding:12px 18px}
+.opass{min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+.opass h2{font-size:28px;margin:0}.opass .who{color:var(--game,var(--accent))}.obig{font-size:60px;line-height:1}.opass .btn{max-width:300px}
+.secret{background:#fff4d6;border-radius:12px;padding:8px 12px;font-weight:800;color:#8a5a00;text-align:center;margin:0 0 10px}
+.ocount{font-family:var(--f-display);font-weight:800;font-size:120px;line-height:1.1;color:var(--game,var(--accent));animation:fnpop .4s}
+.ocount.go{font-size:64px;color:var(--danger)}
+@keyframes fnpop{from{transform:scale(.4);opacity:0}}
+.otally{display:grid;gap:8px}.otally div{display:flex;align-items:center;gap:8px}
+.otally .nm{flex:1;background:var(--soft);border-radius:14px;padding:12px;font-weight:800;font-size:17px;text-align:start}
+.otally b{min-width:34px;text-align:center;font-family:var(--f-display);font-size:24px}
+.otally .mn{width:40px;height:40px;border-radius:12px;background:var(--soft);font-weight:800;font-size:20px}
 </style>
 <style>
 /* games bar: one row that scrolls sideways on phones */
@@ -164,7 +180,7 @@ td.plus{color:var(--good)}
 .gamesbar a.site img{vertical-align:-5px;margin-inline-end:4px}
 @media (min-width:820px){.gamesbar{justify-content:center!important;margin-inline:0;padding-inline:0}}
 </style>
-<link rel="stylesheet" href="../fntheme.css?v=202611071836">
+<link rel="stylesheet" href="../fntheme.css?v=202611071902">
 </head>
 <body style="--game:#ffb21e">
 <div class="wrap">
@@ -178,14 +194,14 @@ td.plus{color:var(--good)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="../firebase-config.js?v=202611071836"></script>
-<script src="../fnstats.js?v=202611071836"></script>
-<script src="../fncrypto.js?v=202611071836"></script>
-<script src="../fnwake.js?v=202611071836"></script>
-<script src="../fnfx.js?v=202611071836"></script>
-<script src="../fnanim.js?v=202611071836"></script>
-<script src="../fnnight.js?v=202611071836"></script>
-<script src="app.js?v=202611071836"></script>
+<script src="../firebase-config.js?v=202611071902"></script>
+<script src="../fnstats.js?v=202611071902"></script>
+<script src="../fncrypto.js?v=202611071902"></script>
+<script src="../fnwake.js?v=202611071902"></script>
+<script src="../fnfx.js?v=202611071902"></script>
+<script src="../fnanim.js?v=202611071902"></script>
+<script src="../fnnight.js?v=202611071902"></script>
+<script src="app.js?v=202611071902"></script>
 <script>try{document.querySelector(".gamesbar .on").scrollIntoView({inline:"center",block:"nearest"})}catch(e){}</script>
 </body>
 </html>
