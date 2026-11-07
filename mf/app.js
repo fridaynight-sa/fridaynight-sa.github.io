@@ -214,15 +214,15 @@
           <p class="note">خلّ البقية يصوّرون الباركود أو يدخلون الرمز.</p><button type="button" class="ghost mt" data-act="copy">انسخ رابط الدخول</button>
           <p class="note">📺 للعرض على التلفزيون: <b dir="ltr">${esc(tvURL().replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>اللاعبين (${ids.length})</h2><ul class="plist">${ids.map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${id === S.host ? " 👑" : ""}${isHost() && id !== ME.pid && !waiting ? ` <button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}</ul></div>
-        ${waiting ? "" : `<div class="card"><h2>نوع الأسئلة</h2><p class="note">صوّت للي تبيه. إذا ما أحد صوّت، تجي الأسئلة من الكل.</p>
-          <div class="catv mt">${CATS.map(c => `<button type="button" data-vcat="${c.id}" class="${mine.includes(c.id) ? "on" : ""}"><span>${esc(c.emoji)} ${esc(c.name)}</span><small>${v[c.id] || ""}</small></button>`).join("")}</div></div>
+        ${waiting ? "" : `${CATS.length > 1 ? `<div class="card"><h2>نوع الأسئلة</h2><p class="note">صوّت للي تبيه. إذا ما أحد صوّت، تجي الأسئلة من الكل.</p>
+          <div class="catv mt">${CATS.map(c => `<button type="button" data-vcat="${c.id}" class="${mine.includes(c.id) ? "on" : ""}"><span>${esc(c.emoji)} ${esc(c.name)}</span><small>${v[c.id] || ""}</small></button>`).join("")}</div></div>` : ""}
         ${isHost() ? `<div class="card"><div class="field"><span class="lbl">عدد الأسئلة</span><div class="seg">${[6, 8, 10, 12, 15].map(n => `<button type="button" data-rounds="${n}" class="${S.rounds === n ? "on" : ""}">${n}</button>`).join("")}</div></div>
           <p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart" ${ids.length < MIN_P ? "disabled" : ""}>ابدأ اللعبة</button>${ids.length < MIN_P ? `<p class="note center">ننتظر ${MIN_P - ids.length} لاعب${MIN_P - ids.length > 1 ? "ين" : ""} بعد.</p>` : ""}</div>`
           : `<div class="card center"><p class="note">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ اللعبة…</p></div>`}`}
         ${leave}`;
       return;
     }
-    const head = S.q ? `<p class="note center">السؤال ${S.idx + 1} من ${S.total} · ${cat ? esc(cat.emoji + " " + cat.name) : ""}</p>` : "";
+    const head = S.q ? `<p class="note center">السؤال ${S.idx + 1} من ${S.total} ${cat && CATS.length > 1 ? "· " + esc(cat.emoji + " " + cat.name) : ""}</p>` : "";
     const qtext = S.q ? `<p class="stmt">${esc(S.q.text)}</p>` : "";
     const order = S.order || [];
     if (S.phase === "vote") {
@@ -282,7 +282,7 @@
         <button type="button" class="mode" data-act="ojoin"><span class="ic">🔑</span><span><b>ادخل غرفة</b><span>عندك رمز من صاحبك</span></span></button>
       </div>
       <div class="card mt"><h3>طريقة اللعب</h3><ul class="note"><li>يطلع سؤال مثل «مين فينا أكثر واحد يتأخر؟».</li><li>كل واحد يصوّت من جواله لواحد من الموجودين، حتى نفسه.</li><li>التصويت سري: محد يعرف مين صوّت لمين، بس نشوف كم صوت أخذ كل واحد.</li><li>اللي ياخذ أكثر أصوات ياخذ اللقب 👑، وكل واحد صوّت له ياخذ <b>+1</b> (إلا إذا صوّت لنفسه).</li><li>إذا تعادل الكل، ما أحد ياخذ اللقب ولا نقاط.</li></ul>
-      <p class="note">نوع الأسئلة: ${CATS.map(c => esc(c.emoji + " " + c.name)).join(" · ")}</p><p class="note">📺 تقدرون تعرضونها على التلفزيون من صفحة «شاشة العرض».</p></div>`;
+      ${CATS.length > 1 ? `<p class="note">نوع الأسئلة: ${CATS.map(c => esc(c.emoji + " " + c.name)).join(" · ")}</p>` : `<p class="note">فيها ${CATS[0] ? CATS[0].items.length : 0} سؤال.</p>`}<p class="note">📺 تقدرون تعرضونها على التلفزيون من صفحة «شاشة العرض».</p></div>`;
   }
   function renderForm(kind, code, msg) {
     const nm = (ME && ME.name) || "";

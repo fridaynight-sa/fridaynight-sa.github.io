@@ -98,7 +98,7 @@
   /* ---------- مين فينا ---------- */
   function renderMF() {
     const order = S.order || [], cat = S.q && MFCATS.find(c => c.id === S.q.cat);
-    const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${cat ? " · " + esc(cat.emoji + " " + cat.name) : ""}</p>` : "";
+    const head = S.q ? `<p class="tvsub">السؤال ${S.idx + 1} من ${S.total}${cat && MFCATS.length > 1 ? " · " + esc(cat.emoji + " " + cat.name) : ""}</p>` : "";
     const q = S.q ? `<p class="tvq">${esc(S.q.text)}</p>` : "";
     if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("mf")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}</div>`;
     if (S.phase === "vote") return `<div class="card">${head}${q}${timer(30)}<p class="tvsub">🗳️ صوّتوا من جوالاتكم… التصويت سري</p>${plist(order, id => P[id] && P[id].vote && S.q && P[id].vote.q === S.q.id)}</div>`;
