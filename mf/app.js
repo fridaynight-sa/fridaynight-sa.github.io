@@ -319,28 +319,24 @@
 
   /* ---------------- 📱 جوال واحد (no internet) ----------------
      One phone for everyone, kept on this phone (mf-one-v1) so a reload goes on where it was.
-     «🔒 تمرير»: the phone goes round, each one votes in secret, then the result (and +1 for voting with the majority).
-     «⏱️ أشّروا»: «٣، ٢، ١» and everyone points at once; the phone only counts who got the most, for the titles. */
+     The phone goes round («مرّر الجوال لـ …»), each one votes in secret, then the result (+1 for voting with the majority). */
   const OKEY = "mf-one-v1", ONAMES = "mf-one-names";
-  let O = LS.get(OKEY, null), oSel = null, oTimer = null;
+  let O = LS.get(OKEY, null), oSel = null;
   const oSave = () => LS.set(OKEY, O);
   const AR = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
   function openOne() {
     view = "one"; chip.hidden = true;
-    if (!O || O.phase === "end") O = { phase: "setup", names: LS.get(ONAMES, []) || [], rounds: 8, mode: "pass" };
+    if (!O || O.phase === "end" || O.mode !== "pass") O = { phase: "setup", names: LS.get(ONAMES, []) || [], rounds: 8, mode: "pass" };
     oRender();
   }
   function oStart() {
     const n = O.names.length, qs = pickQuestions(CATS.map(c => c.id), O.rounds, [], seenWeights([seenList()]));
     LS.set(ONAMES, O.names);
-    O = Object.assign(O, { phase: O.mode === "pass" ? "pass" : "q", qs: qs.map(q => ({ t: q.q, k: q.key })), i: 0, turn: 0, votes: {}, counts: null, scores: Array(n).fill(0), wins: Array(n).fill(0), titles: [] });
+    O = Object.assign(O, { phase: "pass", qs: qs.map(q => ({ t: q.q, k: q.key })), i: 0, turn: 0, votes: {}, counts: null, scores: Array(n).fill(0), wins: Array(n).fill(0), titles: [] });
     oSave(); oRender();
   }
-  function oReveal(counts) {
-    const ids = O.names.map((_, i) => String(i)), votes = O.mode === "pass" ? O.votes : {};
-    let r;
-    if (O.mode === "pass") r = scoreRound(ids, votes);
-    else { const c = {}; ids.forEach(id => c[id] = counts[id] || 0); const max = Math.max(0, ...Object.values(c)); r = { counts: c, winners: max ? ids.filter(id => c[id] === max) : [], right: [], deltas: {} }; }
+  function oReveal() {
+    const ids = O.names.map((_, i) => String(i)), r = scoreRound(ids, O.votes);
     ids.forEach(id => { O.scores[+id] += r.deltas[id] || 0; if (r.winners.includes(id)) O.wins[+id]++; });
     if (r.winners.length) O.titles.push({ q: O.qs[O.i].t, w: r.winners.map(Number) });
     noteSeen(O.qs[O.i].k);
@@ -348,18 +344,15 @@
     O.phase = "reveal"; oSave(); oRender();
     if (self.FA && r.winners.length) { FA.play && FA.play("party"); FA.confetti && FA.confetti(); }
   }
-  function oNext() { O.i++; O.votes = {}; O.turn = 0; O.res = null; O.phase = O.i >= O.qs.length ? "end" : O.mode === "pass" ? "pass" : "q"; oSave(); oRender(); }
+  function oNext() { O.i++; O.votes = {}; O.turn = 0; O.res = null; O.phase = O.i >= O.qs.length ? "end" : "pass"; oSave(); oRender(); }
   function oRender() {
-    clearInterval(oTimer);
     const nm = i => esc(O.names[i]), qn = O.qs ? `<p class="note center">السؤال ${AR(O.i + 1)} من ${AR(O.qs.length)}</p>` : "";
     const q = O.qs && O.qs[O.i] ? `<p class="stmt">${esc(O.qs[O.i].t)}</p>` : "";
     if (O.phase === "setup") {
       app.innerHTML = `<div class="card"><h2>📱 جوال واحد <span class="offl">بدون نت</span></h2><p class="note">اكتبوا أسماءكم بالترتيب اللي بتمررون فيه الجوال.</p>
         <div class="onames mt">${O.names.map((n, i) => `<span>${esc(n)} <button type="button" data-odel="${i}" aria-label="شيل ${esc(n)}">✕</button></span>`).join("")}</div>
         <div class="oadd"><input id="oName" class="inp" maxlength="18" placeholder="اسم لاعب…" autocomplete="off"><button type="button" class="btn" data-act="oadd">أضف</button></div><p class="err" id="oerr"></p></div>
-        <div class="card"><div class="field"><span class="lbl">طريقة التصويت</span><div class="seg"><button type="button" data-omode="pass" class="${O.mode === "pass" ? "on" : ""}">🔒 تمرير الجوال (سري)</button><button type="button" data-omode="point" class="${O.mode === "point" ? "on" : ""}">⏱️ ٣، ٢، ١ أشّروا! (أسرع)</button></div>
-          <p class="note">${O.mode === "pass" ? "كل واحد يصوّت سري بدوره، والجوال يحسب النقاط." : "الكل يأشّر بنفس اللحظة، وأنت تضغط على اللي أشّروا عليه."}</p></div>
-          <div class="field"><span class="lbl">عدد الأسئلة</span><div class="seg">${[6, 8, 10, 12, 15].map(n => `<button type="button" data-orounds="${n}" class="${O.rounds === n ? "on" : ""}">${AR(n)}</button>`).join("")}</div></div>
+        <div class="card"><div class="field"><span class="lbl">عدد الأسئلة</span><div class="seg">${[6, 8, 10, 12, 15].map(n => `<button type="button" data-orounds="${n}" class="${O.rounds === n ? "on" : ""}">${AR(n)}</button>`).join("")}</div></div>
           <button type="button" class="btn" data-act="ostart" ${O.names.length < MIN_P ? "disabled" : ""}>ابدأ اللعبة</button>${O.names.length < MIN_P ? `<p class="note center">${AR(MIN_P)} لاعبين على الأقل</p>` : ""}
           <button type="button" class="btn alt mt" data-act="home">رجوع</button></div>`;
       return;
@@ -374,39 +367,17 @@
         <button type="button" class="btn mt" data-act="ovote" ${oSel == null ? "disabled" : ""}>${O.turn + 1 < O.names.length ? "صوّت وخلّ اللي بعدك" : "صوّت واعرض النتيجة"}</button></div>`;
       return;
     }
-    if (O.phase === "q") {
-      app.innerHTML = `<div class="card">${qn}${q}<button type="button" class="btn mt" data-act="ocount">٣، ٢، ١… أشّروا!</button><p class="note center">لما تضغط، يعدّ الجوال وكلكم تأشّرون بنفس اللحظة.</p></div>${oQuit()}`;
-      return;
-    }
-    if (O.phase === "count") {
-      let n = 3;
-      app.innerHTML = `<div class="card opass">${q}<div class="ocount" id="ocn">${AR(n)}</div></div>`;
-      if (self.FX) FX.play("tick");
-      oTimer = setInterval(() => {
-        n--; const el = document.getElementById("ocn"); if (!el) { clearInterval(oTimer); return; }
-        if (n > 0) { el.textContent = AR(n); if (self.FX) FX.play("tick"); }
-        else { clearInterval(oTimer); el.textContent = "أشّروا!"; el.classList.add("go"); if (self.FX) FX.play("whoosh", [80]); setTimeout(() => { if (O.phase === "count") { O.phase = "tally"; O.tally = {}; oSave(); oRender(); } }, 1400); }
-      }, 900);
-      return;
-    }
-    if (O.phase === "tally") {
-      const t = O.tally || {};
-      app.innerHTML = `<div class="card">${qn}${q}<p class="note center">اضغط على اسم كل واحد بعدد اللي أشّروا عليه</p>
-        <div class="otally">${O.names.map((n, i) => `<div><button type="button" class="nm" data-oup="${i}">${esc(n)}</button><b>${AR(t[i] || 0)}</b><button type="button" class="mn" data-odown="${i}" aria-label="نقّص">−</button></div>`).join("")}</div>
-        <button type="button" class="btn mt" data-act="otally">اعرض النتيجة</button></div>`;
-      return;
-    }
     if (O.phase === "reveal") {
       const r = O.res, max = Math.max(1, ...Object.values(r.counts)), order = O.names.map((_, i) => i).sort((a, b) => (r.counts[b] || 0) - (r.counts[a] || 0));
       app.innerHTML = `<div class="card">${qn}${q}<p class="big-msg">${r.winners.length ? "👑 " + r.winners.map(nm).join(" و") : "ما فيه فايز، تعادلتوا 😅"}</p>
         <div class="bars">${order.map(i => `<div class="bar ${r.winners.includes(i) ? "win" : ""}"><span>${nm(i)}</span><span class="tr"><i style="width:${(r.counts[i] || 0) / max * 100}%"></i></span><span>${AR(r.counts[i] || 0)}</span></div>`).join("")}</div>
-        ${O.mode === "pass" ? `<p class="note center mt">${r.right.length ? "توقّعوا مع الأغلبية (+١): " + r.right.map(nm).join("، ") : "ما أحد توقّع مع الأغلبية"}</p>` : ""}
+        <p class="note center mt">${r.right.length ? "توقّعوا مع الأغلبية (+١): " + r.right.map(nm).join("، ") : "ما أحد توقّع مع الأغلبية"}</p>
         <button type="button" class="btn mt" data-act="onext">${O.i + 1 >= O.qs.length ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button></div>`;
       return;
     }
     if (O.phase === "end") {
-      const pts = O.mode === "pass" ? O.scores : O.wins, order = O.names.map((_, i) => i).sort((a, b) => pts[b] - pts[a]), medal = ["🥇", "🥈", "🥉"];
-      app.innerHTML = `<div class="card"><h2 class="center">النتيجة النهائية 🏆</h2><p class="note center">${O.mode === "pass" ? "أكثر واحد توقّع مع الأغلبية" : "أكثر واحد أخذ ألقاب"}</p>
+      const pts = O.scores, order = O.names.map((_, i) => i).sort((a, b) => pts[b] - pts[a]), medal = ["🥇", "🥈", "🥉"];
+      app.innerHTML = `<div class="card"><h2 class="center">النتيجة النهائية 🏆</h2><p class="note center">أكثر واحد توقّع مع الأغلبية</p>
         <div class="podium mt">${order.map((i, k) => `<div><span>${medal[k] || AR(k + 1) + "."} ${nm(i)}</span><span>${AR(pts[i])}</span></div>`).join("")}</div></div>
         ${O.titles.length ? `<div class="card"><h2>الألقاب 👑</h2><ul class="titles">${O.titles.map(t => `<li><b>${t.w.map(nm).join(" و")}</b><span>${esc(t.q.replace(/^مين فينا\s*/, "").replace(/[؟?]$/, ""))}</span></li>`).join("")}</ul></div>` : ""}
         <div class="card"><button type="button" class="btn" data-act="oagain">العبوا مرة ثانية</button><button type="button" class="btn alt mt" data-act="home">القائمة</button></div>`;
@@ -422,7 +393,6 @@
       O.names.push(v); oSave(); oRender(); const n = document.getElementById("oName"); if (n) n.focus(); return;
     }
     if (b.dataset.odel !== undefined) { O.names.splice(+b.dataset.odel, 1); oSave(); oRender(); return; }
-    if (b.dataset.omode) { O.mode = b.dataset.omode; oSave(); oRender(); return; }
     if (b.dataset.orounds) { O.rounds = +b.dataset.orounds; oSave(); oRender(); return; }
     if (a === "ostart") { oStart(); return; }
     if (a === "oready") { oSel = null; O.phase = "vote"; oSave(); oRender(); return; }
@@ -432,10 +402,6 @@
       if (O.turn < O.names.length) { O.phase = "pass"; oSave(); oRender(); } else oReveal();
       return;
     }
-    if (a === "ocount") { O.phase = "count"; oSave(); oRender(); return; }
-    if (b.dataset.oup !== undefined) { O.tally[b.dataset.oup] = (O.tally[b.dataset.oup] || 0) + 1; if (self.FX) FX.play("tap"); oSave(); oRender(); return; }
-    if (b.dataset.odown !== undefined) { O.tally[b.dataset.odown] = Math.max(0, (O.tally[b.dataset.odown] || 0) - 1); oSave(); oRender(); return; }
-    if (a === "otally") { oReveal(O.tally || {}); return; }
     if (a === "onext") { oNext(); return; }
     if (a === "oquit") { if (confirm("تخلّصون اللعبة وتطلع النتيجة؟")) { O.phase = "end"; oSave(); oRender(); } return; }
     if (a === "oagain") { O.phase = "setup"; oSave(); oRender(); return; }
