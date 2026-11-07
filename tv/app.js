@@ -17,6 +17,7 @@
     mf: { dir: "mf/", label: "مين فينا؟", icon: "mf" },
     draw: { dir: "draw/", label: "ارسم وخمّن", icon: "draw" },
     df: { dir: "dafour/", label: "الدافور", icon: "dafour" },
+    jh: { dir: "jhi/", label: "جماد حيوان إنسان", icon: "jhi" },
   };
   // each game's own picture (icons/) instead of an emoji
   const gic = (name, cls) => `<img class="${cls || "gic"}" src="../icons/${name}.png" alt="">`;
@@ -117,6 +118,33 @@
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">دافور الشلة 🤓: ${esc(ids.length ? nameOf(ids[0]) : "")}</p></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
     return "";
   }
+  /* ---------- جماد حيوان إنسان ---------- */
+  const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };
+  const JHL = { ا: "الألف", ب: "الباء", ت: "التاء", ث: "الثاء", ج: "الجيم", ح: "الحاء", خ: "الخاء", د: "الدال", ذ: "الذال", ر: "الراء", ز: "الزاي", س: "السين", ش: "الشين", ص: "الصاد", ض: "الضاد", ط: "الطاء", ظ: "الظاء", ع: "العين", غ: "الغين", ف: "الفاء", ق: "القاف", ك: "الكاف", ل: "اللام", م: "الميم", ن: "النون", ه: "الهاء", و: "الواو", ي: "الياء" };
+  const jhChip = c => `<span class="jhcat" style="background:${(JHC[c] || ["", "#888"])[1]}">${esc((JHC[c] || [c])[0])}</span>`;
+  const jhCur = (e, k) => e && e[k] && e[k].r === S.r && e[k].g === S.game ? e[k] : null;
+  function renderJH() {
+    const order = S.order || [], rnd = S.r ? `<p class="tvsub">الجولة ${S.r} من ${S.total}</p>` : "", Lb = S.L === "ا" ? "أ" : S.L;
+    if (S.phase === "lobby") return `<div class="card"><p class="tvtitle">${gname("jh")}</p><p class="tvsub">اللاعبين (${lobbyIds().length}) · ننتظر صاحب الغرفة يبدأ</p>${plist(lobbyIds())}<p class="tvsub">${(S.cats || []).map(jhChip).join(" ")}</p></div>`;
+    if (S.phase === "spin") return `<div class="jhstage">${rnd}<div id="tvwheel" class="jhwbox">${self.JHW ? JHW.html(S.wl || [], "../jhi/") : ""}</div><div class="jhplq" id="tvplq" hidden><b>${Lb}</b>حرف ${JHL[S.L] || ""}</div></div>`;
+    if (S.phase === "write" || S.phase === "stop") return `<div class="card"><div class="jhlt"><b>${Lb}</b><div><p class="tvtitle">كلمة تبدأ بحرف ${JHL[S.L] || ""}</p>${rnd}</div></div>
+      <p class="tvsub">${(S.cats || []).map(jhChip).join(" ")}</p>${plist(order, id => { const a = jhCur(P[id], "ans"); return a && a.done; })}
+      ${S.phase === "stop" ? `<p class="jhstop">🛑 ${esc(nameOf(S.stopBy))} قال ستوب! باقي ٥ ثواني</p>` : ""}</div>`;
+    if (S.phase === "vote") { const items = (S.vote || {}).items || []; return `<div class="card"><p class="tvtitle">⚖️ الحكم الجماعي</p><p class="tvsub">صوّتوا من جوالاتكم: تنقبل ولا لا؟</p><div class="jhvote">${items.map((it, i) => { let y = 0, n = 0; order.forEach(id => { const v = jhCur(P[id], "vote"); const x = v && v.v ? v.v[i] : null; if (x === 1) y++; else if (x === 0) n++; }); return `<div>${jhChip(it.c)}<b>${esc(it.w)}</b><small>${it.by.map(nameOf).map(esc).join(" و")}</small><span>✅ ${y} · ❌ ${n}</span></div>`; }).join("")}</div></div>`; }
+    if (S.phase === "reveal" && S.res) return `<div class="card"><p class="tvtitle">حرف ${JHL[S.res.L] || ""} ${rnd ? "· " + rnd.replace(/<[^>]+>/g, "") : ""}</p><div class="jhrv">${(S.res.cats || []).map(cc => `<div>${jhChip(cc.c)}${cc.rows.slice().sort((a, b) => b.pts - a.pts).map(r => `<p class="${r.st === "ok" ? (r.pts > 5 ? "u" : "s") : "z"}"><b>${esc(r.w || "—")}</b><small>${esc(nameOf(r.p))}</small><i>${r.pts ? "+" + r.pts : 0}</i></p>`).join("")}</div>`).join("")}</div>${scoreTable(S.res.d)}</div>`;
+    if (S.phase === "end") return `<div class="card"><p class="tvtitle">🏁 خلصت اللعبة</p>${scoreTable(null)}</div>`;
+    return "";
+  }
+  let jhSpun = "";
+  function jhSpin() {
+    const w = document.getElementById("tvwheel"); if (!w || !self.JHW || !S.spin) return;
+    const k = S.game + ":" + S.r; if (jhSpun === k) return; jhSpun = k;
+    (S.used || []).slice(0, -1).forEach(l => { const i = (S.wl || []).indexOf(l); w.querySelectorAll(`.sl[data-i="${i}"],.lt[data-i="${i}"]`).forEach(x => x.classList.add("used")); });
+    let lt = 0;
+    JHW.spin(w, S.spin, (S.wl || []).length, () => { const t = performance.now(); if (t - lt > 40 && self.FX) { lt = t; FX.play("tick"); } }, Math.max(0, Date.now() - stepStart)).then(() => {
+      const p = document.getElementById("tvplq"); if (p) p.hidden = false; if (self.FX) FX.play("reveal");
+    });
+  }
   /* ---------- برا السالفة ---------- */
   function renderBS() {
     const order = S.order || [], spy = S.catInfo && S.catInfo.mode === "spy";
@@ -135,7 +163,7 @@
   function render() {
     if (!game) return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">الغرفة انقفلت أو ما بدأت.</p></div>`; return; }
-    const key = S.phase + ":" + (S.q ? S.q.id : S.tid || S.round || "");
+    const key = S.phase + ":" + (S.q ? S.q.id : S.tid || S.round || (game === "jh" ? (S.game || 0) + "-" + (S.r || 0) : ""));
     if (key !== lastStep) {
       lastStep = key;
       // ارسم وخمّن: follow the host's clock (t0) so a TV opened mid-turn shows the real time left
@@ -143,12 +171,15 @@
       stepStart = game === "draw" && ago > -15000 && ago < 120000 ? Math.min(Date.now(), S.t0) : Date.now();
     }
     if (game === "draw" && S.phase === "draw" && frame === key && document.getElementById("tvcv")) { document.getElementById("tvside").innerHTML = drawSide(); return; }
+    if (game === "jh" && S.phase === "spin" && frame === key && document.getElementById("tvwheel")) return;   // the wheel is turning: leave it
+    if (game === "jh" && S.phase !== "spin") jhSpun = "";
     const bg = game === "bs" && S.catInfo && S.catInfo.image && S.phase !== "lobby" ? "../outside/" + S.catInfo.image : null;
     document.body.classList.toggle("catbg", !!bg); document.body.style.setProperty("--catbg", bg ? `url("${bg}")` : "none");
-    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : renderBS();
+    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
     moments();
+    if (game === "jh" && S.phase === "spin") jhSpin();
     const cv = document.getElementById("tvcv");
     if (cv && self.DrawBoard) { board = DrawBoard.Board(cv); board.set(DrawBoard.parse(STROKES, dec)); }
   }

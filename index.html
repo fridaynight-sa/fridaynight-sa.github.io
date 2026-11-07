@@ -219,6 +219,13 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
       <div class="tags"><span>2 لاعبين وأكثر</span><span>أونلاين</span></div>
       <span class="go">العب <b>←</b></span>
     </a>
+    <a class="game" href="jhi/" style="--c:#f76707;--i:6">
+      <span class="new">جديدة</span>
+      <div class="top"><span class="ic"><img src="icons/jhi.png" alt="" onerror="this.replaceWith('🔤')"></span><div><h3>جماد حيوان إنسان</h3><p class="sub">العجلة تختار الحرف</p></div></div>
+      <p class="desc">تدور العجلة على حرف، وكل واحد يكتب إنسان وحيوان ونبات وجماد وبلاد. أول واحد يخلص يقول 🛑 ستوب، والباقين عندهم ٥ ثواني!</p>
+      <div class="tags"><span>2 لاعبين وأكثر</span><span>أونلاين</span></div>
+      <span class="go">العب <b>←</b></span>
+    </a>
   </div>
 
   <a class="tv" href="tv/">
@@ -243,19 +250,19 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202611061442"></script>
-<script src="fninstall.js?v=202611061442"></script>
+<script src="fnfx.js?v=202611071634"></script>
+<script src="fninstall.js?v=202611071634"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202611061442"></script>
-<script src="fnstats.js?v=202611061442"></script>
+<script src="firebase-config.js?v=202611071634"></script>
+<script src="fnstats.js?v=202611071634"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
    Old سين جيم codes (AB123) still work. */
 (function () {
   "use strict";
-  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/", df: "dafour/", rooms: "seenjeem/" };
+  const GAMES = { bs: "outside/", sq: "sedq/", mf: "mf/", draw: "draw/", df: "dafour/", jh: "jhi/", rooms: "seenjeem/" };
   const form = document.getElementById("join"), inp = document.getElementById("code"), msg = document.getElementById("jmsg"), go = document.getElementById("jgo");
   const say = (t, err) => { msg.textContent = t; msg.classList.toggle("err", !!err); if (err && self.FX) FX.play("wrong", 60); };
   let db = null;

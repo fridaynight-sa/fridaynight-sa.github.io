@@ -141,6 +141,30 @@
         }
       }
     },
+    "jh": {
+      "$code": {
+        ".read": true,
+        "state": {
+          ".write": true,
+          ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 100000"
+        },
+        "players": {
+          "$pid": {
+            ".write": true,
+            ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 8000"
+          }
+        }
+      }
+    },
+    "jhw": {
+      ".read": true,
+      "$cat": {
+        "$w": {
+          ".write": "!data.exists() || (auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52')",
+          ".validate": "$cat.matches(/^[a-z]{3,10}$/) && $w.length <= 40 && (!newData.exists() || newData.isString() && newData.val().length <= 30)"
+        }
+      }
+    },
     "stats": {
       ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "day": {

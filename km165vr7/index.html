@@ -80,6 +80,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .mini{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:0 10px;font:800 13px var(--f-body);cursor:pointer}
 .mini.go{background:var(--purple);color:#fff}.mini.red{color:var(--red);border-color:var(--red)}
 .dev ul{margin:4px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700}
+.jw{display:flex;flex-wrap:wrap;gap:6px}.jw span{display:inline-flex;align-items:center;gap:4px;background:var(--soft,#f4f0ff);border-radius:999px;padding:3px 4px 3px 10px;font-weight:800;font-size:14px}
 .uav{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--ink);vertical-align:middle;margin-inline-end:6px}
 .dev li{display:flex;gap:6px}.dev li b{flex:none;width:1.4em;text-align:center}
 .dev .acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px;font-weight:800}
@@ -110,7 +111,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611061442"></script>
+<script src="../firebase-config.js?v=202611071634"></script>
 <script>
 (function () {
   "use strict";
@@ -121,7 +122,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   const digits = s => String(s || "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d));
   const SETUP = location.hash === "#setup";
   const GAMES = { words: "لوحة الكلمات", search: "دوّر الكلمة", dots: "توصيل النقاط", squares: "تذكّر المربعات", lamha: "لمحة", seenjeem: "سين جيم", outside: "برا السالفة",
-    sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور", tv: "شاشة العرض" };
+    sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور", jhi: "جماد حيوان إنسان", tv: "شاشة العرض" };
   const DAYS = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
   // days and weeks in Saudi time, the same way fnstats.js counts them
   const sa = ms => new Date(ms + 3 * 36e5);
@@ -154,13 +155,13 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg0, tags, users, paper, avs] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av")]);
+    const [dev, names, bans, cfg0, tags, users, paper, avs, jhw] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av"), soft("jhw")]);
     const cfg = cfg0 === NO ? null : cfg0;
     const byDev = {};                                             // phone → the Google account signed in on it
     Object.entries(users && users !== NO ? users : {}).forEach(([uid, u]) => Object.keys((u && u.d) || {}).forEach(d => { if (!byDev[d] || (u.t || 0) > (byDev[d].t || 0)) byDev[d] = Object.assign({ uid }, u); }));
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
       bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev,
-      avs: avs === NO ? {} : avs || {},
+      avs: avs === NO ? {} : avs || {}, jhw: jhw === NO ? {} : jhw || {},
       need: [dev, names, bans, cfg0, tags, users, paper, avs].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة; av/: «حسابي» pictures
   }
 
@@ -293,7 +294,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   }
 
   /* ---------- «إخفاء لعبة» ---------- */
-  const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "tv", "mind", "words", "search", "dots", "squares", "lamha"];
+  const HIDE = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "jhi", "tv", "mind", "words", "search", "dots", "squares", "lamha"];
   const MINDS = ["words", "search", "dots", "squares", "lamha"];
   function hides() {
     return HIDE.map(k => {
@@ -301,6 +302,12 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       return `<li class="${sub ? "sub" : ""}"><img src="../icons/${k}.png" alt=""><span>${k === "mind" ? "Mind Games (كلها)" : esc(GAMES[k])}</span>
         <button type="button" data-a="hide" data-g="${k}" aria-pressed="${off}" ${viaMind ? "disabled" : ""}>${off ? "🔒 مخفية" : "✅ ظاهرة"}</button></li>`;
     }).join("");
+  }
+  const JHC = { insan: "إنسان", hayawan: "حيوان", nabat: "نبات", jamad: "جماد", bilad: "بلاد", akla: "أكلة", mihna: "مهنة", sayyara: "سيارة", musalsal: "مسلسل", laeb: "لاعب كرة", marka: "ماركة" };
+  function learnedList() {
+    const cs = Object.entries(data.jhw || {}).filter(([c, ws]) => JHC[c] && ws && Object.keys(ws).length);
+    if (!cs.length) return `<p class="small">ما تعلّمت كلمات للحين.</p>`;
+    return cs.map(([c, ws]) => `<p class="small" style="margin:8px 0 4px"><b>${esc(JHC[c])}</b></p><div class="jw">${Object.entries(ws).map(([k, w]) => `<span>${esc(w)} <button type="button" class="mini red" data-a="jhwdel" data-c="${esc(c)}" data-k="${esc(k)}" aria-label="شيلها">✕</button></span>`).join("")}</div>`).join("");
   }
   function panel() {
     const d = data, today = dayKey(d.now), yest = dayKey(d.now - 864e5);
@@ -340,6 +347,11 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <p class="small" style="margin:0 0 6px">اللعبة المخفية تختفي من الصفحة الرئيسية ومن شريط الألعاب، واللي يفتح رابطها يطلع له إنها مقفلة مؤقتاً. اللي داخلها الحين يكمّل عادي.</p>
         <ul class="hide" id="hide">${hides()}</ul>
         <p class="msg err" id="hmsg" role="status"></p>
+      </section>
+
+      <section class="card"><h2>🔤 كلمات تعلمتها «جماد حيوان إنسان»</h2>
+        <p class="small" style="margin:0 0 6px">الكلمات اللي قبلتوها في «الحكم الجماعي» تنقبل لحالها بعدين. لو فيه كلمة ما تستاهل، شيلها.</p>
+        <div id="jhw">${learnedList()}</div>
       </section>
 
       <section class="card"><h2>📢 رسالة للكل</h2>
@@ -434,6 +446,10 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     }
     else if (a === "tg") { tagging = b.dataset.id; editing = banning = null; paintWho(); }
     else if (a === "tgx") { tagging = null; paintWho(); }
+    else if (a === "jhwdel") {
+      const c = b.dataset.c, k = b.dataset.k; if (!c || !k) return;
+      try { await call("jhw/" + c + "/" + k, { method: "DELETE" }); if (data.jhw[c]) delete data.jhw[c][k]; const el = $("jhw"); if (el) el.innerHTML = learnedList(); } catch (e) { alert("ما انشالت. جرّب مرة ثانية."); }
+    }
     else if (a === "unpic") {                                     // a picture that doesn't suit: off everywhere
       const k = b.dataset.k; if (!/^[0-9a-f]{4}$/.test(k || "") || !confirm("تشيل صورة حسابه؟")) return;
       try { await call("av/" + k, { method: "DELETE" }); delete data.avs[k]; paintWho(); } catch (e) { alert("ما انشالت. جرّب مرة ثانية."); }
