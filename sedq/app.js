@@ -339,7 +339,7 @@
       if (self.FA) FA.once("sq-rv-" + S.q.id, () => { if (myPick === r.truth) FA.right("عرفت الصح! +2"); else if (d > 0) FA.right("خدعتهم 😏 +" + d); else if (myPick) FA.wrong("انخدعت 😅"); });
       app.innerHTML = `<div class="card">${head}${img}${qtext}
         <p class="big-msg">${myPick === r.truth ? `عرفت الصح! 🎉` : myPick ? "انخدعت 😅" : "ما اخترت ⏱️"}${d ? ` <span class="word">+${d}</span>` : ""}</p>
-        <ul class="answers mt">${rows}</ul></div>
+        <ul class="answers mt">${rows}</ul>${self.FNR ? FNR.button("sedq", S.q.text, ((S.opts || []).find(o => o.id === r.truth) || {}).text) : ""}</div>
         <div class="card"><h2>الترتيب</h2>${standings(r.deltas)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${S.idx + 1 >= S.total ? "النتيجة النهائية 🏆" : "الجولة اللي بعدها"}</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>`;
       return;
     }
@@ -443,7 +443,7 @@
   }, 1000);
   if (self.FNW) FNW.onVisible(() => hostTick());
   fetch("questions.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    CATS = d.categories;
+    CATS = d.categories.map(c => Object.assign({}, c, { items: (c.items || []).filter(x => !(self.FNR && FNR.hidden("sedq", x.q))) }));   // without what the owner took out
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("sq/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));

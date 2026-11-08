@@ -422,7 +422,7 @@
       if (self.FA) FA.once("dr-rv-" + S.tid, () => { FA.play("reveal", [60, 60]); FA.slam("الكلمة كانت: " + (S.word || ""), n ? `عرفها ${n} 🎉` : "محد عرفها 😅", n ? "#ff7a1a" : "#7c3aed"); });
       app.innerHTML = `<div class="card center">${turnHead()}<p class="note">الكلمة كانت</p><p class="big-msg"><span class="word">${esc(S.word || "")}</span></p>
         <p class="note">${n ? `عرفها ${n} ${n > 1 ? "لاعبين" : "لاعب"} 🎉` : "محد عرفها 😅"}</p>
-        <canvas id="cvr" class="board" aria-label="الرسمة"></canvas></div>
+        <canvas id="cvr" class="board" aria-label="الرسمة"></canvas>${self.FNR ? FNR.button("draw", S.word || "") : ""}</div>
         <div class="card"><h2>الترتيب</h2>${standings(d)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${S.turn + 1 >= S.total ? "النتيجة النهائية 🏆" : "الدور اللي بعده"}</button>` : ""}</div>`;
       const b = DrawBoard.Board(document.getElementById("cvr")); b.set(DrawBoard.parse(STROKES, dec));
       return;
@@ -570,7 +570,7 @@
   }, 1000);
   if (self.FNW) FNW.onVisible(() => hostTick());
   fetch("words.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    WORDS = d.categories;
+    WORDS = d.categories.map(c => Object.assign({}, c, { words: (c.words || []).filter(w => !(self.FNR && FNR.hidden("draw", w))) }));   // without what the owner took out
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("draw/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));

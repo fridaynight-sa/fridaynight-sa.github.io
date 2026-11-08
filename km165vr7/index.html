@@ -80,6 +80,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .mini{border:2px solid var(--ink);background:#fff;border-radius:999px;padding:0 10px;font:800 13px var(--f-body);cursor:pointer}
 .mini.go{background:var(--purple);color:#fff}.mini.red{color:var(--red);border-color:var(--red)}
 .dev ul{margin:4px 0 0;padding:0;list-style:none;font-size:14px;font-weight:700}
+.rep{border:1.5px solid var(--line,#e3d9f0);border-radius:14px;padding:10px 12px;margin-bottom:8px}.rep .rq{font-weight:800;margin:6px 0;background:var(--soft,#f4f0ff);border-radius:10px;padding:6px 10px}.rep .rq small{font-weight:700;color:var(--muted)}
 .jw{display:flex;flex-wrap:wrap;gap:6px}.jw span{display:inline-flex;align-items:center;gap:4px;background:var(--soft,#f4f0ff);border-radius:999px;padding:3px 4px 3px 10px;font-weight:800;font-size:14px}
 .uav{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--ink);vertical-align:middle;margin-inline-end:6px}
 .dev li{display:flex;gap:6px}.dev li b{flex:none;width:1.4em;text-align:center}
@@ -111,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611071904"></script>
+<script src="../firebase-config.js?v=202611081113"></script>
 <script>
 (function () {
   "use strict";
@@ -155,14 +156,14 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg0, tags, users, paper, avs, jhw] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av"), soft("jhw")]);
+    const [dev, names, bans, cfg0, tags, users, paper, avs, jhw, rep] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av"), soft("jhw"), soft("rep")]);
     const cfg = cfg0 === NO ? null : cfg0;
     const byDev = {};                                             // phone → the Google account signed in on it
     Object.entries(users && users !== NO ? users : {}).forEach(([uid, u]) => Object.keys((u && u.d) || {}).forEach(d => { if (!byDev[d] || (u.t || 0) > (byDev[d].t || 0)) byDev[d] = Object.assign({ uid }, u); }));
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
       bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev,
-      avs: avs === NO ? {} : avs || {}, jhw: jhw === NO ? {} : jhw || {},
-      need: [dev, names, bans, cfg0, tags, users, paper, avs].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة; av/: «حسابي» pictures
+      avs: avs === NO ? {} : avs || {}, jhw: jhw === NO ? {} : jhw || {}, rep: rep === NO ? {} : rep || {}, off: (cfg && cfg.off) || {},
+      need: [dev, names, bans, cfg0, tags, users, paper, avs, rep].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة; av/: «حسابي» pictures
   }
 
   /* ---------- screens ---------- */
@@ -304,6 +305,70 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     }).join("");
   }
   const JHC = { insan: "إنسان", hayawan: "حيوان", nabat: "نبات", jamad: "جماد", bilad: "بلاد", akla: "أكلة", mihna: "مهنة", sayyara: "سيارة", musalsal: "مسلسل", laeb: "لاعب كرة", marka: "ماركة" };
+  /* ---------- «🚩 بلاغات» ---------- */
+  const RG = { dafour: "الدافور", sedq: "صدق ولا كذب", mf: "مين فينا؟", outside: "برا السالفة", draw: "ارسم وخمّن" };
+  function repList() {
+    const items = [];
+    Object.entries(data.rep || {}).forEach(([g, ks]) => Object.entries(ks || {}).forEach(([k, rs]) => {
+      const l = Object.values(rs || {}).filter(x => x && x.q); if (!l.length) return;
+      const why = {}; l.forEach(x => why[x.r] = (why[x.r] || 0) + 1);
+      items.push({ g, k, q: l[0].q, a: l.find(x => x.a) ? l.find(x => x.a).a : "", why, notes: l.map(x => x.n).filter(Boolean), last: Math.max(...l.map(x => x.at || 0)), n: l.length });
+    }));
+    items.sort((a, b) => b.n - a.n || b.last - a.last);
+    const offs = [];
+    Object.entries(data.off || {}).forEach(([g, ks]) => Object.entries(ks || {}).forEach(([k, q]) => offs.push({ g, k, q })));
+    return (items.length ? items.map(it => `<div class="rep"><p class="small" style="margin:0"><b>${esc(RG[it.g] || it.g)}</b> · ${it.n > 1 ? "بلّغ عنها " + unit(it.n, "مرة", "مرتين", "مرات", "مرة") + " · " : ""}${at(it.last)}</p>
+        <p class="rq">${esc(it.q)}${it.a ? `<br><small>الجواب: ${esc(it.a)}</small>` : ""}</p>
+        <p class="small" style="margin:0">${Object.entries(it.why).map(([w, c]) => `🚩 ${esc(w)}${c > 1 ? " ×" + c : ""}`).join(" · ")}</p>
+        ${it.notes.length ? `<p class="small" style="margin:4px 0 0">💬 ${it.notes.map(esc).join(" · ")}</p>` : ""}
+        <div class="acts"><button type="button" class="mini red" data-a="repoff" data-g="${esc(it.g)}" data-k="${esc(it.k)}">🗑️ شيلها من اللعبة</button><button type="button" class="mini" data-a="repok" data-g="${esc(it.g)}" data-k="${esc(it.k)}">✅ سليمة</button></div></div>`).join("")
+      : `<p class="small">ما فيه بلاغات 👌</p>`) +
+      (offs.length ? `<p class="small" style="margin:12px 0 4px"><b>المشالة من الألعاب (${offs.length})</b></p>${offs.map(o => `<p class="small" style="margin:2px 0">${esc(RG[o.g] || o.g)}: ${esc(o.q)} <button type="button" class="mini" data-a="repback" data-g="${esc(o.g)}" data-k="${esc(o.k)}">رجّعها</button></p>`).join("")}` : "");
+  }
+  /* ---------- «🧹 تنظيف الغرف» ---------- */
+  const ROOMS = { rooms: "سين جيم", bs: "برا السالفة", sq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", df: "الدافور", jh: "جماد حيوان إنسان", night: "السهرة" };
+  const DAY = 864e5;
+  let scan = null;
+  // the newest time a room shows: in its state (at, t, t0, wt, ts) or when a player joined
+  function newest(...objs) {
+    let m = 0;
+    const look = o => { if (!o || typeof o !== "object") return; ["at", "t", "t0", "wt", "ts"].forEach(k => { if (typeof o[k] === "number" && o[k] > 1.5e12 && o[k] > m) m = o[k]; }); };
+    objs.forEach(o => { if (o && typeof o.j === "string") { try { look(JSON.parse(o.j)); } catch (e) {} } else look(o); });
+    return m;
+  }
+  async function scanRooms() {
+    const out = [];
+    await Promise.all(Object.keys(ROOMS).map(async p => {
+      const codes = Object.keys((await call(p, {}, "&shallow=true").catch(() => null)) || {});
+      await Promise.all(codes.map(async c => {
+        let t = 0;
+        if (p === "rooms") t = newest(await call("rooms/" + c).catch(() => null));
+        else {
+          const [st, pl] = await Promise.all([call(p + "/" + c + "/state").catch(() => null), call(p + "/" + c + "/players").catch(() => null)]);
+          t = newest(st, ...Object.values(pl || {}));
+        }
+        out.push({ p, c, t });
+      }));
+    }));
+    return out;
+  }
+  // delete a room; where the rules only let each part go by itself, part by part
+  async function wipe(path, depth) {
+    try { await call(path, { method: "DELETE" }); }
+    catch (e) {
+      if (e !== "denied" || (depth || 0) > 2) throw e;
+      const ks = Object.keys((await call(path, {}, "&shallow=true")) || {});
+      for (const k of ks) await wipe(path + "/" + k, (depth || 0) + 1);
+    }
+  }
+  function cleanView(msg) {
+    const el = $("clean"); if (!el || !scan) return;
+    const now = Date.now(), old = scan.filter(r => !r.t || now - r.t > DAY), by = {};
+    old.forEach(r => by[r.p] = (by[r.p] || 0) + 1);
+    el.innerHTML = `<p class="small" style="margin:0 0 6px">فيه <b>${scan.length}</b> غرفة محفوظة، منها <b>${old.length}</b> قديمة (أكثر من يوم)${scan.length - old.length ? `، و${scan.length - old.length} جديدة ما تنلمس` : ""}.</p>
+      ${old.length ? `<p class="small" style="margin:0 0 8px">${Object.entries(by).map(([p, n]) => `${esc(ROOMS[p])}: ${n}`).join(" · ")}</p><button type="button" class="btn" data-a="wipe">🧹 امسح ${old.length} غرفة قديمة</button>` : `<p class="small">ما فيه شي ينمسح 👌</p>`}
+      <p class="msg ${msg && msg[1] ? "ok" : "err"}" role="status">${esc(msg ? msg[0] : "")}</p>`;
+  }
   function learnedList() {
     const cs = Object.entries(data.jhw || {}).filter(([c, ws]) => JHC[c] && ws && Object.keys(ws).length);
     if (!cs.length) return `<p class="small">ما تعلّمت كلمات للحين.</p>`;
@@ -347,6 +412,16 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <p class="small" style="margin:0 0 6px">اللعبة المخفية تختفي من الصفحة الرئيسية ومن شريط الألعاب، واللي يفتح رابطها يطلع له إنها مقفلة مؤقتاً. اللي داخلها الحين يكمّل عادي.</p>
         <ul class="hide" id="hide">${hides()}</ul>
         <p class="msg err" id="hmsg" role="status"></p>
+      </section>
+
+      <section class="card"><h2>🚩 بلاغات</h2>
+        <p class="small" style="margin:0 0 6px">اللي ضغطوا «🚩 فيه غلط؟» في الألعاب. شيل السؤال من اللعبة، أو قل إنه سليم.</p>
+        <div id="reps">${repList()}</div>
+      </section>
+
+      <section class="card"><h2>🧹 تنظيف الغرف</h2>
+        <p class="small" style="margin:0 0 6px">كل غرفة تنفتح تبقى محفوظة في قاعدة البيانات. هذا يمسح الغرف اللي صار لها أكثر من يوم، عشان تبقى خفيفة. الغرف الشغالة ما تنلمس.</p>
+        <div id="clean"><button type="button" class="btn alt" data-a="scan">🔍 افحص الغرف</button></div>
       </section>
 
       <section class="card"><h2>🔤 كلمات تعلمتها «جماد حيوان إنسان»</h2>
@@ -446,6 +521,27 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     }
     else if (a === "tg") { tagging = b.dataset.id; editing = banning = null; paintWho(); }
     else if (a === "tgx") { tagging = null; paintWho(); }
+    else if (a === "repoff" || a === "repok" || a === "repback") {
+      const g = b.dataset.g, k = b.dataset.k; if (!/^[a-z]{2,12}$/.test(g || "") || !/^k[0-9a-z]+$/.test(k || "")) return;
+      b.disabled = true;
+      try {
+        if (a === "repoff") { const l = Object.values((data.rep[g] || {})[k] || {}), q = (l.find(x => x && x.q) || {}).q || ""; await call("cfg/off/" + g + "/" + k, { method: "PUT", body: JSON.stringify(q.slice(0, 400)) }); (data.off[g] = data.off[g] || {})[k] = q; }
+        if (a === "repback") { await call("cfg/off/" + g + "/" + k, { method: "DELETE" }); if (data.off[g]) delete data.off[g][k]; }
+        else { await call("rep/" + g + "/" + k, { method: "DELETE" }); if (data.rep[g]) delete data.rep[g][k]; }
+        const el = $("reps"); if (el) el.innerHTML = repList();
+      } catch (e) { b.disabled = false; alert(e === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
+    }
+    else if (a === "scan") { b.disabled = true; b.textContent = "لحظة… أفحص"; try { scan = await scanRooms(); cleanView(); } catch (e) { b.disabled = false; b.textContent = "🔍 افحص الغرف"; alert("ما قدرت أفحص. تأكد من النت."); } }
+    else if (a === "wipe") {
+      if (!scan || !confirm("تمسح الغرف القديمة؟ الغرف الشغالة ما تنلمس.")) return;
+      b.disabled = true; const now = Date.now(), old = scan.filter(r => !r.t || now - r.t > DAY); let done = 0, bad = 0;
+      for (const r of old) {
+        try { await wipe(r.p + "/" + r.c); if (r.p === "rooms") await wipe("presence/sj-" + r.c.toLowerCase()).catch(() => {}); done++; } catch (e) { bad++; }
+        b.textContent = `لحظة… ${done + bad} من ${old.length}`;
+      }
+      scan = scan.filter(r => !old.includes(r) );
+      cleanView([`انمسحت ${done} غرفة${bad ? ` (وما قدرت أمسح ${bad})` : ""} ✅`, !bad]);
+    }
     else if (a === "jhwdel") {
       const c = b.dataset.c, k = b.dataset.k; if (!c || !k) return;
       try { await call("jhw/" + c + "/" + k, { method: "DELETE" }); if (data.jhw[c]) delete data.jhw[c][k]; const el = $("jhw"); if (el) el.innerHTML = learnedList(); } catch (e) { alert("ما انشالت. جرّب مرة ثانية."); }

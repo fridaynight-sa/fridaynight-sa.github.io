@@ -1,6 +1,7 @@
 {
   "rules": {
     "rooms": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         ".write": true,
@@ -24,6 +25,7 @@
       }
     },
     "bs": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -49,6 +51,7 @@
       }
     },
     "sq": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -68,6 +71,7 @@
       }
     },
     "mf": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -83,6 +87,7 @@
       }
     },
     "draw": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -108,6 +113,7 @@
       }
     },
     "night": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -123,6 +129,7 @@
       }
     },
     "df": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -142,6 +149,7 @@
       }
     },
     "jh": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
       "$code": {
         ".read": true,
         "state": {
@@ -288,7 +296,28 @@
         "img": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 60000" },
         "$other": { ".validate": false }
       },
+      "off": {
+        "$g": {
+          "$k": { ".validate": "$g.matches(/^[a-z]{2,12}$/) && $k.matches(/^k[0-9a-z]{1,12}$/) && newData.isString() && newData.val().length <= 400" }
+        }
+      },
       "$other": { ".validate": false }
+    },
+    "rep": {
+      ".read": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$g": {
+        "$k": {
+          "$id": {
+            ".write": "!data.exists()",
+            ".validate": "$g.matches(/^[a-z]{2,12}$/) && $k.matches(/^k[0-9a-z]{1,12}$/) && newData.child('q').isString() && newData.child('q').val().length <= 400 && newData.child('r').isString() && newData.child('r').val().length <= 40",
+            "q": { ".validate": true }, "a": { ".validate": "newData.isString() && newData.val().length <= 120" }, "r": { ".validate": true },
+            "n": { ".validate": "newData.isString() && newData.val().length <= 120" }, "at": { ".validate": "newData.isNumber()" },
+            "d": { ".validate": "newData.isString() && newData.val().length <= 16" },
+            "$other": { ".validate": false }
+          }
+        }
+      }
     },
     "paper": {
       "$n": {

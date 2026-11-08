@@ -277,7 +277,7 @@
         ${optsHTML(S.q.opts, { reveal: true, correct: r.correct, mine, who })}
         <p class="big-msg mt">${amRight ? `صح ✅ <span class="word">+${r.deltas[ME.pid]}</span>` : mine != null ? "غلط ❌" : "ما جاوبت ⏱️"}</p>
         ${r.fastest ? `<p class="note center">⚡ أسرع جواب صح: <b>${esc(nameOf(r.fastest))}</b></p>` : `<p class="note center">ما أحد جاوب صح 😅</p>`}
-        ${r.note ? `<p class="fact">💡 ${esc(r.note)}</p>` : ""}</div>
+        ${r.note ? `<p class="fact">💡 ${esc(r.note)}</p>` : ""}${self.FNR ? FNR.button("dafour", S.q.text, (S.q.opts || [])[r.correct]) : ""}</div>
         <div class="card"><h2>الترتيب</h2>${standings(r.deltas)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${!S.inf && S.idx + 1 >= S.total ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>${finishBtn()}`;
       return;
     }
@@ -378,7 +378,8 @@
     // the right option is not written plainly in questions.json (so nobody reads it there mid-game): k hides it
     const code = id => [...String(id)].reduce((n, c) => n + c.codePointAt(0), 0) * 7;
     QS = d.questions.map(q => (q && q.k != null && q.answer == null ? Object.assign({}, q, { answer: (((q.k - code(q.id)) % 4) + 4) % 4 }) : q))
-      .filter(q => q && q.question && Array.isArray(q.options) && q.options.length === 4 && q.answer >= 0 && q.answer < 4);
+      .filter(q => q && q.question && Array.isArray(q.options) && q.options.length === 4 && q.answer >= 0 && q.answer < 4)
+      .filter(q => !(self.FNR && FNR.hidden("dafour", q.question)));   // taken out by the owner after a «🚩» report
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("df/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));

@@ -242,7 +242,7 @@
       if (self.FA) FA.once("mf-rv-" + S.q.id, () => { if (r.winners.length) { FA.play("party", [40, 40, 40]); FA.confetti(); FA.slam("👑 " + r.winners.map(nameOf).join(" و"), amRight ? "توقعت مع الأغلبية +1" : null, "#ffb21e"); } else if (r.tie) FA.slam("تعادل كامل 🤝", null, "#7c3aed"); });
       app.innerHTML = `<div class="card">${head}${qtext}
         ${r.winners.length ? `<p class="big-msg">👑 ${esc(r.winners.map(nameOf).join(" و"))}</p><p class="note center">${amWin ? "هذا أنت 😂" : ""}${amRight ? " توقعت مع الأغلبية <b class=\"word\">+1</b>" : ""}</p>` : r.tie ? `<p class="big-msg">تعادل كامل 🤝</p><p class="note center">ما أحد ياخذ اللقب ولا نقاط هالمرة</p>` : `<p class="big-msg">ما أحد صوّت ⏱️</p>`}
-        ${bars(order, r.counts, r.winners)}</div>
+        ${bars(order, r.counts, r.winners)}${self.FNR ? FNR.button("mf", S.q.text) : ""}</div>
         <div class="card"><h2>الترتيب</h2>${standings(r.deltas)}${isHost() ? `<button type="button" class="btn mt" data-act="hnext">${S.idx + 1 >= S.total ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))}…</p>`}</div>`;
       return;
     }
@@ -371,7 +371,7 @@
       const r = O.res, max = Math.max(1, ...Object.values(r.counts)), order = O.names.map((_, i) => i).sort((a, b) => (r.counts[b] || 0) - (r.counts[a] || 0));
       app.innerHTML = `<div class="card">${qn}${q}<p class="big-msg">${r.winners.length ? "👑 " + r.winners.map(nm).join(" و") : "ما فيه فايز، تعادلتوا 😅"}</p>
         <div class="bars">${order.map(i => `<div class="bar ${r.winners.includes(i) ? "win" : ""}"><span>${nm(i)}</span><span class="tr"><i style="width:${(r.counts[i] || 0) / max * 100}%"></i></span><span>${AR(r.counts[i] || 0)}</span></div>`).join("")}</div>
-        <p class="note center mt">${r.right.length ? "توقّعوا مع الأغلبية (+١): " + r.right.map(nm).join("، ") : "ما أحد توقّع مع الأغلبية"}</p>
+        <p class="note center mt">${r.right.length ? "توقّعوا مع الأغلبية (+١): " + r.right.map(nm).join("، ") : "ما أحد توقّع مع الأغلبية"}</p>${self.FNR && navigator.onLine !== false ? FNR.button("mf", O.qs[O.i].t) : ""}
         <button type="button" class="btn mt" data-act="onext">${O.i + 1 >= O.qs.length ? "النتيجة النهائية 🏆" : "السؤال اللي بعده"}</button></div>`;
       return;
     }
@@ -440,7 +440,7 @@
     }
   } catch (e) {}
   fetch("questions.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    CATS = d.categories;
+    CATS = d.categories.map(c => Object.assign({}, c, { items: (c.items || []).filter(x => !(self.FNR && FNR.hidden("mf", x.q))) }));   // without what the owner took out
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("mf/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));

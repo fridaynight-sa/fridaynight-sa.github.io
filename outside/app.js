@@ -469,7 +469,7 @@
       const r = S.results;
       if (S.catInfo && r.word) noteSeen(S.catInfo.id + ":" + r.word);
       const R = { outs: r.outs, word: r.word, spyWord: r.spyWord, cat: S.catInfo };
-      app.innerHTML = `<div class="card"><h2>نتيجة الجولة ${S.round} 🏆</h2>${resultSummary(R, r, nameOf)}${barsHTML(order, nameOf, r.counts, r.outs)}</div>
+      app.innerHTML = `<div class="card"><h2>نتيجة الجولة ${S.round} 🏆</h2>${resultSummary(R, r, nameOf)}${barsHTML(order, nameOf, r.counts, r.outs)}${self.FNR && r.word ? FNR.button("outside", r.word, S.catInfo ? S.catInfo.name : "") : ""}</div>
         <div class="card"><h2>النقاط</h2>${scoreTable(Object.keys(S.scores || {}).concat(order.filter(id => !(S.scores || {})[id])).filter((x, i, a) => a.indexOf(x) === i), nameOf, S.scores || {}, r.deltas)}
         ${(fa("bs-res-" + ME.code + "-" + S.round, () => { const d = (r.deltas || {})[ME.pid] || 0; if (d > 0) FA.right("+" + d + " 🎉"); else { FA.play("party"); FA.confetti(); } }), "")}
         ${isHost() ? `<p class="err" id="herr"></p><button type="button" class="btn mt" data-act="hnext">جولة جديدة</button><button type="button" class="btn alt mt" data-act="hlobby">غيّر القسم أو انتظر لاعبين</button>` : `<p class="note center mt">ننتظر 👑 ${esc(nameOf(S.host))} يبدأ جولة جديدة…</p>`}</div>${leave}`;
@@ -574,7 +574,7 @@
   setInterval(() => { if (self.FNW) FNW.hold(view === "room" && isHost()); }, 1000);
   if (self.FNW) FNW.onVisible(() => hostTick());
   fetch("words.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    CATS = d.categories.filter(c => c.words && c.words.length >= 6);
+    CATS = d.categories.map(c => Object.assign({}, c, { words: (c.words || []).filter(w => !(self.FNR && FNR.hidden("outside", w))) })).filter(c => c.words && c.words.length >= 6);   // without what the owner took out
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("bs/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
