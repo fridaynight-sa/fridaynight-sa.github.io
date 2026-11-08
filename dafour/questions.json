@@ -6671,6 +6671,5950 @@
     "عبد اللات"
    ],
    "k": 2
+  },
+  {
+   "id": "q0552",
+   "difficulty": "سهل",
+   "question": "ما أكبر عضو في جسم الإنسان؟",
+   "options": [
+    "الأمعاء الدقيقة",
+    "الرئتان",
+    "الكبد",
+    "الجلد"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/Skin"
+  },
+  {
+   "id": "q0553",
+   "difficulty": "سهل",
+   "question": "ما الجزء المسؤول عن التحكم بمعظم وظائف الجسم؟",
+   "options": [
+    "الدماغ",
+    "الكبد",
+    "النخاع الشوكي",
+    "القلب"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/Brain"
+  },
+  {
+   "id": "q0554",
+   "difficulty": "صعب",
+   "question": "ما أصغر عظمة في جسم الإنسان؟",
+   "options": [
+    "عظمة الركاب",
+    "عظمة المطرقة",
+    "عظمة اللامي",
+    "عظمة الإصبع الصغير"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Stapes"
+  },
+  {
+   "id": "q0555",
+   "difficulty": "سهل",
+   "question": "كم عدد حجرات قلب الإنسان؟",
+   "options": [
+    "ست حجرات",
+    "ثلاث حجرات",
+    "أربع حجرات",
+    "حجرتان"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Heart"
+  },
+  {
+   "id": "q0556",
+   "difficulty": "متوسط",
+   "question": "ما اسم الخلايا المسؤولة عن نقل الأكسجين في الدم؟",
+   "options": [
+    "الصفائح الدموية",
+    "البلازما",
+    "خلايا الدم البيضاء",
+    "خلايا الدم الحمراء"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/Red_blood_cell"
+  },
+  {
+   "id": "q0557",
+   "difficulty": "سهل",
+   "question": "ما أسرع حيوان بري؟",
+   "options": [
+    "الغزال",
+    "الأسد",
+    "الفهد الصياد",
+    "الحصان العربي"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Cheetah"
+  },
+  {
+   "id": "q0558",
+   "difficulty": "متوسط",
+   "question": "كم قلباً يمتلك الأخطبوط؟",
+   "options": [
+    "خمسة قلوب",
+    "قلب واحد",
+    "ثلاثة قلوب",
+    "قلبان"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Octopus"
+  },
+  {
+   "id": "q0559",
+   "difficulty": "متوسط",
+   "question": "ما أكبر طائر حي في العالم؟",
+   "options": [
+    "النعامة",
+    "طائر الإمو",
+    "النسر الأصلع",
+    "البطريق الإمبراطوري"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Common_ostrich"
+  },
+  {
+   "id": "q0560",
+   "difficulty": "متوسط",
+   "question": "ما الثديي الوحيد القادر على الطيران الحقيقي؟",
+   "options": [
+    "السنجاب الطائر",
+    "الخفاش",
+    "البطريق",
+    "الليمور الطائر"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Bat"
+  },
+  {
+   "id": "q0561",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة أستراليا؟",
+   "options": [
+    "بيرث",
+    "سيدني",
+    "كانبرا",
+    "ملبورن"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Canberra"
+  },
+  {
+   "id": "q0562",
+   "difficulty": "سهل",
+   "question": "ما العملة الرسمية لليابان؟",
+   "options": [
+    "الروبية",
+    "الين",
+    "الوون",
+    "اليوان"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Japanese_yen"
+  },
+  {
+   "id": "q0563",
+   "difficulty": "متوسط",
+   "question": "ما اللغة الرسمية في البرازيل؟",
+   "options": [
+    "الإنجليزية",
+    "الإسبانية",
+    "البرتغالية",
+    "الفرنسية"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Brazil"
+  },
+  {
+   "id": "q0564",
+   "difficulty": "سهل",
+   "question": "في أي دولة تقع مدينة كراتشي؟",
+   "options": [
+    "باكستان",
+    "أفغانستان",
+    "الهند",
+    "بنغلاديش"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Karachi"
+  },
+  {
+   "id": "q0565",
+   "difficulty": "متوسط",
+   "question": "ما أعلى قمة جبلية فوق مستوى سطح البحر؟",
+   "options": [
+    "جبل مون بلان",
+    "جبل كي 2",
+    "جبل كليمنجارو",
+    "جبل إيفرست"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/Mount_Everest"
+  },
+  {
+   "id": "q0566",
+   "difficulty": "سهل",
+   "question": "من كتب مسرحية هاملت؟",
+   "options": [
+    "أوسكار وايلد",
+    "جون ميلتون",
+    "تشارلز ديكنز",
+    "ويليام شكسبير"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Hamlet"
+  },
+  {
+   "id": "q0567",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية دون كيشوت؟",
+   "options": [
+    "ميغيل دي ثيربانتس",
+    "لوبي دي فيغا",
+    "غابرييل غارسيا ماركيز",
+    "دانتي أليغييري"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Don_Quixote"
+  },
+  {
+   "id": "q0568",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية الأمير الصغير؟",
+   "options": [
+    "أنطوان دو سانت إكزوبيري",
+    "جول فيرن",
+    "ألكسندر دوما",
+    "فيكتور هوغو"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/The_Little_Prince"
+  },
+  {
+   "id": "q0569",
+   "difficulty": "متوسط",
+   "question": "ما اسم اللوحة الشهيرة التي رسمها إدفارد مونك وتُظهر شخصاً يصرخ؟",
+   "options": [
+    "ليلة النجوم",
+    "إصرار الذاكرة",
+    "الفتاة ذات القرط اللؤلؤي",
+    "الصرخة"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/The_Scream"
+  },
+  {
+   "id": "q0570",
+   "difficulty": "متوسط",
+   "question": "ما الكاتدرائية القوطية الشهيرة التي تعرضت لحريق كبير عام 2019؟",
+   "options": [
+    "كاتدرائية ميلانو",
+    "كاتدرائية كولونيا",
+    "كاتدرائية نوتردام",
+    "كاتدرائية القديس بولس"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Notre-Dame_de_Paris"
+  },
+  {
+   "id": "q0571",
+   "difficulty": "متوسط",
+   "question": "أين أقيمت أول دورة ألعاب أولمبية حديثة؟",
+   "options": [
+    "لندن",
+    "أثينا",
+    "باريس",
+    "روما"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/1896_Summer_Olympics"
+  },
+  {
+   "id": "q0572",
+   "difficulty": "متوسط",
+   "question": "في أي عام أقيمت أول دورة أولمبية حديثة؟",
+   "options": [
+    "1900",
+    "1886",
+    "1896",
+    "1912"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/1896_Summer_Olympics"
+  },
+  {
+   "id": "q0573",
+   "difficulty": "صعب",
+   "question": "من يُعرف بأنه مخترع كرة السلة؟",
+   "options": [
+    "جيمس نايسميث",
+    "مايكل جوردن",
+    "ويليام مورغان",
+    "أبنر دابلداي"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/James_Naismith"
+  },
+  {
+   "id": "q0574",
+   "difficulty": "سهل",
+   "question": "كم لاعباً يشارك من كل فريق داخل ملعب كرة القدم؟",
+   "options": [
+    "11 لاعباً",
+    "10 لاعبين",
+    "9 لاعبين",
+    "12 لاعباً"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Association_football"
+  },
+  {
+   "id": "q0575",
+   "difficulty": "متوسط",
+   "question": "في أي دولة أقيمت أول بطولة لكأس العالم لكرة القدم؟",
+   "options": [
+    "الأوروغواي",
+    "البرازيل",
+    "فرنسا",
+    "إيطاليا"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/1930_FIFA_World_Cup"
+  },
+  {
+   "id": "q0576",
+   "difficulty": "صعب",
+   "question": "من أول بطل أولمبي في الألعاب الأولمبية الحديثة؟",
+   "options": [
+    "كارل شومان",
+    "جيمس كونولي",
+    "سبيريدون لويس",
+    "ألفريد هايوش"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/James_Connolly_(athlete)"
+  },
+  {
+   "id": "q0577",
+   "difficulty": "صعب",
+   "question": "من مخترع شبكة الويب العالمية؟",
+   "options": [
+    "فينت سيرف",
+    "تيم بيرنرز لي",
+    "بيل غيتس",
+    "ستيف جوبز"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Tim_Berners-Lee"
+  },
+  {
+   "id": "q0578",
+   "difficulty": "متوسط",
+   "question": "ما أول قمر صناعي أُطلق إلى الفضاء؟",
+   "options": [
+    "فوستوك 1",
+    "أبولو 11",
+    "إكسبلورر 1",
+    "سبوتنيك 1"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Sputnik_1"
+  },
+  {
+   "id": "q0579",
+   "difficulty": "متوسط",
+   "question": "في أي عام أُطلق أول قمر صناعي؟",
+   "options": [
+    "1969",
+    "1957",
+    "1961",
+    "1949"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Sputnik_1"
+  },
+  {
+   "id": "q0580",
+   "difficulty": "متوسط",
+   "question": "من شارك ستيف جوبز في تأسيس شركة آبل؟",
+   "options": [
+    "ستيف وزنياك",
+    "بيل غيتس",
+    "تيم كوك",
+    "بول ألين"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/Steve_Wozniak"
+  },
+  {
+   "id": "q0581",
+   "difficulty": "صعب",
+   "question": "ما لغة البرمجة التي سُميت تيمناً بعرض كوميدي بريطاني؟",
+   "options": [
+    "بايثون",
+    "جافا",
+    "روبي",
+    "سي شارب"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Python_(programming_language)"
+  },
+  {
+   "id": "q0582",
+   "difficulty": "سهل",
+   "question": "ما التقنية المستخدمة لتحديد المواقع الجغرافية عبر الأقمار الصناعية؟",
+   "options": [
+    "Wi-Fi",
+    "GPS",
+    "NFC",
+    "البلوتوث"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/Global_Positioning_System"
+  },
+  {
+   "id": "q0583",
+   "difficulty": "متوسط",
+   "question": "ماذا تعني الأحرف CPU في الحاسب؟",
+   "options": [
+    "وحدة المعالجة المركزية",
+    "وحدة البرمجة الحاسوبية",
+    "وحدة التحكم المركزية",
+    "وحدة الذاكرة المركزية"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Central_processing_unit"
+  },
+  {
+   "id": "q0584",
+   "difficulty": "متوسط",
+   "question": "ما اسم الملك الفرعوني الشاب الذي اكتشف هوارد كارتر مقبرته شبه كاملة؟",
+   "options": [
+    "أخناتون",
+    "خوفو",
+    "رمسيس الثاني",
+    "توت عنخ آمون"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Tutankhamun"
+  },
+  {
+   "id": "q0585",
+   "difficulty": "صعب",
+   "question": "ما اسم العاصمة الشرفية للإمبراطورية الفارسية الأخمينية التي اشتهرت بقصورها؟",
+   "options": [
+    "نينوى",
+    "بابل",
+    "برسيبوليس",
+    "بغداد"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Persepolis"
+  },
+  {
+   "id": "q0586",
+   "difficulty": "متوسط",
+   "question": "من القائد المقدوني الذي أسس إمبراطورية امتدت إلى مصر وأجزاء من آسيا؟",
+   "options": [
+    "هانيبال",
+    "يوليوس قيصر",
+    "الإسكندر الأكبر",
+    "نابليون بونابرت"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Alexander_the_Great"
+  },
+  {
+   "id": "q0587",
+   "difficulty": "سهل",
+   "question": "ما اسم المدينة الأثرية المنحوتة في الصخور في الأردن؟",
+   "options": [
+    "تدمر",
+    "البتراء",
+    "جرش",
+    "بعلبك"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Petra"
+  },
+  {
+   "id": "q0588",
+   "difficulty": "متوسط",
+   "question": "ما الحضارة التي بنت مدينة تشيتشن إيتزا في المكسيك؟",
+   "options": [
+    "المايا",
+    "الأولمك",
+    "الإنكا",
+    "الأزتك"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Chichen_Itza"
+  },
+  {
+   "id": "q0589",
+   "difficulty": "متوسط",
+   "question": "في أي دولة تقع مدينة بومبي الأثرية؟",
+   "options": [
+    "تركيا",
+    "إيطاليا",
+    "إسبانيا",
+    "اليونان"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Pompeii"
+  },
+  {
+   "id": "q0590",
+   "difficulty": "سهل",
+   "question": "ما اسم السفينة الشهيرة التي غرقت عام 1912؟",
+   "options": [
+    "بريتانيك",
+    "لوسيتانيا",
+    "ماي فلاور",
+    "تايتانيك"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/Titanic"
+  },
+  {
+   "id": "q0591",
+   "difficulty": "متوسط",
+   "question": "في أي عام هبط الإنسان على سطح القمر لأول مرة؟",
+   "options": [
+    "1965",
+    "1959",
+    "1972",
+    "1969"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Apollo_11"
+  },
+  {
+   "id": "q0592",
+   "difficulty": "سهل",
+   "question": "كم عدد ألوان قوس قزح التقليدية؟",
+   "options": [
+    "ثمانية",
+    "ستة",
+    "سبعة",
+    "خمسة"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Rainbow"
+  },
+  {
+   "id": "q0593",
+   "difficulty": "متوسط",
+   "question": "ما اللغة الأكثر انتشاراً من حيث عدد المتحدثين الأصليين؟",
+   "options": [
+    "الصينية المندرينية",
+    "الإنجليزية",
+    "الهندية",
+    "الإسبانية"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/List_of_languages_by_number_of_native_speakers"
+  },
+  {
+   "id": "q0594",
+   "difficulty": "سهل",
+   "question": "ما اسم العملة الرسمية للمملكة المتحدة؟",
+   "options": [
+    "الدولار",
+    "الفرنك",
+    "الجنيه الإسترليني",
+    "اليورو"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Pound_sterling"
+  },
+  {
+   "id": "q0595",
+   "difficulty": "متوسط",
+   "question": "ما اسم العلم الذي يدرس الزلازل؟",
+   "options": [
+    "علم البراكين",
+    "علم الزلازل",
+    "علم المحيطات",
+    "علم المعادن"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Seismology"
+  },
+  {
+   "id": "q0596",
+   "difficulty": "سهل",
+   "question": "ما اسم الجهاز المستخدم لقياس درجة الحرارة؟",
+   "options": [
+    "الهيغرومتر",
+    "مقياس الحرارة",
+    "الأنيمومتر",
+    "البارومتر"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Thermometer"
+  },
+  {
+   "id": "q0597",
+   "difficulty": "سهل",
+   "question": "كم ضلعاً للشكل السداسي؟",
+   "options": [
+    "ثمانية أضلاع",
+    "خمسة أضلاع",
+    "ستة أضلاع",
+    "سبعة أضلاع"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Hexagon"
+  },
+  {
+   "id": "q0598",
+   "difficulty": "سهل",
+   "question": "ما اسم العملية التي يتحول فيها الماء من سائل إلى غاز؟",
+   "options": [
+    "التسامي",
+    "الانصهار",
+    "التبخر",
+    "التكاثف"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Evaporation"
+  },
+  {
+   "id": "q0599",
+   "difficulty": "سهل",
+   "question": "ما الحيوان الذي يمتلك أطول رقبة بين الحيوانات البرية؟",
+   "options": [
+    "الفيل",
+    "الزرافة",
+    "الجمل",
+    "النعامة"
+   ],
+   "k": 2297,
+   "src": "https://en.wikipedia.org/wiki/Giraffe"
+  },
+  {
+   "id": "q0600",
+   "difficulty": "سهل",
+   "question": "كم عدد الحلقات في الشعار الأولمبي؟",
+   "options": [
+    "ست حلقات",
+    "خمس حلقات",
+    "سبع حلقات",
+    "أربع حلقات"
+   ],
+   "k": 2178,
+   "src": "https://en.wikipedia.org/wiki/Olympic_symbols"
+  },
+  {
+   "id": "q0601",
+   "difficulty": "متوسط",
+   "question": "في أي رياضة يُستخدم مصطلح (هوم رن)؟",
+   "options": [
+    "الغولف",
+    "التنس",
+    "الكريكيت",
+    "البيسبول"
+   ],
+   "k": 2187,
+   "src": "https://en.wikipedia.org/wiki/Home_run"
+  },
+  {
+   "id": "q0602",
+   "difficulty": "متوسط",
+   "question": "كم عدد المربعات في رقعة الشطرنج؟",
+   "options": [
+    "100 مربع",
+    "81 مربعاً",
+    "36 مربعاً",
+    "64 مربعاً"
+   ],
+   "k": 2194,
+   "src": "https://en.wikipedia.org/wiki/Chessboard"
+  },
+  {
+   "id": "q0603",
+   "difficulty": "سهل",
+   "question": "ما الدولة التي استضافت كأس العالم لكرة القدم عام 2022؟",
+   "options": [
+    "البرازيل",
+    "روسيا",
+    "جنوب أفريقيا",
+    "قطر"
+   ],
+   "k": 2201,
+   "src": "https://en.wikipedia.org/wiki/2022_FIFA_World_Cup"
+  },
+  {
+   "id": "q0604",
+   "difficulty": "صعب",
+   "question": "كم عدد لاعبي فريق الرغبي (اتحاد الرغبي) داخل الملعب؟",
+   "options": [
+    "15 لاعباً",
+    "11 لاعباً",
+    "9 لاعبين",
+    "13 لاعباً"
+   ],
+   "k": 2205,
+   "src": "https://en.wikipedia.org/wiki/Rugby_union"
+  },
+  {
+   "id": "q0605",
+   "difficulty": "سهل",
+   "question": "كم عدد اللاعبين في فريق كرة السلة داخل الملعب؟",
+   "options": [
+    "سبعة لاعبين",
+    "خمسة لاعبين",
+    "ستة لاعبين",
+    "أربعة لاعبين"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Basketball"
+  },
+  {
+   "id": "q0606",
+   "difficulty": "سهل",
+   "question": "ما الدولة التي تشتهر بطواحين الهواء وزهور التوليب؟",
+   "options": [
+    "بلجيكا",
+    "هولندا",
+    "الدنمارك",
+    "سويسرا"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Netherlands"
+  },
+  {
+   "id": "q0607",
+   "difficulty": "سهل",
+   "question": "ما اسم المدينة التي تقع فيها ساعة بيغ بن؟",
+   "options": [
+    "دبلن",
+    "لندن",
+    "برلين",
+    "باريس"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Big_Ben"
+  },
+  {
+   "id": "q0608",
+   "difficulty": "متوسط",
+   "question": "في أي دولة يقع معبد أنغكور وات؟",
+   "options": [
+    "كمبوديا",
+    "تايلاند",
+    "فيتنام",
+    "إندونيسيا"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Angkor_Wat"
+  },
+  {
+   "id": "q0609",
+   "difficulty": "صعب",
+   "question": "ما اسم التماثيل الحجرية الشهيرة الموجودة في جزيرة الفصح؟",
+   "options": [
+    "توتيم",
+    "مواي",
+    "أبو الهول",
+    "تيكي"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/Moai"
+  },
+  {
+   "id": "q0610",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي نشأت فيها رقصة التانغو؟",
+   "options": [
+    "كوبا",
+    "البرازيل",
+    "إسبانيا",
+    "الأرجنتين"
+   ],
+   "k": 2187,
+   "src": "https://en.wikipedia.org/wiki/Tango"
+  },
+  {
+   "id": "q0611",
+   "difficulty": "متوسط",
+   "question": "ما المدينة التي تُعرف بمدينة القنوات؟",
+   "options": [
+    "أمستردام",
+    "براغ",
+    "برشلونة",
+    "البندقية"
+   ],
+   "k": 2194,
+   "src": "https://en.wikipedia.org/wiki/Venice"
+  },
+  {
+   "id": "q0612",
+   "difficulty": "متوسط",
+   "question": "في أي مدينة تقع دار الأوبرا الشهيرة ذات الأسقف التي تشبه الأشرعة؟",
+   "options": [
+    "ملبورن",
+    "سنغافورة",
+    "أوكلاند",
+    "سيدني"
+   ],
+   "k": 2201,
+   "src": "https://en.wikipedia.org/wiki/Sydney_Opera_House"
+  },
+  {
+   "id": "q0613",
+   "difficulty": "صعب",
+   "question": "ما الدولة التي نشأت فيها لعبة الشطرنج بصورتها القديمة المعروفة باسم تشاتورانغا؟",
+   "options": [
+    "الصين",
+    "الهند",
+    "بلاد فارس",
+    "اليونان"
+   ],
+   "k": 2206,
+   "src": "https://en.wikipedia.org/wiki/Chaturanga"
+  },
+  {
+   "id": "q0614",
+   "difficulty": "متوسط",
+   "question": "ما العملة الرسمية للهند؟",
+   "options": [
+    "التاكا",
+    "الروبية",
+    "الين",
+    "البات"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Indian_rupee"
+  },
+  {
+   "id": "q0615",
+   "difficulty": "متوسط",
+   "question": "ما المضيق الذي يفصل بين قارتي أوروبا وأفريقيا عند أضيق نقطة بينهما؟",
+   "options": [
+    "مضيق صقلية",
+    "مضيق جبل طارق",
+    "مضيق باب المندب",
+    "مضيق البوسفور"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Strait_of_Gibraltar"
+  },
+  {
+   "id": "q0616",
+   "difficulty": "متوسط",
+   "question": "ما الرمز الكيميائي للذهب؟",
+   "options": [
+    "Go",
+    "Gd",
+    "Au",
+    "Ag"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Gold"
+  },
+  {
+   "id": "q0617",
+   "difficulty": "متوسط",
+   "question": "ما الغاز الأكثر وفرة في الغلاف الجوي للأرض؟",
+   "options": [
+    "النيتروجين",
+    "ثاني أكسيد الكربون",
+    "الأكسجين",
+    "الأرغون"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Atmosphere_of_Earth"
+  },
+  {
+   "id": "q0618",
+   "difficulty": "صعب",
+   "question": "كم عدد الكروموسومات في الخلية البشرية الجسدية الطبيعية؟",
+   "options": [
+    "44",
+    "23",
+    "46",
+    "48"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Chromosome"
+  },
+  {
+   "id": "q0619",
+   "difficulty": "متوسط",
+   "question": "ما وحدة قياس شدة التيار الكهربائي؟",
+   "options": [
+    "الأوم",
+    "الفولت",
+    "الأمبير",
+    "الواط"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Ampere"
+  },
+  {
+   "id": "q0620",
+   "difficulty": "سهل",
+   "question": "ما اسم القوة التي تجذب الأجسام نحو الأرض؟",
+   "options": [
+    "الجاذبية",
+    "الاحتكاك",
+    "الطفو",
+    "المغناطيسية"
+   ],
+   "k": 2191,
+   "src": "https://en.wikipedia.org/wiki/Gravity"
+  },
+  {
+   "id": "q0621",
+   "difficulty": "سهل",
+   "question": "ما عاصمة كندا؟",
+   "options": [
+    "أوتاوا",
+    "مونتريال",
+    "تورونتو",
+    "فانكوفر"
+   ],
+   "k": 2198,
+   "src": "https://en.wikipedia.org/wiki/Ottawa"
+  },
+  {
+   "id": "q0622",
+   "difficulty": "سهل",
+   "question": "ما أكبر دولة في العالم من حيث المساحة؟",
+   "options": [
+    "الصين",
+    "كندا",
+    "روسيا",
+    "الولايات المتحدة"
+   ],
+   "k": 2207,
+   "src": "https://en.wikipedia.org/wiki/Russia"
+  },
+  {
+   "id": "q0623",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة سويسرا؟",
+   "options": [
+    "جنيف",
+    "برن",
+    "زيورخ",
+    "لوزان"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Bern"
+  },
+  {
+   "id": "q0624",
+   "difficulty": "متوسط",
+   "question": "في أي قارة تقع دولة سورينام؟",
+   "options": [
+    "أفريقيا",
+    "أمريكا الشمالية",
+    "أمريكا الجنوبية",
+    "آسيا"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Suriname"
+  },
+  {
+   "id": "q0625",
+   "difficulty": "متوسط",
+   "question": "ما البحر الذي تطل عليه أوكرانيا وبلغاريا وجورجيا؟",
+   "options": [
+    "بحر إيجة",
+    "بحر البلطيق",
+    "البحر الأسود",
+    "بحر قزوين"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Black_Sea"
+  },
+  {
+   "id": "q0626",
+   "difficulty": "سهل",
+   "question": "ما عاصمة كوريا الجنوبية؟",
+   "options": [
+    "سيول",
+    "بوسان",
+    "بيونغ يانغ",
+    "إنتشون"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Seoul"
+  },
+  {
+   "id": "q0627",
+   "difficulty": "متوسط",
+   "question": "في أي عام سقط جدار برلين؟",
+   "options": [
+    "1991",
+    "1989",
+    "1985",
+    "1979"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/Berlin_Wall"
+  },
+  {
+   "id": "q0628",
+   "difficulty": "سهل",
+   "question": "في أي عام بدأت الحرب العالمية الأولى؟",
+   "options": [
+    "1912",
+    "1905",
+    "1918",
+    "1914"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/World_War_I"
+  },
+  {
+   "id": "q0629",
+   "difficulty": "سهل",
+   "question": "ما الحضارة التي بنت الأهرامات في الجيزة؟",
+   "options": [
+    "الحضارة الرومانية",
+    "الحضارة المصرية القديمة",
+    "الحضارة الإغريقية",
+    "الحضارة البابلية"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Giza_pyramid_complex"
+  },
+  {
+   "id": "q0630",
+   "difficulty": "سهل",
+   "question": "من كان أول رئيس للولايات المتحدة الأمريكية؟",
+   "options": [
+    "جون آدامز",
+    "أبراهام لينكولن",
+    "توماس جيفرسون",
+    "جورج واشنطن"
+   ],
+   "k": 2201,
+   "src": "https://en.wikipedia.org/wiki/George_Washington"
+  },
+  {
+   "id": "q0631",
+   "difficulty": "متوسط",
+   "question": "في أي عام تفكك الاتحاد السوفيتي؟",
+   "options": [
+    "1991",
+    "1985",
+    "1993",
+    "1989"
+   ],
+   "k": 2205,
+   "src": "https://en.wikipedia.org/wiki/Dissolution_of_the_Soviet_Union"
+  },
+  {
+   "id": "q0632",
+   "difficulty": "صعب",
+   "question": "ما اسم الشركة التي طورت نظام أندرويد في البداية قبل أن تستحوذ عليها غوغل؟",
+   "options": [
+    "نوكيا",
+    "Android Inc.",
+    "موتورولا",
+    "سامسونج"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Android_(operating_system)"
+  },
+  {
+   "id": "q0633",
+   "difficulty": "صعب",
+   "question": "ما اسم أول حاسوب إلكتروني رقمي عام الأغراض اشتهر تاريخياً؟",
+   "options": [
+    "ماكنتوش",
+    "ألتير 8800",
+    "IBM PC",
+    "ENIAC"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/ENIAC"
+  },
+  {
+   "id": "q0634",
+   "difficulty": "متوسط",
+   "question": "ما التقنية التي تسمح للأجهزة بالتواصل لاسلكياً عبر مسافات قصيرة وسُميت على اسم ملك دنماركي؟",
+   "options": [
+    "Wi-Fi",
+    "NFC",
+    "البلوتوث",
+    "الأشعة تحت الحمراء"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Bluetooth"
+  },
+  {
+   "id": "q0635",
+   "difficulty": "متوسط",
+   "question": "ماذا تعني الأحرف WWW؟",
+   "options": [
+    "الشبكة اللاسلكية العالمية",
+    "الويب الرسمي العالمي",
+    "الموقع الإلكتروني العالمي",
+    "الشبكة العنكبوتية العالمية"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/World_Wide_Web"
+  },
+  {
+   "id": "q0636",
+   "difficulty": "صعب",
+   "question": "ما اسم أول متصفح ويب رسومي واسع الانتشار؟",
+   "options": [
+    "أوبرا",
+    "نتسكيب",
+    "إنترنت إكسبلورر",
+    "Mosaic"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Mosaic_(web_browser)"
+  },
+  {
+   "id": "q0637",
+   "difficulty": "سهل",
+   "question": "ما وحدة قياس سعة التخزين الرقمية التي تساوي 8 بت؟",
+   "options": [
+    "الكيلوبايت",
+    "البايت",
+    "الهرتز",
+    "البت"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Byte"
+  },
+  {
+   "id": "q0638",
+   "difficulty": "سهل",
+   "question": "من مؤلف رواية البؤساء؟",
+   "options": [
+    "بلزاك",
+    "فيكتور هوغو",
+    "ألكسندر دوما",
+    "إميل زولا"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Les_Mis%C3%A9rables"
+  },
+  {
+   "id": "q0639",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية مئة عام من العزلة؟",
+   "options": [
+    "إيزابيل الليندي",
+    "غابرييل غارسيا ماركيز",
+    "خورخي لويس بورخيس",
+    "باولو كويلو"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/One_Hundred_Years_of_Solitude"
+  },
+  {
+   "id": "q0640",
+   "difficulty": "متوسط",
+   "question": "ما اللغة التي كُتبت بها الإلياذة أصلاً؟",
+   "options": [
+    "الفارسية القديمة",
+    "العبرية",
+    "اللاتينية",
+    "اليونانية القديمة"
+   ],
+   "k": 2208,
+   "src": "https://en.wikipedia.org/wiki/Iliad"
+  },
+  {
+   "id": "q0641",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية موبي ديك؟",
+   "options": [
+    "مارك توين",
+    "إرنست همنغواي",
+    "هرمان ملفيل",
+    "جاك لندن"
+   ],
+   "k": 2214,
+   "src": "https://en.wikipedia.org/wiki/Moby-Dick"
+  },
+  {
+   "id": "q0642",
+   "difficulty": "صعب",
+   "question": "من مؤلف المسرحية الشعرية الألمانية فاوست؟",
+   "options": [
+    "شيلر",
+    "نيتشه",
+    "كافكا",
+    "غوته"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/Goethe%27s_Faust"
+  },
+  {
+   "id": "q0643",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية الجريمة والعقاب؟",
+   "options": [
+    "ليو تولستوي",
+    "ألكسندر بوشكين",
+    "فيودور دوستويفسكي",
+    "أنطون تشيخوف"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Crime_and_Punishment"
+  },
+  {
+   "id": "q0644",
+   "difficulty": "متوسط",
+   "question": "ما الجزء المسؤول عن إنتاج الإنسولين في جسم الإنسان؟",
+   "options": [
+    "البنكرياس",
+    "الطحال",
+    "الكبد",
+    "الكلية"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Pancreas"
+  },
+  {
+   "id": "q0645",
+   "difficulty": "متوسط",
+   "question": "ما اسم البروتين الذي يعطي الدم لونه الأحمر وينقل الأكسجين؟",
+   "options": [
+    "الإنسولين",
+    "الكيراتين",
+    "الكولاجين",
+    "الهيموغلوبين"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Hemoglobin"
+  },
+  {
+   "id": "q0646",
+   "difficulty": "سهل",
+   "question": "ما أكبر عظمة في جسم الإنسان؟",
+   "options": [
+    "عظمة الفخذ",
+    "عظمة الحوض",
+    "عظمة العضد",
+    "عظمة الساق"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Femur"
+  },
+  {
+   "id": "q0647",
+   "difficulty": "سهل",
+   "question": "ما العضو المسؤول عن تنقية الدم من الفضلات وإنتاج البول؟",
+   "options": [
+    "الكبد",
+    "الكليتان",
+    "المثانة",
+    "الطحال"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Kidney"
+  },
+  {
+   "id": "q0648",
+   "difficulty": "سهل",
+   "question": "ما الفيتامين الذي ينتجه الجسم عند التعرض لأشعة الشمس؟",
+   "options": [
+    "فيتامين D",
+    "فيتامين C",
+    "فيتامين B12",
+    "فيتامين A"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Vitamin_D"
+  },
+  {
+   "id": "q0649",
+   "difficulty": "متوسط",
+   "question": "ما الثديي المعروف بأنه من أبطأ الحيوانات حركة ويقضي معظم وقته معلقاً بالأشجار؟",
+   "options": [
+    "الكسلان",
+    "الكوالا",
+    "السلحفاة",
+    "القنفذ"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Sloth"
+  },
+  {
+   "id": "q0650",
+   "difficulty": "متوسط",
+   "question": "ما أكبر أنواع القطط البرية حجماً؟",
+   "options": [
+    "اليغور",
+    "الأسد",
+    "الفهد",
+    "النمر"
+   ],
+   "note": "المقصود النمر المخطط (Tiger).",
+   "k": 2215,
+   "src": "https://en.wikipedia.org/wiki/Tiger"
+  },
+  {
+   "id": "q0651",
+   "difficulty": "متوسط",
+   "question": "ما الحيوان الوحيد من فصيلة القطط الكبيرة الذي يعيش في جماعات؟",
+   "options": [
+    "اليغور",
+    "الفهد",
+    "النمر",
+    "الأسد"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/Lion"
+  },
+  {
+   "id": "q0652",
+   "difficulty": "سهل",
+   "question": "ما الحيوان الذي يستطيع تغيير لون جلده للتمويه؟",
+   "options": [
+    "الضب",
+    "الحرباء",
+    "الإغوانا",
+    "الورل"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Chameleon"
+  },
+  {
+   "id": "q0653",
+   "difficulty": "متوسط",
+   "question": "ما الطائر الذي يستطيع الطيران إلى الخلف؟",
+   "options": [
+    "الطائر الطنان",
+    "الهدهد",
+    "السنونو",
+    "الصقر"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Hummingbird"
+  },
+  {
+   "id": "q0654",
+   "difficulty": "سهل",
+   "question": "ما أكبر حيوان بري من حيث الوزن؟",
+   "options": [
+    "الزرافة",
+    "وحيد القرن",
+    "فرس النهر",
+    "الفيل الأفريقي"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/African_bush_elephant"
+  },
+  {
+   "id": "q0655",
+   "difficulty": "سهل",
+   "question": "ما عاصمة النرويج؟",
+   "options": [
+    "هلسنكي",
+    "أوسلو",
+    "كوبنهاغن",
+    "ستوكهولم"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Oslo"
+  },
+  {
+   "id": "q0656",
+   "difficulty": "سهل",
+   "question": "ما الدولة التي تضم مدينة إسطنبول؟",
+   "options": [
+    "اليونان",
+    "بلغاريا",
+    "قبرص",
+    "تركيا"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Istanbul"
+  },
+  {
+   "id": "q0657",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة البيرو؟",
+   "options": [
+    "بوغوتا",
+    "كيتو",
+    "سانتياغو",
+    "ليما"
+   ],
+   "k": 2264,
+   "src": "https://en.wikipedia.org/wiki/Lima"
+  },
+  {
+   "id": "q0658",
+   "difficulty": "متوسط",
+   "question": "على حدود أي دولتين تقع شلالات فيكتوريا؟",
+   "options": [
+    "زامبيا وزيمبابوي",
+    "كينيا وتنزانيا",
+    "موزمبيق وملاوي",
+    "الكونغو وأنغولا"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Victoria_Falls"
+  },
+  {
+   "id": "q0659",
+   "difficulty": "سهل",
+   "question": "ما الدولة التي تقع فيها مدينة مراكش؟",
+   "options": [
+    "تونس",
+    "موريتانيا",
+    "الجزائر",
+    "المغرب"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Marrakesh"
+  },
+  {
+   "id": "q0660",
+   "difficulty": "سهل",
+   "question": "من العالم الذي وضع قوانين الحركة الثلاثة؟",
+   "options": [
+    "إسحاق نيوتن",
+    "يوهانس كيبلر",
+    "ألبرت أينشتاين",
+    "غاليليو غاليلي"
+   ],
+   "k": 2219,
+   "src": "https://en.wikipedia.org/wiki/Newton%27s_laws_of_motion"
+  },
+  {
+   "id": "q0661",
+   "difficulty": "متوسط",
+   "question": "من مخترع آلة الطباعة بالحروف المتحركة في أوروبا؟",
+   "options": [
+    "ليوناردو دا فينشي",
+    "توماس إديسون",
+    "يوهان غوتنبرغ",
+    "جيمس وات"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Johannes_Gutenberg"
+  },
+  {
+   "id": "q0662",
+   "difficulty": "سهل",
+   "question": "ما اسم أول إنسان أرسل إلى الفضاء؟",
+   "options": [
+    "ألان شيبرد",
+    "جون غلين",
+    "يوري غاغارين",
+    "نيل أرمسترونغ"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Yuri_Gagarin"
+  },
+  {
+   "id": "q0663",
+   "difficulty": "متوسط",
+   "question": "في أي عام أُرسل أول إنسان إلى الفضاء؟",
+   "options": [
+    "1965",
+    "1957",
+    "1969",
+    "1961"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Vostok_1"
+  },
+  {
+   "id": "q0664",
+   "difficulty": "متوسط",
+   "question": "ما اسم الجهاز المستخدم لرصد الزلازل وتسجيلها؟",
+   "options": [
+    "البارومتر",
+    "الهيغرومتر",
+    "السيزموغراف",
+    "الأنيمومتر"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Seismometer"
+  },
+  {
+   "id": "q0665",
+   "difficulty": "متوسط",
+   "question": "ما اسم العملة الرسمية لكوريا الجنوبية؟",
+   "options": [
+    "اليوان",
+    "الين",
+    "الرينغيت",
+    "الوون"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/South_Korean_won"
+  },
+  {
+   "id": "q0666",
+   "difficulty": "سهل",
+   "question": "كم عدد أضلاع الشكل المثمن؟",
+   "options": [
+    "ثمانية",
+    "عشرة",
+    "ستة",
+    "سبعة"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Octagon"
+  },
+  {
+   "id": "q0667",
+   "difficulty": "صعب",
+   "question": "ما اسم العلم الذي يدرس الفطريات؟",
+   "options": [
+    "علم النبات",
+    "علم الأحياء الدقيقة",
+    "علم الفطريات",
+    "علم الحشرات"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Mycology"
+  },
+  {
+   "id": "q0668",
+   "difficulty": "سهل",
+   "question": "ما العنصر الكيميائي الذي رمزه Fe؟",
+   "options": [
+    "الرصاص",
+    "الحديد",
+    "الفضة",
+    "الفلور"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Iron"
+  },
+  {
+   "id": "q0669",
+   "difficulty": "متوسط",
+   "question": "ما اسم الجهاز الذي يقيس الضغط الجوي؟",
+   "options": [
+    "البارومتر",
+    "الهيدرومتر",
+    "الترمومتر",
+    "الأنيمومتر"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Barometer"
+  },
+  {
+   "id": "q0670",
+   "difficulty": "سهل",
+   "question": "ما اسم الخط الوهمي الذي يقسم الأرض إلى نصفين شمالي وجنوبي؟",
+   "options": [
+    "خط غرينتش",
+    "الدائرة القطبية",
+    "مدار السرطان",
+    "خط الاستواء"
+   ],
+   "k": 2229,
+   "src": "https://en.wikipedia.org/wiki/Equator"
+  },
+  {
+   "id": "q0671",
+   "difficulty": "متوسط",
+   "question": "ما الرمز الكيميائي للفضة؟",
+   "options": [
+    "Si",
+    "Ag",
+    "Fe",
+    "Au"
+   ],
+   "k": 2234,
+   "src": "https://en.wikipedia.org/wiki/Silver"
+  },
+  {
+   "id": "q0672",
+   "difficulty": "متوسط",
+   "question": "ما وحدة قياس القوة في الفيزياء؟",
+   "options": [
+    "الباسكال",
+    "النيوتن",
+    "الواط",
+    "الجول"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/Newton_(unit)"
+  },
+  {
+   "id": "q0673",
+   "difficulty": "متوسط",
+   "question": "ما الجزء المسؤول عن امتصاص معظم العناصر الغذائية في الجهاز الهضمي؟",
+   "options": [
+    "الأمعاء الدقيقة",
+    "المعدة",
+    "الأمعاء الغليظة",
+    "المريء"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Small_intestine"
+  },
+  {
+   "id": "q0674",
+   "difficulty": "متوسط",
+   "question": "كم عدد حجرات معدة البقرة؟",
+   "options": [
+    "أربع حجرات",
+    "ست حجرات",
+    "ثلاث حجرات",
+    "حجرتان"
+   ],
+   "note": "علمياً هي معدة واحدة مقسومة إلى أربع حجرات.",
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/Ruminant"
+  },
+  {
+   "id": "q0675",
+   "difficulty": "سهل",
+   "question": "ما اسم العملية التي تصنع بها النباتات غذاءها باستخدام ضوء الشمس؟",
+   "options": [
+    "التخمر",
+    "التنفس الخلوي",
+    "البناء الضوئي",
+    "النتح"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Photosynthesis"
+  },
+  {
+   "id": "q0676",
+   "difficulty": "سهل",
+   "question": "ما عاصمة البرتغال؟",
+   "options": [
+    "لشبونة",
+    "برشلونة",
+    "بورتو",
+    "مدريد"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Lisbon"
+  },
+  {
+   "id": "q0677",
+   "difficulty": "صعب",
+   "question": "في أي دولة تقع مدينة تمبكتو التاريخية؟",
+   "options": [
+    "مالي",
+    "النيجر",
+    "موريتانيا",
+    "السنغال"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Timbuktu"
+  },
+  {
+   "id": "q0678",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة نيوزيلندا؟",
+   "options": [
+    "كرايستشيرش",
+    "سيدني",
+    "ويلينغتون",
+    "أوكلاند"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Wellington"
+  },
+  {
+   "id": "q0679",
+   "difficulty": "متوسط",
+   "question": "ما النهر الذي يمر بمدينة بغداد؟",
+   "options": [
+    "شط العرب",
+    "دجلة",
+    "الزاب",
+    "الفرات"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Tigris"
+  },
+  {
+   "id": "q0680",
+   "difficulty": "سهل",
+   "question": "في أي دولة يقع برج خليفة؟",
+   "options": [
+    "الإمارات",
+    "قطر",
+    "الكويت",
+    "السعودية"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Burj_Khalifa"
+  },
+  {
+   "id": "q0681",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة آيسلندا؟",
+   "options": [
+    "أوسلو",
+    "دبلن",
+    "هلسنكي",
+    "ريكيافيك"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Reykjav%C3%ADk"
+  },
+  {
+   "id": "q0682",
+   "difficulty": "متوسط",
+   "question": "من أول امرأة حصلت على جائزة نوبل؟",
+   "options": [
+    "إيرين جوليو كوري",
+    "روزاليند فرانكلين",
+    "فلورنس نايتينغيل",
+    "ماري كوري"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/Marie_Curie"
+  },
+  {
+   "id": "q0683",
+   "difficulty": "صعب",
+   "question": "في أي عام أُلغيت السلطنة العثمانية (لا الخلافة)؟",
+   "options": [
+    "1924",
+    "1908",
+    "1922",
+    "1918"
+   ],
+   "note": "إلغاء السلطنة كان عام 1922م، أما إلغاء الخلافة فكان عام 1924م.",
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Abolition_of_the_Ottoman_sultanate"
+  },
+  {
+   "id": "q0684",
+   "difficulty": "سهل",
+   "question": "من القائد المسلم الذي استعاد القدس عام 1187م؟",
+   "options": [
+    "نور الدين زنكي",
+    "سيف الدين قطز",
+    "الظاهر بيبرس",
+    "صلاح الدين الأيوبي"
+   ],
+   "k": 2264,
+   "src": "https://en.wikipedia.org/wiki/Siege_of_Jerusalem_(1187)"
+  },
+  {
+   "id": "q0685",
+   "difficulty": "صعب",
+   "question": "ما اسم السفينة التي حملت تشارلز داروين في رحلته الشهيرة؟",
+   "options": [
+    "سانتا ماريا",
+    "إتش إم إس بيغل",
+    "فيكتوريا",
+    "إنديفور"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/HMS_Beagle"
+  },
+  {
+   "id": "q0686",
+   "difficulty": "متوسط",
+   "question": "من أول إمبراطور روماني؟",
+   "options": [
+    "نيرون",
+    "أغسطس",
+    "يوليوس قيصر",
+    "كاليغولا"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Augustus"
+  },
+  {
+   "id": "q0687",
+   "difficulty": "متوسط",
+   "question": "في أي عام فتح العثمانيون القسطنطينية؟",
+   "options": [
+    "1492",
+    "1517",
+    "1389",
+    "1453"
+   ],
+   "k": 2285,
+   "src": "https://en.wikipedia.org/wiki/Fall_of_Constantinople"
+  },
+  {
+   "id": "q0688",
+   "difficulty": "سهل",
+   "question": "من رسم لوحة ليلة النجوم؟",
+   "options": [
+    "فان غوخ",
+    "كلود مونيه",
+    "بيكاسو",
+    "سلفادور دالي"
+   ],
+   "k": 2289,
+   "src": "https://en.wikipedia.org/wiki/The_Starry_Night"
+  },
+  {
+   "id": "q0689",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية شيفرة دافنشي؟",
+   "options": [
+    "ستيفن كينغ",
+    "سيدني شيلدون",
+    "دان براون",
+    "جون غريشام"
+   ],
+   "k": 2298,
+   "src": "https://en.wikipedia.org/wiki/The_Da_Vinci_Code"
+  },
+  {
+   "id": "q0690",
+   "difficulty": "سهل",
+   "question": "ما اسم الآلة الموسيقية التي تحتوي عادةً على 88 مفتاحاً؟",
+   "options": [
+    "البيانو",
+    "القانون",
+    "الأكورديون",
+    "الأورغن"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Piano"
+  },
+  {
+   "id": "q0691",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية الحرب والسلام؟",
+   "options": [
+    "إيفان تورغينيف",
+    "ليو تولستوي",
+    "فيودور دوستويفسكي",
+    "أنطون تشيخوف"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/War_and_Peace"
+  },
+  {
+   "id": "q0692",
+   "difficulty": "سهل",
+   "question": "ما الفن الياباني الذي يعتمد على طي الورق؟",
+   "options": [
+    "الإيكيبانا",
+    "البونساي",
+    "الأوريغامي",
+    "الكاليغرافي"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Origami"
+  },
+  {
+   "id": "q0693",
+   "difficulty": "متوسط",
+   "question": "ما اسم الجائزة السينمائية الأمريكية الشهيرة التي تقدمها أكاديمية فنون وعلوم الصور المتحركة؟",
+   "options": [
+    "الأوسكار",
+    "الإيمي",
+    "الغولدن غلوب",
+    "السعفة الذهبية"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Academy_Awards"
+  },
+  {
+   "id": "q0694",
+   "difficulty": "صعب",
+   "question": "ما اسم الجهاز المستخدم لقياس سرعة الرياح؟",
+   "options": [
+    "السيزموغراف",
+    "الأنيمومتر",
+    "الترمومتر",
+    "البارومتر"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Anemometer"
+  },
+  {
+   "id": "q0695",
+   "difficulty": "متوسط",
+   "question": "ما اسم المضلع الذي يمتلك عشرة أضلاع؟",
+   "options": [
+    "الاثنا عشري",
+    "العشاري",
+    "التساعي",
+    "الثماني"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Decagon"
+  },
+  {
+   "id": "q0696",
+   "difficulty": "متوسط",
+   "question": "ما العملة الرسمية لسويسرا؟",
+   "options": [
+    "المارك",
+    "الكرونة",
+    "الفرنك",
+    "اليورو"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Swiss_franc"
+  },
+  {
+   "id": "q0697",
+   "difficulty": "متوسط",
+   "question": "ما أكبر صحراء حارة في العالم؟",
+   "options": [
+    "صحراء غوبي",
+    "صحراء كالاهاري",
+    "صحراء الربع الخالي",
+    "الصحراء الكبرى"
+   ],
+   "k": 2292,
+   "src": "https://en.wikipedia.org/wiki/Sahara"
+  },
+  {
+   "id": "q0698",
+   "difficulty": "متوسط",
+   "question": "ما اسم العلم الذي يدرس الطقس والغلاف الجوي؟",
+   "options": [
+    "علم طبقات الأرض",
+    "علم الأرصاد الجوية",
+    "علم المناخ القديم",
+    "علم الفلك"
+   ],
+   "k": 2297,
+   "src": "https://en.wikipedia.org/wiki/Meteorology"
+  },
+  {
+   "id": "q0699",
+   "difficulty": "متوسط",
+   "question": "ما وحدة قياس المقاومة الكهربائية؟",
+   "options": [
+    "الواط",
+    "الأوم",
+    "الفولت",
+    "الأمبير"
+   ],
+   "k": 2304,
+   "src": "https://en.wikipedia.org/wiki/Ohm"
+  },
+  {
+   "id": "q0700",
+   "difficulty": "صعب",
+   "question": "ما الرقم الهيدروجيني للماء النقي عند 25 درجة مئوية؟",
+   "options": [
+    "14",
+    "10",
+    "7",
+    "0"
+   ],
+   "k": 2186,
+   "src": "https://en.wikipedia.org/wiki/PH"
+  },
+  {
+   "id": "q0701",
+   "difficulty": "متوسط",
+   "question": "ما الصيغة الكيميائية لملح الطعام؟",
+   "options": [
+    "KCl",
+    "NaOH",
+    "NaCl",
+    "CaCO3"
+   ],
+   "k": 2193,
+   "src": "https://en.wikipedia.org/wiki/Sodium_chloride"
+  },
+  {
+   "id": "q0702",
+   "difficulty": "سهل",
+   "question": "ما المعدن الذي يكون سائلاً في درجة حرارة الغرفة؟",
+   "options": [
+    "الزئبق",
+    "القصدير",
+    "الرصاص",
+    "الألمنيوم"
+   ],
+   "k": 2198,
+   "src": "https://en.wikipedia.org/wiki/Mercury_(element)"
+  },
+  {
+   "id": "q0703",
+   "difficulty": "متوسط",
+   "question": "ما سرعة الضوء التقريبية في الفراغ؟",
+   "options": [
+    "150 ألف كم في الثانية",
+    "3 ملايين كم في الثانية",
+    "30 ألف كم في الثانية",
+    "300 ألف كم في الثانية"
+   ],
+   "k": 2208,
+   "src": "https://en.wikipedia.org/wiki/Speed_of_light"
+  },
+  {
+   "id": "q0704",
+   "difficulty": "متوسط",
+   "question": "من العالم الذي وضع الجدول الدوري للعناصر بصورته التاريخية الأولى؟",
+   "options": [
+    "أنطوان لافوازييه",
+    "جون دالتون",
+    "ديمتري مندليف",
+    "نيلز بور"
+   ],
+   "k": 2214,
+   "src": "https://en.wikipedia.org/wiki/Dmitri_Mendeleev"
+  },
+  {
+   "id": "q0705",
+   "difficulty": "متوسط",
+   "question": "ما أصغر وحدة تحتفظ بالخصائص الكيميائية للعنصر؟",
+   "options": [
+    "الذرة",
+    "الجزيء",
+    "المركب",
+    "الخلية"
+   ],
+   "k": 2219,
+   "src": "https://en.wikipedia.org/wiki/Atom"
+  },
+  {
+   "id": "q0706",
+   "difficulty": "سهل",
+   "question": "ما الجهاز المستخدم لتكبير الأجسام الدقيقة جداً؟",
+   "options": [
+    "التلسكوب",
+    "المنظار",
+    "المجهر",
+    "البيرسكوب"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Microscope"
+  },
+  {
+   "id": "q0707",
+   "difficulty": "سهل",
+   "question": "ماذا تسمى عملية تحول المادة من الحالة السائلة إلى الصلبة؟",
+   "options": [
+    "التبخر",
+    "التسامي",
+    "التكاثف",
+    "التجمد"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/Freezing"
+  },
+  {
+   "id": "q0708",
+   "difficulty": "صعب",
+   "question": "ما أكبر قمر في المجموعة الشمسية؟",
+   "options": [
+    "تيتان",
+    "غانيميد",
+    "أوروبا",
+    "القمر"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/Ganymede_(moon)"
+  },
+  {
+   "id": "q0709",
+   "difficulty": "سهل",
+   "question": "ما عاصمة مصر؟",
+   "options": [
+    "القاهرة",
+    "الجيزة",
+    "الأقصر",
+    "الإسكندرية"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Cairo"
+  },
+  {
+   "id": "q0710",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة كينيا؟",
+   "options": [
+    "نيروبي",
+    "كمبالا",
+    "مومباسا",
+    "أديس أبابا"
+   ],
+   "k": 2191,
+   "src": "https://en.wikipedia.org/wiki/Nairobi"
+  },
+  {
+   "id": "q0711",
+   "difficulty": "متوسط",
+   "question": "ما النهر الذي يمر بمدينة باريس؟",
+   "options": [
+    "التايمز",
+    "السين",
+    "الراين",
+    "الدانوب"
+   ],
+   "k": 2199,
+   "src": "https://en.wikipedia.org/wiki/Seine"
+  },
+  {
+   "id": "q0712",
+   "difficulty": "صعب",
+   "question": "ما أطول نهر في قارة أوروبا؟",
+   "options": [
+    "الراين",
+    "الفولغا",
+    "الدنيبر",
+    "الدانوب"
+   ],
+   "k": 2206,
+   "src": "https://en.wikipedia.org/wiki/Volga"
+  },
+  {
+   "id": "q0713",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة تايلاند؟",
+   "options": [
+    "بانكوك",
+    "مانيلا",
+    "هانوي",
+    "كوالالمبور"
+   ],
+   "k": 2212,
+   "src": "https://en.wikipedia.org/wiki/Bangkok"
+  },
+  {
+   "id": "q0714",
+   "difficulty": "سهل",
+   "question": "ما البحر الذي يفصل بين قارتي أوروبا وأفريقيا؟",
+   "options": [
+    "البحر الأحمر",
+    "بحر العرب",
+    "البحر الأبيض المتوسط",
+    "البحر الأسود"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Mediterranean_Sea"
+  },
+  {
+   "id": "q0715",
+   "difficulty": "صعب",
+   "question": "ما أعمق بحيرة للمياه العذبة في العالم؟",
+   "options": [
+    "بحيرة فيكتوريا",
+    "بحيرة بايكال",
+    "بحيرة تنجانيقا",
+    "بحيرة سوبيريور"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Lake_Baikal"
+  },
+  {
+   "id": "q0716",
+   "difficulty": "سهل",
+   "question": "في أي دولة تقع مدينة كيب تاون؟",
+   "options": [
+    "جنوب أفريقيا",
+    "كينيا",
+    "نيجيريا",
+    "ناميبيا"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Cape_Town"
+  },
+  {
+   "id": "q0717",
+   "difficulty": "متوسط",
+   "question": "في أي دولة تقع صحراء أتاكاما؟",
+   "options": [
+    "بوليفيا",
+    "الأرجنتين",
+    "بيرو",
+    "تشيلي"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Atacama_Desert"
+  },
+  {
+   "id": "q0718",
+   "difficulty": "متوسط",
+   "question": "في أي عام أُعلن استقلال الولايات المتحدة الأمريكية؟",
+   "options": [
+    "1812",
+    "1776",
+    "1789",
+    "1492"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/United_States_Declaration_of_Independence"
+  },
+  {
+   "id": "q0719",
+   "difficulty": "متوسط",
+   "question": "في أي عام بدأت الثورة الفرنسية؟",
+   "options": [
+    "1848",
+    "1776",
+    "1789",
+    "1815"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/French_Revolution"
+  },
+  {
+   "id": "q0720",
+   "difficulty": "سهل",
+   "question": "في أي مدينة يقع مبنى الكولوسيوم الشهير؟",
+   "options": [
+    "ميلانو",
+    "روما",
+    "إسطنبول",
+    "أثينا"
+   ],
+   "k": 2199,
+   "src": "https://en.wikipedia.org/wiki/Colosseum"
+  },
+  {
+   "id": "q0721",
+   "difficulty": "متوسط",
+   "question": "في أي عام تأسست منظمة الأمم المتحدة؟",
+   "options": [
+    "1945",
+    "1939",
+    "1919",
+    "1948"
+   ],
+   "k": 2205,
+   "src": "https://en.wikipedia.org/wiki/United_Nations"
+  },
+  {
+   "id": "q0722",
+   "difficulty": "متوسط",
+   "question": "من أول امرأة تولت رئاسة وزراء بريطانيا؟",
+   "options": [
+    "الملكة إليزابيث",
+    "مارغريت تاتشر",
+    "تيريزا ماي",
+    "أنجيلا ميركل"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Margaret_Thatcher"
+  },
+  {
+   "id": "q0723",
+   "difficulty": "صعب",
+   "question": "من ملك بابل الذي ارتبط اسمه بأحد أقدم القوانين المكتوبة؟",
+   "options": [
+    "حمورابي",
+    "نبوخذ نصر",
+    "جلجامش",
+    "سرجون الأكدي"
+   ],
+   "k": 2219,
+   "src": "https://en.wikipedia.org/wiki/Code_of_Hammurabi"
+  },
+  {
+   "id": "q0724",
+   "difficulty": "صعب",
+   "question": "ما اسم الوثيقة الإنجليزية الشهيرة التي صدرت عام 1215؟",
+   "options": [
+    "معاهدة وستفاليا",
+    "وثيقة الحقوق",
+    "الماغنا كارتا",
+    "إعلان الاستقلال"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Magna_Carta"
+  },
+  {
+   "id": "q0725",
+   "difficulty": "صعب",
+   "question": "من العالم الفرنسي الذي فك رموز الكتابة الهيروغليفية المصرية مستعيناً بحجر رشيد؟",
+   "options": [
+    "شامبليون",
+    "نابليون بونابرت",
+    "فلندرز بتري",
+    "هوارد كارتر"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Jean-Fran%C3%A7ois_Champollion"
+  },
+  {
+   "id": "q0726",
+   "difficulty": "متوسط",
+   "question": "ما الحضارة التي بنت مدينة ماتشو بيتشو في جبال الأنديز؟",
+   "options": [
+    "الأولمك",
+    "المايا",
+    "الإنكا",
+    "الأزتك"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Machu_Picchu"
+  },
+  {
+   "id": "q0727",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية كبرياء وتحامل؟",
+   "options": [
+    "فرجينيا وولف",
+    "جورج إليوت",
+    "جين أوستن",
+    "شارلوت برونتي"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Pride_and_Prejudice"
+  },
+  {
+   "id": "q0728",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية مزرعة الحيوان؟",
+   "options": [
+    "مارك توين",
+    "ألدوس هكسلي",
+    "جورج أورويل",
+    "تشارلز ديكنز"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Animal_Farm"
+  },
+  {
+   "id": "q0729",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية الشيخ والبحر؟",
+   "options": [
+    "إرنست همنغواي",
+    "مارك توين",
+    "جون شتاينبك",
+    "هرمان ملفيل"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/The_Old_Man_and_the_Sea"
+  },
+  {
+   "id": "q0730",
+   "difficulty": "صعب",
+   "question": "من مؤلفة رواية نساء صغيرات؟",
+   "options": [
+    "جين أوستن",
+    "هارييت بيتشر ستو",
+    "لويزا ماي ألكوت",
+    "شارلوت برونتي"
+   ],
+   "k": 2207,
+   "src": "https://en.wikipedia.org/wiki/Little_Women"
+  },
+  {
+   "id": "q0731",
+   "difficulty": "سهل",
+   "question": "من مؤلف قصص المحقق شرلوك هولمز؟",
+   "options": [
+    "تشارلز ديكنز",
+    "آرثر كونان دويل",
+    "إدغار آلان بو",
+    "أغاثا كريستي"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Arthur_Conan_Doyle"
+  },
+  {
+   "id": "q0732",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية المسخ؟",
+   "options": [
+    "هيرمان هيسه",
+    "فرانز كافكا",
+    "ألبير كامو",
+    "جان بول سارتر"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/The_Metamorphosis"
+  },
+  {
+   "id": "q0733",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الإغريقي المنسوب إليه تأليف الإلياذة؟",
+   "options": [
+    "هوميروس",
+    "أفلاطون",
+    "فيرجيل",
+    "سوفوكليس"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/Iliad"
+  },
+  {
+   "id": "q0734",
+   "difficulty": "متوسط",
+   "question": "ما اسم القصيدة اليابانية التقليدية القصيرة التي تتكون غالباً من ثلاثة أسطر؟",
+   "options": [
+    "المانغا",
+    "التانكا",
+    "الهايكو",
+    "الكابوكي"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Haiku"
+  },
+  {
+   "id": "q0735",
+   "difficulty": "متوسط",
+   "question": "ماذا يسمى الكتاب الذي يروي حياة شخص بقلم شخص آخر؟",
+   "options": [
+    "السيرة الذاتية",
+    "المذكرات",
+    "الرواية التاريخية",
+    "السيرة الغيرية"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Biography"
+  },
+  {
+   "id": "q0736",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية حول العالم في ثمانين يوماً؟",
+   "options": [
+    "روبرت لويس ستيفنسون",
+    "ألكسندر دوما",
+    "جول فيرن",
+    "إتش جي ويلز"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Around_the_World_in_Eighty_Days"
+  },
+  {
+   "id": "q0737",
+   "difficulty": "سهل",
+   "question": "ما اختصار الحمض النووي الريبوزي منقوص الأكسجين؟",
+   "options": [
+    "PCR",
+    "DNA",
+    "ATP",
+    "RNA"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/DNA"
+  },
+  {
+   "id": "q0738",
+   "difficulty": "متوسط",
+   "question": "ما العضية التي تُعرف بأنها محطة الطاقة في الخلية؟",
+   "options": [
+    "جهاز غولجي",
+    "النواة",
+    "الميتوكوندريا",
+    "الريبوسوم"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Mitochondrion"
+  },
+  {
+   "id": "q0739",
+   "difficulty": "متوسط",
+   "question": "ما العلم الذي يدرس الحشرات؟",
+   "options": [
+    "علم الفطريات",
+    "علم الزواحف",
+    "علم الحشرات",
+    "علم الطيور"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Entomology"
+  },
+  {
+   "id": "q0740",
+   "difficulty": "متوسط",
+   "question": "ما أكبر عضو داخلي في جسم الإنسان؟",
+   "options": [
+    "المعدة",
+    "الكبد",
+    "الرئتان",
+    "القلب"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Liver"
+  },
+  {
+   "id": "q0741",
+   "difficulty": "سهل",
+   "question": "ما نوع خلايا الدم التي تساعد على مقاومة العدوى؟",
+   "options": [
+    "البلازما",
+    "خلايا الدم البيضاء",
+    "الصفائح الدموية",
+    "خلايا الدم الحمراء"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/White_blood_cell"
+  },
+  {
+   "id": "q0742",
+   "difficulty": "متوسط",
+   "question": "نقص أي فيتامين يسبب مرض الإسقربوط؟",
+   "options": [
+    "فيتامين C",
+    "فيتامين D",
+    "فيتامين A",
+    "فيتامين K"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/Scurvy"
+  },
+  {
+   "id": "q0743",
+   "difficulty": "سهل",
+   "question": "أي جزء من النبات يمتص الماء والأملاح من التربة؟",
+   "options": [
+    "الجذور",
+    "الأزهار",
+    "الأوراق",
+    "الساق"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Root"
+  },
+  {
+   "id": "q0744",
+   "difficulty": "صعب",
+   "question": "ما اسم الحيوان الثديي الذي يضع البيض ويملك منقاراً يشبه منقار البط؟",
+   "options": [
+    "خلد الماء",
+    "ثعلب الماء",
+    "القندس",
+    "آكل النمل الشوكي"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Platypus"
+  },
+  {
+   "id": "q0745",
+   "difficulty": "صعب",
+   "question": "ما نوع الحمض النووي الذي ينقل التعليمات الوراثية من النواة إلى الريبوسومات لصنع البروتين؟",
+   "options": [
+    "rRNA",
+    "mRNA",
+    "tRNA",
+    "ATP"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Messenger_RNA"
+  },
+  {
+   "id": "q0746",
+   "difficulty": "صعب",
+   "question": "ما اسم العملية التي تنقسم فيها الخلية إلى خليتين متماثلتين وراثياً؟",
+   "options": [
+    "الانقسام المنصف",
+    "التبرعم",
+    "الانقسام المتساوي",
+    "الإخصاب"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Mitosis"
+  },
+  {
+   "id": "q0747",
+   "difficulty": "متوسط",
+   "question": "ماذا يسمى صغير الكنغر؟",
+   "options": [
+    "جوي",
+    "جرو",
+    "عجل",
+    "شبل"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Kangaroo"
+  },
+  {
+   "id": "q0748",
+   "difficulty": "سهل",
+   "question": "ما الحشرة التي تنتج الحرير الطبيعي؟",
+   "options": [
+    "العنكبوت",
+    "النحلة",
+    "دودة القز",
+    "الفراشة"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Bombyx_mori"
+  },
+  {
+   "id": "q0749",
+   "difficulty": "متوسط",
+   "question": "ما الحيوان البحري المعروف بقدرته على تجديد أذرعه؟",
+   "options": [
+    "نجم البحر",
+    "قنديل البحر",
+    "فرس البحر",
+    "قنفذ البحر"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Starfish"
+  },
+  {
+   "id": "q0750",
+   "difficulty": "متوسط",
+   "question": "ما اسم صغير الضفدع في مرحلة نموه المائية؟",
+   "options": [
+    "اليرقة",
+    "الحوار",
+    "الشرغوف",
+    "الصوص"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Tadpole"
+  },
+  {
+   "id": "q0751",
+   "difficulty": "سهل",
+   "question": "ما الحيوان الذي يمتلك خطوطاً سوداء وبيضاء على جسمه؟",
+   "options": [
+    "الظبي",
+    "النمر",
+    "الحمار الوحشي",
+    "الفهد"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Zebra"
+  },
+  {
+   "id": "q0752",
+   "difficulty": "سهل",
+   "question": "ما الطائر المعروف بقدرته على تقليد الأصوات والكلام البشري؟",
+   "options": [
+    "الغراب",
+    "الببغاء",
+    "البلبل",
+    "الحمام"
+   ],
+   "k": 2234,
+   "src": "https://en.wikipedia.org/wiki/Parrot"
+  },
+  {
+   "id": "q0753",
+   "difficulty": "متوسط",
+   "question": "إلى أي مجموعة حيوانية ينتمي السلمندر؟",
+   "options": [
+    "البرمائيات",
+    "الأسماك",
+    "الزواحف",
+    "الثدييات"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Salamander"
+  },
+  {
+   "id": "q0754",
+   "difficulty": "متوسط",
+   "question": "ما السمكة التي تنتفخ عند تعرضها للخطر؟",
+   "options": [
+    "سمكة الأنقليس",
+    "السمكة المنتفخة",
+    "سمكة القرش",
+    "سمكة المهرج"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Tetraodontidae"
+  },
+  {
+   "id": "q0755",
+   "difficulty": "متوسط",
+   "question": "ما نظام العد الذي يستخدم الرقمين 0 و1؟",
+   "options": [
+    "النظام العشري",
+    "النظام الست عشري",
+    "النظام الثماني",
+    "النظام الثنائي"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Binary_number"
+  },
+  {
+   "id": "q0756",
+   "difficulty": "صعب",
+   "question": "ماذا تعني الأحرف HTML؟",
+   "options": [
+    "لغة ترميز النص التشعبي",
+    "لغة برمجة المواقع العالية",
+    "لغة نقل النصوص الرقمية",
+    "لغة تصميم الصفحات الحديثة"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/HTML"
+  },
+  {
+   "id": "q0757",
+   "difficulty": "صعب",
+   "question": "ماذا تعني الأحرف URL؟",
+   "options": [
+    "رابط الشبكة الموحد",
+    "مسار الملفات الموحد",
+    "عنوان المستخدم العالمي",
+    "محدد موقع الموارد الموحد"
+   ],
+   "k": 2271,
+   "src": "https://en.wikipedia.org/wiki/URL"
+  },
+  {
+   "id": "q0758",
+   "difficulty": "سهل",
+   "question": "ما الشركة المطورة لنظام التشغيل Windows؟",
+   "options": [
+    "غوغل",
+    "آي بي إم",
+    "آبل",
+    "مايكروسوفت"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Microsoft_Windows"
+  },
+  {
+   "id": "q0759",
+   "difficulty": "متوسط",
+   "question": "ما التقنية المستخدمة في الدفع الإلكتروني اللاتلامسي عبر مسافات قصيرة جداً؟",
+   "options": [
+    "Wi-Fi",
+    "NFC",
+    "GPS",
+    "البلوتوث"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Near-field_communication"
+  },
+  {
+   "id": "q0760",
+   "difficulty": "متوسط",
+   "question": "ماذا تعني الأحرف USB؟",
+   "options": [
+    "الناقل التسلسلي العام",
+    "المنفذ السريع العام",
+    "الوصلة الرقمية الشاملة",
+    "وحدة التخزين الموحدة"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/USB"
+  },
+  {
+   "id": "q0761",
+   "difficulty": "متوسط",
+   "question": "ماذا تعني الأحرف RAM؟",
+   "options": [
+    "ذاكرة الوصول العشوائي",
+    "ذاكرة التخزين المؤقت",
+    "الذاكرة الدائمة",
+    "ذاكرة القراءة فقط"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Random-access_memory"
+  },
+  {
+   "id": "q0762",
+   "difficulty": "متوسط",
+   "question": "ماذا تعني الأحرف PDF؟",
+   "options": [
+    "تنسيق المستندات المحمولة",
+    "ملف البيانات العامة",
+    "تنسيق الصور المضغوطة",
+    "صيغة الطباعة الرقمية"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/PDF"
+  },
+  {
+   "id": "q0763",
+   "difficulty": "سهل",
+   "question": "ماذا تعني الأحرف AI؟",
+   "options": [
+    "التحليل الآلي",
+    "الأتمتة الصناعية",
+    "الذكاء الاصطناعي",
+    "الإنترنت الذكي"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Artificial_intelligence"
+  },
+  {
+   "id": "q0764",
+   "difficulty": "متوسط",
+   "question": "ما الجهاز الذي يربط شبكات الحاسب ويوجه البيانات بينها؟",
+   "options": [
+    "الهب",
+    "السويتش",
+    "الراوتر",
+    "المودم"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Router_(computing)"
+  },
+  {
+   "id": "q0765",
+   "difficulty": "سهل",
+   "question": "ما أصغر عدد أولي؟",
+   "options": [
+    "0",
+    "3",
+    "1",
+    "2"
+   ],
+   "k": 2264,
+   "src": "https://en.wikipedia.org/wiki/Prime_number"
+  },
+  {
+   "id": "q0766",
+   "difficulty": "سهل",
+   "question": "كم مجموع زوايا المثلث في الهندسة المستوية؟",
+   "options": [
+    "360 درجة",
+    "270 درجة",
+    "180 درجة",
+    "90 درجة"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Sum_of_angles_of_a_triangle"
+  },
+  {
+   "id": "q0767",
+   "difficulty": "متوسط",
+   "question": "ماذا يمثل الرمز الروماني X؟",
+   "options": [
+    "100",
+    "5",
+    "10",
+    "50"
+   ],
+   "k": 2277,
+   "src": "https://en.wikipedia.org/wiki/Roman_numerals"
+  },
+  {
+   "id": "q0768",
+   "difficulty": "سهل",
+   "question": "ما الجذر التربيعي للعدد 144؟",
+   "options": [
+    "16",
+    "11",
+    "12",
+    "14"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Square_root"
+  },
+  {
+   "id": "q0769",
+   "difficulty": "سهل",
+   "question": "كم درجة قياس الزاوية القائمة؟",
+   "options": [
+    "60 درجة",
+    "90 درجة",
+    "180 درجة",
+    "45 درجة"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Right_angle"
+  },
+  {
+   "id": "q0770",
+   "difficulty": "سهل",
+   "question": "كم يساوي الربع بالنسبة المئوية؟",
+   "options": [
+    "25%",
+    "20%",
+    "40%",
+    "75%"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Percentage"
+  },
+  {
+   "id": "q0771",
+   "difficulty": "متوسط",
+   "question": "ما القيمة التقريبية للعدد باي؟",
+   "options": [
+    "1.61",
+    "3.41",
+    "2.71",
+    "3.14"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Pi"
+  },
+  {
+   "id": "q0772",
+   "difficulty": "سهل",
+   "question": "كم وجهاً للمكعب؟",
+   "options": [
+    "4",
+    "6",
+    "12",
+    "8"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Cube"
+  },
+  {
+   "id": "q0773",
+   "difficulty": "متوسط",
+   "question": "ماذا يسمى طول الحد الخارجي للدائرة؟",
+   "options": [
+    "محيط الدائرة",
+    "قطر الدائرة",
+    "نصف القطر",
+    "مساحة الدائرة"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/Circumference"
+  },
+  {
+   "id": "q0774",
+   "difficulty": "سهل",
+   "question": "كم ضلعاً للشكل الخماسي؟",
+   "options": [
+    "ستة أضلاع",
+    "خمسة أضلاع",
+    "سبعة أضلاع",
+    "أربعة أضلاع"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/Pentagon"
+  },
+  {
+   "id": "q0775",
+   "difficulty": "متوسط",
+   "question": "كم عدد بطولات الغراند سلام الرئيسية في التنس؟",
+   "options": [
+    "خمس بطولات",
+    "ست بطولات",
+    "ثلاث بطولات",
+    "أربع بطولات"
+   ],
+   "k": 2271,
+   "src": "https://en.wikipedia.org/wiki/Grand_Slam_(tennis)"
+  },
+  {
+   "id": "q0776",
+   "difficulty": "سهل",
+   "question": "كم لاعباً يشارك من كل فريق داخل ملعب الكرة الطائرة؟",
+   "options": [
+    "7 لاعبين",
+    "5 لاعبين",
+    "8 لاعبين",
+    "6 لاعبين"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Volleyball"
+  },
+  {
+   "id": "q0777",
+   "difficulty": "متوسط",
+   "question": "ما المسافة الرسمية لسباق الماراثون؟",
+   "options": [
+    "45.5 كم",
+    "42.195 كم",
+    "40 كم",
+    "21.0975 كم"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Marathon"
+  },
+  {
+   "id": "q0778",
+   "difficulty": "سهل",
+   "question": "ما الرياضة التي يُسمى فيها إسقاط جميع القوارير العشر برمية واحدة (سترايك)؟",
+   "options": [
+    "الكيرلنغ",
+    "البولينغ",
+    "الغولف",
+    "البلياردو"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Strike_(bowling)"
+  },
+  {
+   "id": "q0779",
+   "difficulty": "متوسط",
+   "question": "ما الرياضة التي تشتهر بها جولة فرنسا؟",
+   "options": [
+    "سباق الخيل",
+    "الماراثون",
+    "سباق السيارات",
+    "سباق الدراجات الهوائية"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/Tour_de_France"
+  },
+  {
+   "id": "q0780",
+   "difficulty": "متوسط",
+   "question": "ما الرياضة التي تُمنح فيها كأس ستانلي؟",
+   "options": [
+    "كرة السلة",
+    "البيسبول",
+    "هوكي الجليد",
+    "كرة القدم الأمريكية"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Stanley_Cup"
+  },
+  {
+   "id": "q0781",
+   "difficulty": "سهل",
+   "question": "ما الرياضة التي تُقام مباراتها النهائية الشهيرة باسم سوبر بول؟",
+   "options": [
+    "كرة القدم الأمريكية",
+    "هوكي الجليد",
+    "كرة السلة",
+    "البيسبول"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Super_Bowl"
+  },
+  {
+   "id": "q0782",
+   "difficulty": "صعب",
+   "question": "ماذا تسمى نتيجة تسجيل ضربة واحدة أقل من المعدل المحدد للحفرة في الغولف؟",
+   "options": [
+    "بوغي",
+    "بيردي",
+    "بار",
+    "إيغل"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Glossary_of_golf"
+  },
+  {
+   "id": "q0783",
+   "difficulty": "سهل",
+   "question": "كم حكم ساحة يقود مباراة كرة القدم داخل أرضية الملعب عادةً؟",
+   "options": [
+    "حكم واحد",
+    "حكمان",
+    "ثلاثة حكام",
+    "أربعة حكام"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Referee_(association_football)"
+  },
+  {
+   "id": "q0784",
+   "difficulty": "متوسط",
+   "question": "في أي دولة نشأت موسيقى الريغي؟",
+   "options": [
+    "البرازيل",
+    "جامايكا",
+    "كوبا",
+    "الولايات المتحدة"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Reggae"
+  },
+  {
+   "id": "q0785",
+   "difficulty": "سهل",
+   "question": "ما اسم الزي التقليدي الياباني؟",
+   "options": [
+    "الكيمونو",
+    "الهانبوك",
+    "القفطان",
+    "الساري"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Kimono"
+  },
+  {
+   "id": "q0786",
+   "difficulty": "متوسط",
+   "question": "في أي مدينة يقع متحف البرادو؟",
+   "options": [
+    "برشلونة",
+    "إشبيلية",
+    "مدريد",
+    "لشبونة"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Museo_del_Prado"
+  },
+  {
+   "id": "q0787",
+   "difficulty": "متوسط",
+   "question": "ماذا يسمى فن الكتابة اليدوية المزخرفة؟",
+   "options": [
+    "النقش",
+    "الفسيفساء",
+    "فن الخط",
+    "الزخرفة"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Calligraphy"
+  },
+  {
+   "id": "q0788",
+   "difficulty": "صعب",
+   "question": "ما اسم تقنية الرسم على الجص الرطب؟",
+   "options": [
+    "الأكواريل",
+    "الفريسكو",
+    "الموزاييك",
+    "الغواش"
+   ],
+   "k": 2297,
+   "src": "https://en.wikipedia.org/wiki/Fresco"
+  },
+  {
+   "id": "q0789",
+   "difficulty": "سهل",
+   "question": "ما الآلة الوترية التي تُعزف عادةً باستخدام قوس؟",
+   "options": [
+    "العود",
+    "الغيتار",
+    "القانون",
+    "الكمان"
+   ],
+   "k": 2306,
+   "src": "https://en.wikipedia.org/wiki/Violin"
+  },
+  {
+   "id": "q0790",
+   "difficulty": "صعب",
+   "question": "في أي مدينة إيطالية ازدهرت بدايات حركة عصر النهضة؟",
+   "options": [
+    "ميلانو",
+    "روما",
+    "فلورنسا",
+    "نابولي"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Italian_Renaissance"
+  },
+  {
+   "id": "q0791",
+   "difficulty": "متوسط",
+   "question": "ما اسم الزي التقليدي الكوري؟",
+   "options": [
+    "الكيمونو",
+    "الأو داي",
+    "الساري",
+    "الهانبوك"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Hanbok"
+  },
+  {
+   "id": "q0792",
+   "difficulty": "متوسط",
+   "question": "ما الفن الذي يستخدم قطعاً صغيرة من الزجاج أو الحجر لتكوين صورة؟",
+   "options": [
+    "الفسيفساء",
+    "الكولاج",
+    "الأرابيسك",
+    "الفريسكو"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Mosaic"
+  },
+  {
+   "id": "q0793",
+   "difficulty": "متوسط",
+   "question": "ما اسم فن الرقص المسرحي الذي تطور في البلاطات الأوروبية؟",
+   "options": [
+    "التانغو",
+    "الفلامنكو",
+    "الباليه",
+    "الفالس"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Ballet"
+  },
+  {
+   "id": "q0794",
+   "difficulty": "سهل",
+   "question": "ما المدينة السعودية التي تُعرف بلقب عروس البحر الأحمر؟",
+   "options": [
+    "جدة",
+    "الدمام",
+    "ينبع",
+    "جازان"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Jeddah"
+  },
+  {
+   "id": "q0795",
+   "difficulty": "سهل",
+   "question": "ما اسم النافورة الشهيرة على ساحل البحر الأحمر التي تُعد من أعلى النوافير في العالم؟",
+   "options": [
+    "نافورة دبي",
+    "نافورة جنيف",
+    "نافورة الملك فهد",
+    "نافورة تريفي"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/King_Fahd%27s_Fountain"
+  },
+  {
+   "id": "q0796",
+   "difficulty": "متوسط",
+   "question": "ما أكبر مناطق المملكة العربية السعودية من حيث المساحة؟",
+   "options": [
+    "منطقة نجران",
+    "المنطقة الشرقية",
+    "منطقة مكة المكرمة",
+    "منطقة الرياض"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Eastern_Province,_Saudi_Arabia"
+  },
+  {
+   "id": "q0797",
+   "difficulty": "متوسط",
+   "question": "في أي عام أُطلقت رؤية السعودية 2030؟",
+   "options": [
+    "2016",
+    "2019",
+    "2015",
+    "2017"
+   ],
+   "k": 2296,
+   "src": "https://www.vision2030.gov.sa/"
+  },
+  {
+   "id": "q0798",
+   "difficulty": "متوسط",
+   "question": "ما اسم السوق المالية السعودية؟",
+   "options": [
+    "سوق أبوظبي للأوراق المالية",
+    "بورصة الكويت",
+    "سوق دبي المالي",
+    "تداول السعودية"
+   ],
+   "k": 2306,
+   "src": "https://www.saudiexchange.sa/"
+  },
+  {
+   "id": "q0799",
+   "difficulty": "متوسط",
+   "question": "ما اسم الواحة السعودية المدرجة ضمن قائمة التراث العالمي لليونسكو؟",
+   "options": [
+    "واحة القطيف",
+    "واحة الأحساء",
+    "واحة الخرج",
+    "واحة تيماء"
+   ],
+   "k": 2311,
+   "src": "https://whc.unesco.org/en/list/1563/"
+  },
+  {
+   "id": "q0800",
+   "difficulty": "متوسط",
+   "question": "في أي محافظة سعودية يقع موقع الحِجر (مدائن صالح) المدرج في قائمة التراث العالمي؟",
+   "options": [
+    "العلا",
+    "تيماء",
+    "تبوك",
+    "خيبر"
+   ],
+   "k": 2191,
+   "src": "https://en.wikipedia.org/wiki/Hegra_(Mada%27in_Salih)"
+  },
+  {
+   "id": "q0801",
+   "difficulty": "متوسط",
+   "question": "في أي مدينة يقع المقر الرئيسي لشركة أرامكو السعودية؟",
+   "options": [
+    "جدة",
+    "الخبر",
+    "الرياض",
+    "الظهران"
+   ],
+   "k": 2201,
+   "src": "https://en.wikipedia.org/wiki/Saudi_Aramco"
+  },
+  {
+   "id": "q0802",
+   "difficulty": "صعب",
+   "question": "ما اسم البئر التي ارتبطت ببداية الإنتاج التجاري للنفط في السعودية؟",
+   "options": [
+    "بئر الغوار",
+    "بئر السفانية",
+    "بئر بقيق 1",
+    "بئر الدمام رقم 7"
+   ],
+   "k": 2208,
+   "src": "https://en.wikipedia.org/wiki/Dammam_No._7"
+  },
+  {
+   "id": "q0803",
+   "difficulty": "صعب",
+   "question": "ما المعاهدة التي أنهت الحرب العالمية الأولى رسمياً مع ألمانيا؟",
+   "options": [
+    "معاهدة سيفر",
+    "معاهدة باريس",
+    "معاهدة لوزان",
+    "معاهدة فرساي"
+   ],
+   "k": 2215,
+   "src": "https://en.wikipedia.org/wiki/Treaty_of_Versailles"
+  },
+  {
+   "id": "q0804",
+   "difficulty": "متوسط",
+   "question": "من مؤسس الإمبراطورية المغولية؟",
+   "options": [
+    "هولاكو",
+    "تيمورلنك",
+    "قوبلاي خان",
+    "جنكيز خان"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/Genghis_Khan"
+  },
+  {
+   "id": "q0805",
+   "difficulty": "صعب",
+   "question": "ما المدينة التي كانت عاصمة الدولة العثمانية قبل انتقالها إلى القسطنطينية؟",
+   "options": [
+    "بورصة",
+    "أدرنة",
+    "قونية",
+    "أنقرة"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Edirne"
+  },
+  {
+   "id": "q0806",
+   "difficulty": "صعب",
+   "question": "من آخر ملوك غرناطة قبل سقوطها عام 1492م؟",
+   "options": [
+    "المعتمد بن عباد",
+    "أبو عبدالله الصغير",
+    "ابن الأحمر",
+    "عبد الرحمن الداخل"
+   ],
+   "k": 2234,
+   "src": "https://en.wikipedia.org/wiki/Muhammad_XII_of_Granada"
+  },
+  {
+   "id": "q0807",
+   "difficulty": "متوسط",
+   "question": "في أي عام وقعت معركة واترلو؟",
+   "options": [
+    "1812",
+    "1805",
+    "1799",
+    "1815"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Waterloo"
+  },
+  {
+   "id": "q0808",
+   "difficulty": "صعب",
+   "question": "ما الحضارة التي استخدمت الكتابة المسمارية لأول مرة؟",
+   "options": [
+    "الفينيقيون",
+    "الفراعنة",
+    "الآشوريون",
+    "السومريون"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/Cuneiform"
+  },
+  {
+   "id": "q0809",
+   "difficulty": "صعب",
+   "question": "من القائد القرطاجي الذي عبر جبال الألب لمهاجمة الجمهورية الرومانية؟",
+   "options": [
+    "سبارتاكوس",
+    "يوليوس قيصر",
+    "الإسكندر الأكبر",
+    "حنبعل"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Hannibal"
+  },
+  {
+   "id": "q0810",
+   "difficulty": "صعب",
+   "question": "ما اسم المعركة التي انتصر فيها العثمانيون على المماليك عام 1516م؟",
+   "options": [
+    "ملاذكرد",
+    "الريدانية",
+    "جالديران",
+    "مرج دابق"
+   ],
+   "k": 2201,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Marj_Dabiq"
+  },
+  {
+   "id": "q0811",
+   "difficulty": "صعب",
+   "question": "ما المدينتان الألمانيتان اللتان شهدتا توقيع صلح وستفاليا عام 1648م؟",
+   "options": [
+    "مونستر وأوسنابروك",
+    "ميونخ ونورمبرغ",
+    "هامبورغ وبريمن",
+    "برلين وبون"
+   ],
+   "k": 2205,
+   "src": "https://en.wikipedia.org/wiki/Peace_of_Westphalia"
+  },
+  {
+   "id": "q0812",
+   "difficulty": "صعب",
+   "question": "ما المنظمة الدولية التي أُنشئت مع البنك الدولي في مؤتمر بريتون وودز عام 1944؟",
+   "options": [
+    "صندوق النقد الدولي",
+    "البنك المركزي الأوروبي",
+    "منظمة التعاون الاقتصادي",
+    "منظمة التجارة العالمية"
+   ],
+   "k": 2212,
+   "src": "https://en.wikipedia.org/wiki/International_Monetary_Fund"
+  },
+  {
+   "id": "q0813",
+   "difficulty": "متوسط",
+   "question": "ما اسم المضيق الذي يربط الخليج العربي بخليج عُمان؟",
+   "options": [
+    "مضيق ملقا",
+    "مضيق هرمز",
+    "قناة السويس",
+    "مضيق باب المندب"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Strait_of_Hormuz"
+  },
+  {
+   "id": "q0814",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي كانت تُعرف تاريخياً باسم بلاد فارس؟",
+   "options": [
+    "تركيا",
+    "إيران",
+    "العراق",
+    "أفغانستان"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Iran"
+  },
+  {
+   "id": "q0815",
+   "difficulty": "متوسط",
+   "question": "ما الوثيقة التي اعتمدتها الأمم المتحدة عام 1948 لتحديد المبادئ الأساسية لحقوق الإنسان؟",
+   "options": [
+    "ميثاق الأمم المتحدة",
+    "اتفاقيات جنيف",
+    "الإعلان العالمي لحقوق الإنسان",
+    "الماغنا كارتا"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Universal_Declaration_of_Human_Rights"
+  },
+  {
+   "id": "q0816",
+   "difficulty": "صعب",
+   "question": "ما اسم النظرية الاقتصادية المرتبطة بالاقتصادي جون ماينارد كينز؟",
+   "options": [
+    "الرأسمالية الحرة",
+    "الماركسية",
+    "النظرية الكينزية",
+    "النقدوية"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Keynesian_economics"
+  },
+  {
+   "id": "q0817",
+   "difficulty": "متوسط",
+   "question": "ما اسم العملة التي كانت مستخدمة في ألمانيا قبل اليورو؟",
+   "options": [
+    "المارك",
+    "الفرنك",
+    "الشلن",
+    "الغيلدر"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Deutsche_Mark"
+  },
+  {
+   "id": "q0818",
+   "difficulty": "صعب",
+   "question": "ما الدولة التي استضافت مؤتمر باندونغ عام 1955؟",
+   "options": [
+    "الهند",
+    "إندونيسيا",
+    "مصر",
+    "يوغوسلافيا"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Bandung_Conference"
+  },
+  {
+   "id": "q0819",
+   "difficulty": "صعب",
+   "question": "ما اسم الاتفاقية الدولية الموقّعة عام 1987 للتخلص التدريجي من المواد المستنفدة لطبقة الأوزون؟",
+   "options": [
+    "اتفاقية باريس",
+    "بروتوكول كيوتو",
+    "بروتوكول مونتريال",
+    "اتفاقية ريو"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Montreal_Protocol"
+  },
+  {
+   "id": "q0820",
+   "difficulty": "متوسط",
+   "question": "ما اسم المنظمة التي تأسست عام 1960 وتضم دولاً مصدرة للنفط؟",
+   "options": [
+    "الأونكتاد",
+    "أوابك",
+    "آسيان",
+    "أوبك"
+   ],
+   "k": 2208,
+   "src": "https://en.wikipedia.org/wiki/OPEC"
+  },
+  {
+   "id": "q0821",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي انتصر فيها المسلمون على الفرس بقيادة سعد بن أبي وقاص؟",
+   "options": [
+    "نهاوند",
+    "القادسية",
+    "ذات السلاسل",
+    "اليرموك"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_al-Qadisiyyah"
+  },
+  {
+   "id": "q0822",
+   "difficulty": "متوسط",
+   "question": "ما اسم المعركة التي أوقفت التوسع المغولي باتجاه مصر وبلاد الشام؟",
+   "options": [
+    "عين جالوت",
+    "مرج دابق",
+    "حطين",
+    "المنصورة"
+   ],
+   "k": 2219,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Ain_Jalut"
+  },
+  {
+   "id": "q0823",
+   "difficulty": "صعب",
+   "question": "من السلطان العثماني الذي انتصر في معركة موهاكس عام 1526م؟",
+   "options": [
+    "سليم الأول",
+    "بايزيد الأول",
+    "محمد الفاتح",
+    "سليمان القانوني"
+   ],
+   "k": 2229,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Moh%C3%A1cs"
+  },
+  {
+   "id": "q0824",
+   "difficulty": "صعب",
+   "question": "ما اسم المعركة التي انتصر فيها طارق بن زياد على القوط في الأندلس عام 711م؟",
+   "options": [
+    "العقاب",
+    "الزلاقة",
+    "بلاط الشهداء",
+    "وادي لكة"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Guadalete"
+  },
+  {
+   "id": "q0825",
+   "difficulty": "متوسط",
+   "question": "من العالم المسلم صاحب كتاب «القانون في الطب»؟",
+   "options": [
+    "الزهراوي",
+    "ابن سينا",
+    "ابن النفيس",
+    "الرازي"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/The_Canon_of_Medicine"
+  },
+  {
+   "id": "q0826",
+   "difficulty": "متوسط",
+   "question": "ما المدينة التي اتخذها الأمويون عاصمة لدولتهم؟",
+   "options": [
+    "دمشق",
+    "الكوفة",
+    "القاهرة",
+    "بغداد"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Umayyad_Caliphate"
+  },
+  {
+   "id": "q0827",
+   "difficulty": "متوسط",
+   "question": "في أي عام سقطت بغداد على يد المغول؟",
+   "options": [
+    "1453",
+    "1187",
+    "1099",
+    "1258"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Siege_of_Baghdad_(1258)"
+  },
+  {
+   "id": "q0828",
+   "difficulty": "صعب",
+   "question": "ما الدولة التي كانت تُعرف باسم روديسيا الجنوبية؟",
+   "options": [
+    "زامبيا",
+    "ملاوي",
+    "زيمبابوي",
+    "بوتسوانا"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Rhodesia"
+  },
+  {
+   "id": "q0829",
+   "difficulty": "متوسط",
+   "question": "ما المضيق الذي يفصل بين آسيا وأمريكا الشمالية؟",
+   "options": [
+    "مضيق جبل طارق",
+    "مضيق هدسون",
+    "مضيق بيرينغ",
+    "مضيق ماجلان"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Bering_Strait"
+  },
+  {
+   "id": "q0830",
+   "difficulty": "صعب",
+   "question": "ما عاصمة الإمبراطورية الأزتكية؟",
+   "options": [
+    "تينوتشتيتلان",
+    "تشيتشن إيتزا",
+    "تيكال",
+    "كوسكو"
+   ],
+   "k": 2212,
+   "src": "https://en.wikipedia.org/wiki/Tenochtitlan"
+  },
+  {
+   "id": "q0831",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي يقع فيها إقليم ترانسلفانيا التاريخي؟",
+   "options": [
+    "صربيا",
+    "المجر",
+    "رومانيا",
+    "بلغاريا"
+   ],
+   "k": 2221,
+   "src": "https://en.wikipedia.org/wiki/Transylvania"
+  },
+  {
+   "id": "q0832",
+   "difficulty": "متوسط",
+   "question": "ما النهر الذي يمر عبر مدينة بودابست؟",
+   "options": [
+    "الإلبه",
+    "الفولغا",
+    "الدانوب",
+    "الراين"
+   ],
+   "k": 2228,
+   "src": "https://en.wikipedia.org/wiki/Danube"
+  },
+  {
+   "id": "q0833",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي كانت تُعرف باسم سيلان؟",
+   "options": [
+    "تايلاند",
+    "بنغلاديش",
+    "ميانمار",
+    "سريلانكا"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/Sri_Lanka"
+  },
+  {
+   "id": "q0834",
+   "difficulty": "صعب",
+   "question": "من العالم الذي وضع مبدأ عدم اليقين في ميكانيكا الكم؟",
+   "options": [
+    "فيرنر هايزنبرغ",
+    "ألبرت أينشتاين",
+    "نيلز بور",
+    "ماكس بلانك"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Uncertainty_principle"
+  },
+  {
+   "id": "q0835",
+   "difficulty": "متوسط",
+   "question": "من الرحالة المولود في طنجة الذي دوّن رحلاته في كتاب «تحفة النظار»؟",
+   "options": [
+    "الإدريسي",
+    "ابن جبير",
+    "ابن خلدون",
+    "ابن بطوطة"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/Ibn_Battuta"
+  },
+  {
+   "id": "q0836",
+   "difficulty": "صعب",
+   "question": "من أول أمين عام للأمم المتحدة؟",
+   "options": [
+    "يو ثانت",
+    "كورت فالدهايم",
+    "داغ همرشولد",
+    "تريغفي لي"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Trygve_Lie"
+  },
+  {
+   "id": "q0837",
+   "difficulty": "صعب",
+   "question": "ما اسم المعاهدة التي قسمت مناطق النفوذ بين إسبانيا والبرتغال عام 1494م؟",
+   "options": [
+    "صلح وستفاليا",
+    "معاهدة تورديسيلاس",
+    "معاهدة فرساي",
+    "معاهدة أوترخت"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/Treaty_of_Tordesillas"
+  },
+  {
+   "id": "q0838",
+   "difficulty": "صعب",
+   "question": "من الأديب الذي نقل كتاب «كليلة ودمنة» إلى العربية؟",
+   "options": [
+    "الجاحظ",
+    "بديع الزمان الهمذاني",
+    "ابن المقفع",
+    "ابن قتيبة"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Kalila_and_Dimna"
+  },
+  {
+   "id": "q0839",
+   "difficulty": "متوسط",
+   "question": "من أول أديب عربي يفوز بجائزة نوبل في الأدب؟",
+   "options": [
+    "طه حسين",
+    "نجيب محفوظ",
+    "يوسف إدريس",
+    "توفيق الحكيم"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Naguib_Mahfouz"
+  },
+  {
+   "id": "q0840",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «موسم الهجرة إلى الشمال»؟",
+   "options": [
+    "حنا مينه",
+    "الطيب صالح",
+    "عبد الرحمن منيف",
+    "غسان كنفاني"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Season_of_Migration_to_the_North"
+  },
+  {
+   "id": "q0841",
+   "difficulty": "متوسط",
+   "question": "من مؤلف كتاب «البخلاء»؟",
+   "options": [
+    "ابن قتيبة",
+    "الجاحظ",
+    "الأصمعي",
+    "ابن المقفع"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Al-Jahiz"
+  },
+  {
+   "id": "q0842",
+   "difficulty": "صعب",
+   "question": "من مؤلف كتاب «الأغاني»؟",
+   "options": [
+    "الجاحظ",
+    "ابن عبد ربه",
+    "أبو الفرج الأصفهاني",
+    "المبرد"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Kitab_al-Aghani"
+  },
+  {
+   "id": "q0843",
+   "difficulty": "سهل",
+   "question": "ما اسم الكتاب الذي تروي فيه شهرزاد حكاياتها لشهريار؟",
+   "options": [
+    "ألف ليلة وليلة",
+    "الأغاني",
+    "المقامات",
+    "كليلة ودمنة"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/One_Thousand_and_One_Nights"
+  },
+  {
+   "id": "q0844",
+   "difficulty": "متوسط",
+   "question": "من الشاعر العباسي صاحب البيت الشهير «الخيل والليل والبيداء تعرفني»؟",
+   "options": [
+    "أبو تمام",
+    "البحتري",
+    "المتنبي",
+    "أبو فراس الحمداني"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Al-Mutanabbi"
+  },
+  {
+   "id": "q0845",
+   "difficulty": "صعب",
+   "question": "من مؤلف «رسالة الغفران»؟",
+   "options": [
+    "ابن زيدون",
+    "ابن الرومي",
+    "المتنبي",
+    "أبو العلاء المعري"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Risalat_al-Ghufran"
+  },
+  {
+   "id": "q0846",
+   "difficulty": "صعب",
+   "question": "من مؤلف كتاب «طوق الحمامة» في الحب والأُلّاف؟",
+   "options": [
+    "ابن زيدون",
+    "ابن حزم الأندلسي",
+    "ابن رشد",
+    "ابن عبد ربه"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/The_Ring_of_the_Dove"
+  },
+  {
+   "id": "q0847",
+   "difficulty": "متوسط",
+   "question": "من مؤلف كتاب «النبي» الذي كتبه بالإنجليزية عام 1923؟",
+   "options": [
+    "ميخائيل نعيمة",
+    "جبران خليل جبران",
+    "إيليا أبو ماضي",
+    "أمين الريحاني"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/The_Prophet_(book)"
+  },
+  {
+   "id": "q0848",
+   "difficulty": "متوسط",
+   "question": "من الأديب السعودي مؤلف رواية «شقة الحرية»؟",
+   "options": [
+    "عبد الرحمن منيف",
+    "تركي الحمد",
+    "غازي القصيبي",
+    "عبده خال"
+   ],
+   "k": 2277,
+   "src": "https://en.wikipedia.org/wiki/Ghazi_Abdul_Rahman_Al_Gosaibi"
+  },
+  {
+   "id": "q0849",
+   "difficulty": "صعب",
+   "question": "من مؤلف خماسية «مدن الملح»؟",
+   "options": [
+    "عبد الرحمن منيف",
+    "حنا مينه",
+    "جبرا إبراهيم جبرا",
+    "غازي القصيبي"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Cities_of_Salt"
+  },
+  {
+   "id": "q0850",
+   "difficulty": "صعب",
+   "question": "من مؤلف «المقامات» التي بطلها أبو زيد السروجي؟",
+   "options": [
+    "الجاحظ",
+    "الحريري",
+    "بديع الزمان الهمذاني",
+    "ابن المقفع"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Maqamat_al-Hariri"
+  },
+  {
+   "id": "q0851",
+   "difficulty": "صعب",
+   "question": "ما اسم أقدم ملحمة أدبية معروفة، وقد كُتبت في بلاد الرافدين؟",
+   "options": [
+    "الإلياذة",
+    "الأوديسة",
+    "ملحمة جلجامش",
+    "المهابهاراتا"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Epic_of_Gilgamesh"
+  },
+  {
+   "id": "q0852",
+   "difficulty": "متوسط",
+   "question": "من مؤلف «الكوميديا الإلهية»؟",
+   "options": [
+    "جون ميلتون",
+    "بوكاتشيو",
+    "دانتي أليغييري",
+    "بترارك"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Divine_Comedy"
+  },
+  {
+   "id": "q0853",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية «فرانكنشتاين»؟",
+   "options": [
+    "إميلي برونتي",
+    "ماري شيلي",
+    "برام ستوكر",
+    "جين أوستن"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Frankenstein"
+  },
+  {
+   "id": "q0854",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «دراكولا»؟",
+   "options": [
+    "روبرت لويس ستيفنسون",
+    "ماري شيلي",
+    "برام ستوكر",
+    "إدغار آلان بو"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Dracula"
+  },
+  {
+   "id": "q0855",
+   "difficulty": "متوسط",
+   "question": "من مؤلف «أليس في بلاد العجائب»؟",
+   "options": [
+    "هانس كريستيان أندرسن",
+    "جيمس باري",
+    "تشارلز ديكنز",
+    "لويس كارول"
+   ],
+   "k": 2264,
+   "src": "https://en.wikipedia.org/wiki/Alice%27s_Adventures_in_Wonderland"
+  },
+  {
+   "id": "q0856",
+   "difficulty": "صعب",
+   "question": "من مؤلف «رحلات جليفر»؟",
+   "options": [
+    "جول فيرن",
+    "دانيال ديفو",
+    "جوناثان سويفت",
+    "روبرت لويس ستيفنسون"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Gulliver%27s_Travels"
+  },
+  {
+   "id": "q0857",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «روبنسون كروزو»؟",
+   "options": [
+    "دانيال ديفو",
+    "جوناثان سويفت",
+    "روبرت لويس ستيفنسون",
+    "جول فيرن"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Robinson_Crusoe"
+  },
+  {
+   "id": "q0858",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية «أوليفر تويست»؟",
+   "options": [
+    "توماس هاردي",
+    "جورج إليوت",
+    "تشارلز ديكنز",
+    "وليام ثاكري"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Oliver_Twist"
+  },
+  {
+   "id": "q0859",
+   "difficulty": "صعب",
+   "question": "من مؤلفة رواية «مرتفعات ويذرينغ»؟",
+   "options": [
+    "شارلوت برونتي",
+    "ماري شيلي",
+    "إميلي برونتي",
+    "جين أوستن"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Wuthering_Heights"
+  },
+  {
+   "id": "q0860",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية «الغريب»؟",
+   "options": [
+    "أندريه جيد",
+    "جان بول سارتر",
+    "ألبير كامو",
+    "فرانز كافكا"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/The_Stranger_(Camus_novel)"
+  },
+  {
+   "id": "q0861",
+   "difficulty": "متوسط",
+   "question": "من مؤلف رواية «الخيميائي»؟",
+   "options": [
+    "غابرييل غارسيا ماركيز",
+    "باولو كويلو",
+    "إيزابيل الليندي",
+    "خورخي أمادو"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/The_Alchemist_(novel)"
+  },
+  {
+   "id": "q0862",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «اسم الوردة»؟",
+   "options": [
+    "دان براون",
+    "خوسيه ساراماغو",
+    "إيتالو كالفينو",
+    "أمبرتو إيكو"
+   ],
+   "k": 2250,
+   "src": "https://en.wikipedia.org/wiki/The_Name_of_the_Rose"
+  },
+  {
+   "id": "q0863",
+   "difficulty": "متوسط",
+   "question": "ما اسم المحقق البلجيكي الشهير في روايات أغاثا كريستي؟",
+   "options": [
+    "شرلوك هولمز",
+    "هيركيول بوارو",
+    "الآنسة ماربل",
+    "آرسين لوبين"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Hercule_Poirot"
+  },
+  {
+   "id": "q0864",
+   "difficulty": "سهل",
+   "question": "من مؤلفة سلسلة روايات «هاري بوتر»؟",
+   "options": [
+    "ج. ك. رولينغ",
+    "أغاثا كريستي",
+    "سوزان كولينز",
+    "ستيفاني ماير"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Harry_Potter"
+  },
+  {
+   "id": "q0865",
+   "difficulty": "متوسط",
+   "question": "من مؤلف «سيد الخواتم»؟",
+   "options": [
+    "ج. ر. ر. تولكين",
+    "ج. ك. رولينغ",
+    "جورج آر. آر. مارتن",
+    "سي. إس. لويس"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/The_Lord_of_the_Rings"
+  },
+  {
+   "id": "q0866",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «عناقيد الغضب»؟",
+   "options": [
+    "إرنست همنغواي",
+    "ويليام فوكنر",
+    "مارك توين",
+    "جون شتاينبك"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/The_Grapes_of_Wrath"
+  },
+  {
+   "id": "q0867",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «غاتسبي العظيم»؟",
+   "options": [
+    "جي دي سالينجر",
+    "إرنست همنغواي",
+    "جون شتاينبك",
+    "سكوت فيتزجيرالد"
+   ],
+   "k": 2285,
+   "src": "https://en.wikipedia.org/wiki/The_Great_Gatsby"
+  },
+  {
+   "id": "q0868",
+   "difficulty": "صعب",
+   "question": "من مؤلف رواية «مدام بوفاري»؟",
+   "options": [
+    "غوستاف فلوبير",
+    "بلزاك",
+    "ستندال",
+    "إميل زولا"
+   ],
+   "k": 2289,
+   "src": "https://en.wikipedia.org/wiki/Madame_Bovary"
+  },
+  {
+   "id": "q0869",
+   "difficulty": "متوسط",
+   "question": "من مؤلف كتاب «الأمير» في السياسة والحكم؟",
+   "options": [
+    "مونتسكيو",
+    "جون لوك",
+    "توماس هوبز",
+    "ميكافيلي"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/The_Prince"
+  },
+  {
+   "id": "q0870",
+   "difficulty": "متوسط",
+   "question": "من مؤلف كتاب «ثروة الأمم» الذي يُعد أساس علم الاقتصاد الحديث؟",
+   "options": [
+    "جون ماينارد كينز",
+    "آدم سميث",
+    "ديفيد ريكاردو",
+    "كارل ماركس"
+   ],
+   "k": 2241,
+   "src": "https://en.wikipedia.org/wiki/The_Wealth_of_Nations"
+  },
+  {
+   "id": "q0871",
+   "difficulty": "متوسط",
+   "question": "من مؤلف كتاب «فن الحرب» الصيني القديم؟",
+   "options": [
+    "كونفوشيوس",
+    "سون تزو",
+    "لاو تزو",
+    "منشيوس"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/The_Art_of_War"
+  },
+  {
+   "id": "q0872",
+   "difficulty": "متوسط",
+   "question": "من الفيلسوف الإغريقي مؤلف كتاب «الجمهورية»؟",
+   "options": [
+    "سقراط",
+    "أرسطو",
+    "فيثاغورس",
+    "أفلاطون"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Republic_(Plato)"
+  },
+  {
+   "id": "q0873",
+   "difficulty": "صعب",
+   "question": "من مؤلف كتاب «العقد الاجتماعي»؟",
+   "options": [
+    "مونتسكيو",
+    "فولتير",
+    "جان جاك روسو",
+    "جون لوك"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/The_Social_Contract"
+  },
+  {
+   "id": "q0874",
+   "difficulty": "متوسط",
+   "question": "ما أكبر صحراء رملية متصلة في العالم وتقع جنوب شرق الجزيرة العربية؟",
+   "options": [
+    "الربع الخالي",
+    "صحراء الصمان",
+    "النفود",
+    "الدهناء"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Rub%27_al_Khali"
+  },
+  {
+   "id": "q0875",
+   "difficulty": "متوسط",
+   "question": "ما الصحراء الواقعة شمال الجزيرة العربية والمشهورة برمالها الحمراء؟",
+   "options": [
+    "النفود",
+    "صحراء الحرة",
+    "الربع الخالي",
+    "الدهناء"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/An_Nafud"
+  },
+  {
+   "id": "q0876",
+   "difficulty": "صعب",
+   "question": "ما الصحراء الضيقة الممتدة على شكل قوس وتصل بين أكبر صحراوين رمليتين في المملكة؟",
+   "options": [
+    "الدهناء",
+    "الصمان",
+    "النفود",
+    "الجافورة"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Ad-Dahna_desert"
+  },
+  {
+   "id": "q0877",
+   "difficulty": "متوسط",
+   "question": "ما اسم سلسلة الجبال الممتدة بمحاذاة البحر الأحمر غرب الجزيرة العربية؟",
+   "options": [
+    "جبال طويق",
+    "جبال زاغروس",
+    "جبال السروات",
+    "جبال أجا وسلمى"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Sarawat_Mountains"
+  },
+  {
+   "id": "q0878",
+   "difficulty": "متوسط",
+   "question": "ما المملكة العربية الجنوبية القديمة التي ورد ذكرها مع ملكتها في القرآن الكريم؟",
+   "options": [
+    "معين",
+    "حمير",
+    "قتبان",
+    "سبأ"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/Sabaeans"
+  },
+  {
+   "id": "q0879",
+   "difficulty": "متوسط",
+   "question": "ما السد اليمني القديم الذي ارتبط انهياره بتفرق القبائل العربية في الجزيرة؟",
+   "options": [
+    "سد مأرب",
+    "سد وادي جازان",
+    "سد الخنق",
+    "سد سمعاء"
+   ],
+   "k": 2303,
+   "src": "https://en.wikipedia.org/wiki/Marib_Dam"
+  },
+  {
+   "id": "q0880",
+   "difficulty": "متوسط",
+   "question": "ما الشعب العربي القديم الذي نحت مقابر الحِجر (مدائن صالح) في الصخر؟",
+   "options": [
+    "الأنباط",
+    "الكلدانيون",
+    "اللحيانيون",
+    "الثموديون"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Nabataeans"
+  },
+  {
+   "id": "q0881",
+   "difficulty": "صعب",
+   "question": "ما اسم الحضارة القديمة التي قامت في شرق الجزيرة العربية وكان مركزها جزيرة في الخليج العربي؟",
+   "options": [
+    "جرهاء",
+    "ثاج",
+    "دلمون",
+    "ماجان"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Dilmun"
+  },
+  {
+   "id": "q0882",
+   "difficulty": "متوسط",
+   "question": "ما الطريق التجاري القديم الذي نُقل عبره اللبان والبخور من جنوب الجزيرة إلى الشام؟",
+   "options": [
+    "طريق التوابل",
+    "طريق الحرير",
+    "طريق البخور",
+    "درب زبيدة"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Incense_Route"
+  },
+  {
+   "id": "q0883",
+   "difficulty": "متوسط",
+   "question": "ما عاصمة الدولة السعودية الأولى؟",
+   "options": [
+    "حائل",
+    "الرياض",
+    "الدرعية",
+    "عنيزة"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Diriyah"
+  },
+  {
+   "id": "q0884",
+   "difficulty": "متوسط",
+   "question": "في أي عام تأسست الدولة السعودية الأولى؟",
+   "options": [
+    "1727",
+    "1744",
+    "1818",
+    "1902"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Emirate_of_Diriyah"
+  },
+  {
+   "id": "q0885",
+   "difficulty": "صعب",
+   "question": "من مؤسس الدولة السعودية الثانية؟",
+   "options": [
+    "الإمام عبدالله بن سعود",
+    "الإمام تركي بن عبدالله",
+    "الإمام فيصل بن تركي",
+    "الإمام محمد بن سعود"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Emirate_of_Nejd"
+  },
+  {
+   "id": "q0886",
+   "difficulty": "متوسط",
+   "question": "في أي عام استرد الملك عبدالعزيز الرياض؟",
+   "options": [
+    "1902",
+    "1891",
+    "1913",
+    "1932"
+   ],
+   "k": 2289,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Riyadh_(1902)"
+  },
+  {
+   "id": "q0887",
+   "difficulty": "متوسط",
+   "question": "ما اسم الحصن الذي اقتحمه الملك عبدالعزيز عند استرداده الرياض؟",
+   "options": [
+    "قصر المربع",
+    "قصر سلوى",
+    "قصر الحكم",
+    "قصر المصمك"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/Masmak_fort"
+  },
+  {
+   "id": "q0888",
+   "difficulty": "متوسط",
+   "question": "في أي عام أُعلن توحيد البلاد باسم المملكة العربية السعودية؟",
+   "options": [
+    "1953",
+    "1902",
+    "1932",
+    "1926"
+   ],
+   "k": 2305,
+   "src": "https://en.wikipedia.org/wiki/Saudi_Arabia"
+  },
+  {
+   "id": "q0889",
+   "difficulty": "متوسط",
+   "question": "في أي يوم من السنة يُحتفل باليوم الوطني السعودي؟",
+   "options": [
+    "23 سبتمبر",
+    "1 سبتمبر",
+    "30 نوفمبر",
+    "22 فبراير"
+   ],
+   "k": 2310,
+   "src": "https://en.wikipedia.org/wiki/Saudi_National_Day"
+  },
+  {
+   "id": "q0890",
+   "difficulty": "متوسط",
+   "question": "في أي يوم من السنة يُحتفل بيوم التأسيس السعودي؟",
+   "options": [
+    "23 سبتمبر",
+    "22 فبراير",
+    "15 يناير",
+    "11 مارس"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Emirate_of_Diriyah"
+  },
+  {
+   "id": "q0891",
+   "difficulty": "متوسط",
+   "question": "ما السوق الأدبي الأشهر عند العرب في الجاهلية؟",
+   "options": [
+    "سوق ذي المجاز",
+    "سوق عكاظ",
+    "سوق دومة الجندل",
+    "سوق مجنة"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/Souq_Okaz"
+  },
+  {
+   "id": "q0892",
+   "difficulty": "متوسط",
+   "question": "ما المدينة السعودية الملقبة بمدينة الورد؟",
+   "options": [
+    "الطائف",
+    "أبها",
+    "تبوك",
+    "الباحة"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Taif"
+  },
+  {
+   "id": "q0893",
+   "difficulty": "متوسط",
+   "question": "ما اسم الجبل الذي يقع فيه غار حراء؟",
+   "options": [
+    "جبل عرفات",
+    "جبل ثور",
+    "جبل النور",
+    "جبل أبي قبيس"
+   ],
+   "k": 2277,
+   "src": "https://en.wikipedia.org/wiki/Jabal_al-Nour"
+  },
+  {
+   "id": "q0894",
+   "difficulty": "متوسط",
+   "question": "ما اسم الغار الذي اختبأ فيه النبي ﷺ وصاحبه أثناء الهجرة؟",
+   "options": [
+    "غار ثور",
+    "غار المرسلات",
+    "غار حراء",
+    "غار أحد"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Jabal_Thawr"
+  },
+  {
+   "id": "q0895",
+   "difficulty": "متوسط",
+   "question": "ما الواحة الحصينة شمال المدينة التي فتحها المسلمون عام 7هـ؟",
+   "options": [
+    "فدك",
+    "وادي القرى",
+    "خيبر",
+    "تيماء"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Khaybar"
+  },
+  {
+   "id": "q0896",
+   "difficulty": "متوسط",
+   "question": "في أي منطقة سعودية تقع قرية رجال ألمع التراثية؟",
+   "options": [
+    "عسير",
+    "الباحة",
+    "جازان",
+    "نجران"
+   ],
+   "k": 2296,
+   "src": "https://en.wikipedia.org/wiki/Rijal_Almaa"
+  },
+  {
+   "id": "q0897",
+   "difficulty": "صعب",
+   "question": "ما الاسم التاريخي للإقليم الممتد على ساحل الخليج من البصرة إلى عُمان؟",
+   "options": [
+    "البحرين",
+    "عمان",
+    "اليمامة",
+    "الأحساء"
+   ],
+   "k": 2303,
+   "src": "https://en.wikipedia.org/wiki/Eastern_Arabia"
+  },
+  {
+   "id": "q0898",
+   "difficulty": "صعب",
+   "question": "ما الاسم القديم الذي أطلقه أهل بلاد الرافدين على منطقة عُمان الغنية بالنحاس؟",
+   "options": [
+    "دلمون",
+    "مجان",
+    "سبأ",
+    "ملوخا"
+   ],
+   "k": 2311,
+   "src": "https://en.wikipedia.org/wiki/Magan_(civilization)"
+  },
+  {
+   "id": "q0899",
+   "difficulty": "متوسط",
+   "question": "ما اسم المملكة العربية التي قامت في الحيرة وكانت حليفة للفرس؟",
+   "options": [
+    "الغساسنة",
+    "كندة",
+    "الأنباط",
+    "المناذرة"
+   ],
+   "k": 2320,
+   "src": "https://en.wikipedia.org/wiki/Lakhmids"
+  },
+  {
+   "id": "q0900",
+   "difficulty": "متوسط",
+   "question": "ما اسم المملكة العربية التي كانت حليفة للروم في الشام قبل الإسلام؟",
+   "options": [
+    "الغساسنة",
+    "كندة",
+    "تدمر",
+    "المناذرة"
+   ],
+   "k": 2198,
+   "src": "https://en.wikipedia.org/wiki/Ghassanids"
+  },
+  {
+   "id": "q0901",
+   "difficulty": "صعب",
+   "question": "ما المملكة العربية التي قامت في وسط الجزيرة وكان من ملوكها حُجر آكل المرار؟",
+   "options": [
+    "الغساسنة",
+    "المناذرة",
+    "كندة",
+    "حمير"
+   ],
+   "k": 2207,
+   "src": "https://en.wikipedia.org/wiki/Kingdom_of_Kinda"
+  },
+  {
+   "id": "q0902",
+   "difficulty": "متوسط",
+   "question": "ماذا يُسمى العام الذي حاول فيه أبرهة هدم الكعبة ووُلد فيه النبي ﷺ؟",
+   "options": [
+    "عام الوفود",
+    "عام الفيل",
+    "عام الرمادة",
+    "عام الحزن"
+   ],
+   "k": 2213,
+   "src": "https://en.wikipedia.org/wiki/Year_of_the_Elephant"
+  },
+  {
+   "id": "q0903",
+   "difficulty": "صعب",
+   "question": "كم عدد المعلقات في الرواية الأشهر التي جمعها حماد الراوية؟",
+   "options": [
+    "خمس",
+    "عشر",
+    "تسع",
+    "سبع"
+   ],
+   "k": 2222,
+   "src": "https://en.wikipedia.org/wiki/Mu%27allaqat"
+  },
+  {
+   "id": "q0904",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الجاهلي الملقب بالملك الضليل؟",
+   "options": [
+    "عنترة بن شداد",
+    "امرؤ القيس",
+    "النابغة الذبياني",
+    "طرفة بن العبد"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Imru%27_al-Qais"
+  },
+  {
+   "id": "q0905",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الفارس صاحب المعلقة الذي اشتهر بحبه لعبلة؟",
+   "options": [
+    "عنترة بن شداد",
+    "عمرو بن كلثوم",
+    "الزير سالم",
+    "طرفة بن العبد"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Antarah_ibn_Shaddad"
+  },
+  {
+   "id": "q0906",
+   "difficulty": "صعب",
+   "question": "من صاحب المعلقة التي مطلعها «لخولة أطلال ببرقة ثهمد»؟",
+   "options": [
+    "لبيد بن ربيعة",
+    "زهير بن أبي سلمى",
+    "امرؤ القيس",
+    "طرفة بن العبد"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Tarafa"
+  },
+  {
+   "id": "q0907",
+   "difficulty": "متوسط",
+   "question": "من شاعر المعلقات المشهور بالحكمة ومدح الصلح بين عبس وذبيان؟",
+   "options": [
+    "الحارث بن حلزة",
+    "زهير بن أبي سلمى",
+    "لبيد بن ربيعة",
+    "النابغة الذبياني"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Zuhayr_bin_Abi_Sulma"
+  },
+  {
+   "id": "q0908",
+   "difficulty": "صعب",
+   "question": "من صاحب المعلقة الذي قتل الملك عمرو بن هند؟",
+   "options": [
+    "طرفة بن العبد",
+    "الحارث بن حلزة",
+    "المهلهل",
+    "عمرو بن كلثوم"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Amr_ibn_Kulthum"
+  },
+  {
+   "id": "q0909",
+   "difficulty": "صعب",
+   "question": "من شاعر المعلقات الذي أسلم وقيل إنه لم يقل بعد إسلامه إلا بيتاً واحداً؟",
+   "options": [
+    "لبيد بن ربيعة",
+    "كعب بن زهير",
+    "الأعشى",
+    "حسان بن ثابت"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Labid"
+  },
+  {
+   "id": "q0910",
+   "difficulty": "صعب",
+   "question": "من الشاعر الجاهلي الملقب بصنّاجة العرب؟",
+   "options": [
+    "النابغة الذبياني",
+    "زهير بن أبي سلمى",
+    "امرؤ القيس",
+    "الأعشى"
+   ],
+   "k": 2208,
+   "src": "https://en.wikipedia.org/wiki/Al-A%27sha"
+  },
+  {
+   "id": "q0911",
+   "difficulty": "صعب",
+   "question": "من الشاعر الجاهلي الذي كانت تُضرب له قبة حمراء ليحكم بين الشعراء؟",
+   "options": [
+    "النابغة الذبياني",
+    "امرؤ القيس",
+    "زهير بن أبي سلمى",
+    "الأعشى"
+   ],
+   "k": 2212,
+   "src": "https://en.wikipedia.org/wiki/Al-Nabigha"
+  },
+  {
+   "id": "q0912",
+   "difficulty": "صعب",
+   "question": "من شاعر الصعاليك صاحب القصيدة المعروفة بـ«لامية العرب»؟",
+   "options": [
+    "عروة بن الورد",
+    "الشنفرى",
+    "السليك بن السلكة",
+    "تأبط شراً"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Al-Shanfara"
+  },
+  {
+   "id": "q0913",
+   "difficulty": "صعب",
+   "question": "من الشاعر الجاهلي الذي لُقب بأبي الصعاليك لأنه كان يجمع الفقراء ويعولهم؟",
+   "options": [
+    "تأبط شراً",
+    "الشنفرى",
+    "السليك بن السلكة",
+    "عروة بن الورد"
+   ],
+   "k": 2229,
+   "src": "https://en.wikipedia.org/wiki/Urwa_ibn_al-Ward"
+  },
+  {
+   "id": "q0914",
+   "difficulty": "متوسط",
+   "question": "من الشاعرة المخضرمة التي اشتهرت برثاء أخيها صخر؟",
+   "options": [
+    "رابعة العدوية",
+    "ولادة بنت المستكفي",
+    "الخنساء",
+    "ليلى الأخيلية"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Al-Khansa"
+  },
+  {
+   "id": "q0915",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الجاهلي الذي يُضرب به المثل في الكرم؟",
+   "options": [
+    "هرم بن سنان",
+    "معن بن زائدة",
+    "حاتم الطائي",
+    "كعب بن مامة"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Hatim_al-Tai"
+  },
+  {
+   "id": "q0916",
+   "difficulty": "صعب",
+   "question": "من الشاعر الذي يُضرب به المثل في الوفاء بالأمانة فيقال «أوفى من...»؟",
+   "options": [
+    "عروة بن الورد",
+    "عنترة بن شداد",
+    "السموأل",
+    "حاتم الطائي"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Al-Samawal_ibn_Adiya"
+  },
+  {
+   "id": "q0917",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الملقب بشاعر الرسول ﷺ؟",
+   "options": [
+    "عبدالله بن رواحة",
+    "حسان بن ثابت",
+    "كعب بن زهير",
+    "كعب بن مالك"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Hassan_ibn_Thabit"
+  },
+  {
+   "id": "q0918",
+   "difficulty": "صعب",
+   "question": "من صاحب قصيدة «بانت سعاد» التي ألقاها بين يدي النبي ﷺ؟",
+   "options": [
+    "لبيد بن ربيعة",
+    "كعب بن زهير",
+    "حسان بن ثابت",
+    "الحطيئة"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/Ka%27b_ibn_Zuhayr"
+  },
+  {
+   "id": "q0919",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الأموي الذي اشتهرت نقائضه مع جرير؟",
+   "options": [
+    "الفرزدق",
+    "ذو الرمة",
+    "الأخطل",
+    "عمر بن أبي ربيعة"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Al-Farazdaq"
+  },
+  {
+   "id": "q0920",
+   "difficulty": "صعب",
+   "question": "من ثالث شعراء النقائض الكبار في العصر الأموي، وكان نصرانياً من تغلب؟",
+   "options": [
+    "ذو الرمة",
+    "الفرزدق",
+    "الراعي النميري",
+    "الأخطل"
+   ],
+   "k": 2215,
+   "src": "https://en.wikipedia.org/wiki/Al-Akhtal_al-Taghlibi"
+  },
+  {
+   "id": "q0921",
+   "difficulty": "متوسط",
+   "question": "من الشاعر العذري المعروف بمجنون ليلى؟",
+   "options": [
+    "كثير عزة",
+    "قيس بن الملوح",
+    "قيس بن ذريح",
+    "جميل بن معمر"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Majnun_Layla"
+  },
+  {
+   "id": "q0922",
+   "difficulty": "صعب",
+   "question": "من الشاعر العذري الذي اقترن اسمه ببثينة؟",
+   "options": [
+    "قيس بن الملوح",
+    "جميل بن معمر",
+    "عمر بن أبي ربيعة",
+    "كثير عزة"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Jamil_Buthayna"
+  },
+  {
+   "id": "q0923",
+   "difficulty": "متوسط",
+   "question": "من الشاعر العباسي المشهور بالخمريات وبسخريته من الوقوف على الأطلال؟",
+   "options": [
+    "أبو العتاهية",
+    "بشار بن برد",
+    "أبو نواس",
+    "مسلم بن الوليد"
+   ],
+   "k": 2235,
+   "src": "https://en.wikipedia.org/wiki/Abu_Nuwas"
+  },
+  {
+   "id": "q0924",
+   "difficulty": "صعب",
+   "question": "من الشاعر العباسي جامع ديوان «الحماسة» وصاحب «السيف أصدق إنباءً من الكتب»؟",
+   "options": [
+    "ابن الرومي",
+    "المتنبي",
+    "أبو تمام",
+    "البحتري"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Abu_Tammam"
+  },
+  {
+   "id": "q0925",
+   "difficulty": "صعب",
+   "question": "من الشاعر العباسي المشهور بشعر الزهد بأسلوب سهل قريب من العامة؟",
+   "options": [
+    "أبو العتاهية",
+    "ابن المعتز",
+    "أبو نواس",
+    "بشار بن برد"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Abu_al-%27Atahiya"
+  },
+  {
+   "id": "q0926",
+   "difficulty": "متوسط",
+   "question": "من العالم الذي وضع علم العروض وبحور الشعر العربي؟",
+   "options": [
+    "سيبويه",
+    "أبو الأسود الدؤلي",
+    "الأصمعي",
+    "الخليل بن أحمد الفراهيدي"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Al-Khalil_ibn_Ahmad_al-Farahidi"
+  },
+  {
+   "id": "q0927",
+   "difficulty": "صعب",
+   "question": "كم بحراً وضع واضع علم العروض قبل أن يضيف تلميذه الأخفش بحر المتدارك؟",
+   "options": [
+    "20 بحراً",
+    "12 بحراً",
+    "15 بحراً",
+    "16 بحراً"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Arabic_prosody"
+  },
+  {
+   "id": "q0928",
+   "difficulty": "صعب",
+   "question": "من الأميرة الأندلسية الشاعرة التي اشتهرت بقصتها مع ابن زيدون؟",
+   "options": [
+    "عائشة الباعونية",
+    "الخنساء",
+    "حفصة الركونية",
+    "ولادة بنت المستكفي"
+   ],
+   "k": 2271,
+   "src": "https://en.wikipedia.org/wiki/Wallada_bint_al-Mustakfi"
+  },
+  {
+   "id": "q0929",
+   "difficulty": "صعب",
+   "question": "من صاحب قصيدة «البردة» التي مطلعها «أمن تذكر جيران بذي سلم»؟",
+   "options": [
+    "البوصيري",
+    "ابن الفارض",
+    "أحمد شوقي",
+    "كعب بن زهير"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Al-Busiri"
+  },
+  {
+   "id": "q0930",
+   "difficulty": "متوسط",
+   "question": "ما اسم الشعر الشعبي المنظوم بلهجات أهل الجزيرة العربية؟",
+   "options": [
+    "الشعر الحر",
+    "الشعر النبطي",
+    "الزجل",
+    "الموشحات"
+   ],
+   "k": 2220,
+   "src": "https://en.wikipedia.org/wiki/Nabati"
+  },
+  {
+   "id": "q0931",
+   "difficulty": "صعب",
+   "question": "من شاعر المعلقات الذي دافع عن قبيلة بكر أمام الملك عمرو بن هند؟",
+   "options": [
+    "طرفة بن العبد",
+    "الحارث بن حلزة",
+    "عمرو بن كلثوم",
+    "المهلهل"
+   ],
+   "k": 2227,
+   "src": "https://en.wikipedia.org/wiki/Al-Harith_ibn_Hilliza"
+  },
+  {
+   "id": "q0932",
+   "difficulty": "متوسط",
+   "question": "من الشاعر الجاهلي الذي أشعل حرباً طويلة ثأراً لأخيه كليب؟",
+   "options": [
+    "المهلهل",
+    "جساس بن مرة",
+    "الحارث بن عباد",
+    "عمرو بن كلثوم"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Al-Muhalhil"
+  },
+  {
+   "id": "q0933",
+   "difficulty": "متوسط",
+   "question": "ما الحرب الجاهلية التي دامت قرابة أربعين عاماً بين بكر وتغلب؟",
+   "options": [
+    "حرب البسوس",
+    "يوم بعاث",
+    "حرب داحس والغبراء",
+    "حرب الفجار"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Basus_War"
+  },
+  {
+   "id": "q0934",
+   "difficulty": "متوسط",
+   "question": "ما الحرب الجاهلية بين عبس وذبيان التي سُميت باسم فرسين؟",
+   "options": [
+    "داحس والغبراء",
+    "ذي قار",
+    "الفجار",
+    "البسوس"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/War_of_Dahis_and_al-Ghabra"
+  },
+  {
+   "id": "q0935",
+   "difficulty": "صعب",
+   "question": "ما الحرب التي وقعت في الأشهر الحرم بين قريش وهوازن وشهدها النبي ﷺ شاباً؟",
+   "options": [
+    "حرب الفجار",
+    "يوم بعاث",
+    "داحس والغبراء",
+    "حرب البسوس"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/Sacrilegious_War"
+  },
+  {
+   "id": "q0936",
+   "difficulty": "متوسط",
+   "question": "ما الحلف الذي تعاهدت فيه بطون من قريش على نصرة المظلوم وشهده النبي ﷺ قبل البعثة؟",
+   "options": [
+    "حلف الحمس",
+    "حلف الفضول",
+    "حلف المطيبين",
+    "حلف الأحلاف"
+   ],
+   "k": 2262,
+   "src": "https://en.wikipedia.org/wiki/Hilf_al-Fudul"
+  },
+  {
+   "id": "q0937",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي انتصر فيها العرب على الفرس قبل الإسلام؟",
+   "options": [
+    "يوم الكلاب",
+    "يوم حليمة",
+    "يوم ذي قار",
+    "يوم بعاث"
+   ],
+   "k": 2270,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Dhi_Qar"
+  },
+  {
+   "id": "q0938",
+   "difficulty": "متوسط",
+   "question": "ما البطن القرشي الذي ينتمي إليه النبي ﷺ؟",
+   "options": [
+    "بنو هاشم",
+    "بنو أمية",
+    "بنو زهرة",
+    "بنو مخزوم"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Banu_Hashim"
+  },
+  {
+   "id": "q0939",
+   "difficulty": "متوسط",
+   "question": "من جد النبي ﷺ الذي كفله بعد وفاة أمه؟",
+   "options": [
+    "عبد مناف",
+    "هاشم بن عبد مناف",
+    "أبو طالب",
+    "عبد المطلب"
+   ],
+   "k": 2285,
+   "src": "https://en.wikipedia.org/wiki/Abd_al-Muttalib"
+  },
+  {
+   "id": "q0940",
+   "difficulty": "متوسط",
+   "question": "من عم النبي ﷺ الذي كفله بعد جده وحماه من أذى قومه؟",
+   "options": [
+    "أبو طالب",
+    "العباس",
+    "حمزة",
+    "أبو لهب"
+   ],
+   "k": 2226,
+   "src": "https://en.wikipedia.org/wiki/Abu_Talib_ibn_Abd_al-Muttalib"
+  },
+  {
+   "id": "q0941",
+   "difficulty": "صعب",
+   "question": "ما القبيلة التي ينتمي إليها الحجاج بن يوسف؟",
+   "options": [
+    "ثقيف",
+    "قريش",
+    "هوازن",
+    "تميم"
+   ],
+   "k": 2233,
+   "src": "https://en.wikipedia.org/wiki/Al-Hajjaj_ibn_Yusuf"
+  },
+  {
+   "id": "q0942",
+   "difficulty": "متوسط",
+   "question": "إلى أي جد يُنسب عرب الجنوب (اليمن) في كتب الأنساب؟",
+   "options": [
+    "مضر",
+    "ربيعة",
+    "عدنان",
+    "قحطان"
+   ],
+   "k": 2243,
+   "src": "https://en.wikipedia.org/wiki/Qahtanite"
+  },
+  {
+   "id": "q0943",
+   "difficulty": "متوسط",
+   "question": "إلى أي جد ينتسب عرب الشمال ومنهم قريش في كتب الأنساب؟",
+   "options": [
+    "عدنان",
+    "قحطان",
+    "حمير",
+    "كهلان"
+   ],
+   "k": 2247,
+   "src": "https://en.wikipedia.org/wiki/Adnanite"
+  },
+  {
+   "id": "q0944",
+   "difficulty": "متوسط",
+   "question": "ما اسم المرأة العربية التي اشتهرت بحدة البصر حتى قيل إنها ترى على مسيرة ثلاثة أيام؟",
+   "options": [
+    "بلقيس",
+    "زرقاء اليمامة",
+    "الخنساء",
+    "الزباء"
+   ],
+   "k": 2255,
+   "src": "https://en.wikipedia.org/wiki/Zarqa_al-Yamama"
+  },
+  {
+   "id": "q0945",
+   "difficulty": "متوسط",
+   "question": "ما الاسم التاريخي لمنطقة وسط الجزيرة العربية؟",
+   "options": [
+    "نجد",
+    "العروض",
+    "الحجاز",
+    "تهامة"
+   ],
+   "k": 2261,
+   "src": "https://en.wikipedia.org/wiki/Najd"
+  },
+  {
+   "id": "q0946",
+   "difficulty": "صعب",
+   "question": "إلى أي قبيلة ينتمي مسيلمة الكذاب؟",
+   "options": [
+    "بنو شيبان",
+    "بنو حنيفة",
+    "بنو تميم",
+    "بنو أسد"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Musaylimah"
+  },
+  {
+   "id": "q0947",
+   "difficulty": "متوسط",
+   "question": "ما أكبر أصنام قريش الذي كان منصوباً داخل الكعبة؟",
+   "options": [
+    "هبل",
+    "مناة",
+    "اللات",
+    "العزى"
+   ],
+   "k": 2275,
+   "src": "https://en.wikipedia.org/wiki/Hubal"
+  },
+  {
+   "id": "q0948",
+   "difficulty": "صعب",
+   "question": "ما الصنم الذي هدمه خالد بن الوليد في نخلة؟",
+   "options": [
+    "اللات",
+    "هبل",
+    "مناة",
+    "العزى"
+   ],
+   "k": 2285,
+   "src": "https://en.wikipedia.org/wiki/Al-Uzza"
+  },
+  {
+   "id": "q0949",
+   "difficulty": "متوسط",
+   "question": "ما اسم البئر التي أعاد جد النبي ﷺ حفرها في مكة؟",
+   "options": [
+    "بئر رومة",
+    "زمزم",
+    "بئر غرس",
+    "بئر أريس"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Zamzam_Well"
+  },
+  {
+   "id": "q0950",
+   "difficulty": "متوسط",
+   "question": "ما الرحلتان التجاريتان لقريش المذكورتان في القرآن الكريم؟",
+   "options": [
+    "رحلة البحر والبر",
+    "رحلة الحج والعمرة",
+    "رحلة الشام واليمن",
+    "رحلة الشتاء والصيف"
+   ],
+   "k": 2236,
+   "src": "https://en.wikipedia.org/wiki/Quraysh_(surah)"
+  },
+  {
+   "id": "q0951",
+   "difficulty": "متوسط",
+   "question": "في أي عام ميلادي وُلد النبي ﷺ على أشهر الأقوال؟",
+   "options": [
+    "571م",
+    "590م",
+    "560م",
+    "580م"
+   ],
+   "k": 2240,
+   "src": "https://en.wikipedia.org/wiki/Muhammad"
+  },
+  {
+   "id": "q0952",
+   "difficulty": "متوسط",
+   "question": "ما اسم مرضعة النبي ﷺ في البادية؟",
+   "options": [
+    "أم أيمن",
+    "أم سلمة",
+    "حليمة السعدية",
+    "فاطمة بنت أسد"
+   ],
+   "k": 2249,
+   "src": "https://en.wikipedia.org/wiki/Halimah_bint_Abi_Dhuayb"
+  },
+  {
+   "id": "q0953",
+   "difficulty": "متوسط",
+   "question": "من أول زوجات النبي ﷺ؟",
+   "options": [
+    "أم سلمة",
+    "سودة بنت زمعة",
+    "خديجة بنت خويلد",
+    "عائشة بنت أبي بكر"
+   ],
+   "k": 2256,
+   "src": "https://en.wikipedia.org/wiki/Khadija_bint_Khuwaylid"
+  },
+  {
+   "id": "q0954",
+   "difficulty": "متوسط",
+   "question": "من أول من أسلم من الصبيان؟",
+   "options": [
+    "عبدالله بن عباس",
+    "زيد بن حارثة",
+    "علي بن أبي طالب",
+    "الزبير بن العوام"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Ali"
+  },
+  {
+   "id": "q0955",
+   "difficulty": "متوسط",
+   "question": "من الصحابي الذي كان يُعذَّب في رمضاء مكة ويقول «أحدٌ أحد»؟",
+   "options": [
+    "بلال بن رباح",
+    "عمار بن ياسر",
+    "صهيب الرومي",
+    "خباب بن الأرت"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Bilal_ibn_Rabah"
+  },
+  {
+   "id": "q0956",
+   "difficulty": "متوسط",
+   "question": "إلى أي بلد كانت أول هجرة للمسلمين؟",
+   "options": [
+    "الطائف",
+    "الشام",
+    "اليمن",
+    "الحبشة"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Migration_to_Abyssinia"
+  },
+  {
+   "id": "q0957",
+   "difficulty": "متوسط",
+   "question": "ما لقب الملك الذي استقبل المسلمين في هجرتهم الأولى؟",
+   "options": [
+    "المقوقس",
+    "كسرى",
+    "النجاشي",
+    "هرقل"
+   ],
+   "k": 2284,
+   "src": "https://en.wikipedia.org/wiki/Najashi"
+  },
+  {
+   "id": "q0958",
+   "difficulty": "متوسط",
+   "question": "ما اسم العام الذي فقد فيه النبي ﷺ زوجته الأولى وعمه الذي كفله؟",
+   "options": [
+    "عام الفيل",
+    "عام الوفود",
+    "عام الحزن",
+    "عام الرمادة"
+   ],
+   "k": 2291,
+   "src": "https://en.wikipedia.org/wiki/Year_of_Sorrow"
+  },
+  {
+   "id": "q0959",
+   "difficulty": "صعب",
+   "question": "ما اسم البيعتين اللتين بايع فيهما أهل المدينة النبي ﷺ قبل الهجرة؟",
+   "options": [
+    "بيعة الرضوان",
+    "بيعة السقيفة",
+    "حلف الفضول",
+    "بيعتا العقبة"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/Pledges_at_al-Aqabah"
+  },
+  {
+   "id": "q0960",
+   "difficulty": "متوسط",
+   "question": "في أي عام ميلادي كانت الهجرة النبوية؟",
+   "options": [
+    "610م",
+    "630م",
+    "622م",
+    "632م"
+   ],
+   "k": 2242,
+   "src": "https://en.wikipedia.org/wiki/Hijrah"
+  },
+  {
+   "id": "q0961",
+   "difficulty": "متوسط",
+   "question": "من الخليفة الذي جعل الهجرة بداية للتقويم الإسلامي؟",
+   "options": [
+    "أبو بكر الصديق",
+    "عمر بن الخطاب",
+    "عثمان بن عفان",
+    "علي بن أبي طالب"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Islamic_calendar"
+  },
+  {
+   "id": "q0962",
+   "difficulty": "متوسط",
+   "question": "في أي عام هجري وقعت غزوة بدر الكبرى؟",
+   "options": [
+    "2هـ",
+    "5هـ",
+    "1هـ",
+    "3هـ"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Badr"
+  },
+  {
+   "id": "q0963",
+   "difficulty": "صعب",
+   "question": "كم كان عدد المسلمين تقريباً في غزوة بدر؟",
+   "options": [
+    "1000",
+    "700",
+    "313",
+    "150"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Badr"
+  },
+  {
+   "id": "q0964",
+   "difficulty": "متوسط",
+   "question": "عند أي جبل وقعت غزوة السنة الثالثة للهجرة؟",
+   "options": [
+    "جبل ثور",
+    "جبل أحد",
+    "جبل النور",
+    "جبل سلع"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Uhud"
+  },
+  {
+   "id": "q0965",
+   "difficulty": "متوسط",
+   "question": "ما الصلح الذي عُقد بين المسلمين وقريش عام 6هـ؟",
+   "options": [
+    "صلح الرملة",
+    "صلح الحديبية",
+    "حلف الفضول",
+    "صلح الحسن"
+   ],
+   "k": 2276,
+   "src": "https://en.wikipedia.org/wiki/Treaty_of_Hudaybiyyah"
+  },
+  {
+   "id": "q0966",
+   "difficulty": "صعب",
+   "question": "ما الغزوة التي وقعت بعد فتح مكة مباشرة ضد هوازن؟",
+   "options": [
+    "غزوة الطائف",
+    "غزوة حنين",
+    "غزوة تبوك",
+    "غزوة الأحزاب"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Hunayn"
+  },
+  {
+   "id": "q0967",
+   "difficulty": "صعب",
+   "question": "ما أول معركة كبيرة للمسلمين مع الروم، واستشهد فيها ثلاثة قادة على التوالي؟",
+   "options": [
+    "ذات السلاسل",
+    "تبوك",
+    "اليرموك",
+    "مؤتة"
+   ],
+   "k": 2292,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Mu%27tah"
+  },
+  {
+   "id": "q0968",
+   "difficulty": "متوسط",
+   "question": "ما اسم الحجة الوحيدة التي حجها النبي ﷺ؟",
+   "options": [
+    "الحجة الكبرى",
+    "حجة الوداع",
+    "عمرة القضاء",
+    "حجة الفتح"
+   ],
+   "k": 2297,
+   "src": "https://en.wikipedia.org/wiki/Farewell_Pilgrimage"
+  },
+  {
+   "id": "q0969",
+   "difficulty": "متوسط",
+   "question": "ما اسم الحروب التي خاضها الخليفة الأول ضد المرتدين ومانعي الزكاة؟",
+   "options": [
+    "الفتنة الكبرى",
+    "حروب الفجار",
+    "الفتوحات",
+    "حروب الردة"
+   ],
+   "k": 2306,
+   "src": "https://en.wikipedia.org/wiki/Ridda_Wars"
+  },
+  {
+   "id": "q0970",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي قُتل فيها مسيلمة الكذاب عام 11هـ؟",
+   "options": [
+    "ذات السلاسل",
+    "اليمامة",
+    "أجنادين",
+    "اليرموك"
+   ],
+   "k": 2248,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Yamama"
+  },
+  {
+   "id": "q0971",
+   "difficulty": "صعب",
+   "question": "من الخليفة الذي جُمع القرآن الكريم في عهده لأول مرة في صحف؟",
+   "options": [
+    "أبو بكر الصديق",
+    "عمر بن الخطاب",
+    "علي بن أبي طالب",
+    "عثمان بن عفان"
+   ],
+   "k": 2254,
+   "src": "https://en.wikipedia.org/wiki/History_of_the_Quran"
+  },
+  {
+   "id": "q0972",
+   "difficulty": "متوسط",
+   "question": "من الخليفة الذي وحّد المصاحف على رسم واحد وأرسلها إلى الأمصار؟",
+   "options": [
+    "عمر بن الخطاب",
+    "علي بن أبي طالب",
+    "عثمان بن عفان",
+    "أبو بكر الصديق"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/Uthman"
+  },
+  {
+   "id": "q0973",
+   "difficulty": "متوسط",
+   "question": "ما المعركة الحاسمة التي انتصر فيها المسلمون على الروم في الشام عام 15هـ؟",
+   "options": [
+    "اليرموك",
+    "فحل",
+    "القادسية",
+    "أجنادين"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_the_Yarmuk"
+  },
+  {
+   "id": "q0974",
+   "difficulty": "متوسط",
+   "question": "من الصحابي الذي فتح مصر في عهد الخليفة الثاني؟",
+   "options": [
+    "خالد بن الوليد",
+    "سعد بن أبي وقاص",
+    "أبو عبيدة بن الجراح",
+    "عمرو بن العاص"
+   ],
+   "k": 2278,
+   "src": "https://en.wikipedia.org/wiki/Amr_ibn_al-As"
+  },
+  {
+   "id": "q0975",
+   "difficulty": "صعب",
+   "question": "ما اسم وثيقة الأمان التي أعطاها الخليفة الثاني لأهل إيلياء (القدس)؟",
+   "options": [
+    "صلح الحديبية",
+    "العهدة العمرية",
+    "صحيفة المدينة",
+    "كتاب الأمان النبوي"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/Umar%27s_Assurance"
+  },
+  {
+   "id": "q0976",
+   "difficulty": "صعب",
+   "question": "من قائد المسلمين في معركة نهاوند التي سُميت فتح الفتوح؟",
+   "options": [
+    "خالد بن الوليد",
+    "النعمان بن مقرن",
+    "سعد بن أبي وقاص",
+    "المثنى بن حارثة"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Nahavand"
+  },
+  {
+   "id": "q0977",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي وقعت عام 36هـ وعُرفت باسم حيوان؟",
+   "options": [
+    "معركة النهروان",
+    "معركة الحرة",
+    "معركة صفين",
+    "معركة الجمل"
+   ],
+   "k": 2299,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_the_Camel"
+  },
+  {
+   "id": "q0978",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي وقعت عام 37هـ بين الخليفة الرابع ووالي الشام؟",
+   "options": [
+    "الجمل",
+    "صفين",
+    "كربلاء",
+    "النهروان"
+   ],
+   "k": 2304,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Siffin"
+  },
+  {
+   "id": "q0979",
+   "difficulty": "متوسط",
+   "question": "ما اسم الفرقة التي خرجت على الخليفة الرابع بعد قبوله التحكيم؟",
+   "options": [
+    "الخوارج",
+    "القدرية",
+    "المرجئة",
+    "المعتزلة"
+   ],
+   "k": 2310,
+   "src": "https://en.wikipedia.org/wiki/Kharijites"
+  },
+  {
+   "id": "q0980",
+   "difficulty": "متوسط",
+   "question": "ما المدينة التي اتخذها الخليفة الرابع عاصمة لخلافته؟",
+   "options": [
+    "البصرة",
+    "دمشق",
+    "المدينة المنورة",
+    "الكوفة"
+   ],
+   "k": 2257,
+   "src": "https://en.wikipedia.org/wiki/Kufa"
+  },
+  {
+   "id": "q0981",
+   "difficulty": "متوسط",
+   "question": "من الصحابي الملقب بأمين هذه الأمة؟",
+   "options": [
+    "عمر بن الخطاب",
+    "حذيفة بن اليمان",
+    "عثمان بن عفان",
+    "أبو عبيدة بن الجراح"
+   ],
+   "k": 2264,
+   "src": "https://en.wikipedia.org/wiki/Abu_Ubayda_ibn_al-Jarrah"
+  },
+  {
+   "id": "q0982",
+   "difficulty": "متوسط",
+   "question": "ما المعركة التي استشهد فيها الحسين بن علي عام 61هـ؟",
+   "options": [
+    "كربلاء",
+    "صفين",
+    "الحرة",
+    "الجمل"
+   ],
+   "k": 2268,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Karbala"
+  },
+  {
+   "id": "q0983",
+   "difficulty": "متوسط",
+   "question": "من الخليفة الأموي المشهور بعدله ويُلقب بخامس الخلفاء الراشدين؟",
+   "options": [
+    "سليمان بن عبد الملك",
+    "الوليد بن عبد الملك",
+    "عمر بن عبد العزيز",
+    "هشام بن عبد الملك"
+   ],
+   "k": 2277,
+   "src": "https://en.wikipedia.org/wiki/Umar_II"
+  },
+  {
+   "id": "q0984",
+   "difficulty": "صعب",
+   "question": "من القائد الأموي الشاب الذي فتح بلاد السند؟",
+   "options": [
+    "محمد بن القاسم الثقفي",
+    "المهلب بن أبي صفرة",
+    "موسى بن نصير",
+    "قتيبة بن مسلم"
+   ],
+   "k": 2282,
+   "src": "https://en.wikipedia.org/wiki/Muhammad_ibn_Qasim"
+  },
+  {
+   "id": "q0985",
+   "difficulty": "صعب",
+   "question": "من القائد الأموي الذي فتح بخارى وسمرقند وبلاد ما وراء النهر؟",
+   "options": [
+    "عقبة بن نافع",
+    "طارق بن زياد",
+    "محمد بن القاسم",
+    "قتيبة بن مسلم"
+   ],
+   "k": 2292,
+   "src": "https://en.wikipedia.org/wiki/Qutayba_ibn_Muslim"
+  },
+  {
+   "id": "q0986",
+   "difficulty": "صعب",
+   "question": "من والي إفريقية الذي عبر إلى الأندلس لاستكمال فتحها؟",
+   "options": [
+    "طارق بن زياد",
+    "موسى بن نصير",
+    "عقبة بن نافع",
+    "حسان بن النعمان"
+   ],
+   "k": 2297,
+   "src": "https://en.wikipedia.org/wiki/Musa_ibn_Nusayr"
+  },
+  {
+   "id": "q0987",
+   "difficulty": "صعب",
+   "question": "ما المعركة التي أوقفت تقدم المسلمين في بلاد الفرنجة عام 114هـ (732م)؟",
+   "options": [
+    "وادي لكة",
+    "العقاب",
+    "بلاط الشهداء",
+    "الزلاقة"
+   ],
+   "k": 2305,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Tours"
+  },
+  {
+   "id": "q0988",
+   "difficulty": "متوسط",
+   "question": "ما المدينة التي كانت عاصمة الأندلس في عهد الأمويين؟",
+   "options": [
+    "غرناطة",
+    "إشبيلية",
+    "قرطبة",
+    "طليطلة"
+   ],
+   "k": 2312,
+   "src": "https://en.wikipedia.org/wiki/C%C3%B3rdoba,_Spain"
+  },
+  {
+   "id": "q0989",
+   "difficulty": "صعب",
+   "question": "ما المعركة التي سقطت بعدها الدولة الأموية عام 132هـ؟",
+   "options": [
+    "كربلاء",
+    "الزاب",
+    "مرج راهط",
+    "الحرة"
+   ],
+   "k": 2318,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_the_Zab"
+  },
+  {
+   "id": "q0990",
+   "difficulty": "متوسط",
+   "question": "من أول خلفاء الدولة العباسية؟",
+   "options": [
+    "المهدي",
+    "أبو جعفر المنصور",
+    "أبو العباس السفاح",
+    "هارون الرشيد"
+   ],
+   "k": 2263,
+   "src": "https://en.wikipedia.org/wiki/As-Saffah"
+  },
+  {
+   "id": "q0991",
+   "difficulty": "صعب",
+   "question": "من الخليفة العباسي الذي أهدى ساعة مائية إلى شارلمان؟",
+   "options": [
+    "المأمون",
+    "هارون الرشيد",
+    "المعتصم",
+    "المنصور"
+   ],
+   "k": 2269,
+   "src": "https://en.wikipedia.org/wiki/Harun_al-Rashid"
+  },
+  {
+   "id": "q0992",
+   "difficulty": "صعب",
+   "question": "من الخليفة العباسي الذي ارتبط عهده بمحنة خلق القرآن وازدهار حركة الترجمة؟",
+   "options": [
+    "المعتصم",
+    "هارون الرشيد",
+    "المأمون",
+    "المتوكل"
+   ],
+   "k": 2277,
+   "src": "https://en.wikipedia.org/wiki/Al-Ma%27mun"
+  },
+  {
+   "id": "q0993",
+   "difficulty": "متوسط",
+   "question": "ما اسم المجمع العلمي ومكتبة الترجمة الشهيرة في بغداد العباسية؟",
+   "options": [
+    "المدرسة المستنصرية",
+    "بيت الحكمة",
+    "المدرسة النظامية",
+    "دار العلم"
+   ],
+   "k": 2283,
+   "src": "https://en.wikipedia.org/wiki/House_of_Wisdom"
+  },
+  {
+   "id": "q0994",
+   "difficulty": "متوسط",
+   "question": "من الخليفة العباسي الذي فتح عمورية استجابة لاستغاثة امرأة؟",
+   "options": [
+    "هارون الرشيد",
+    "المعتصم",
+    "المتوكل",
+    "المأمون"
+   ],
+   "k": 2290,
+   "src": "https://en.wikipedia.org/wiki/Al-Mu%27tasim"
+  },
+  {
+   "id": "q0995",
+   "difficulty": "متوسط",
+   "question": "من القائد المغولي الذي اجتاح بغداد عام 656هـ؟",
+   "options": [
+    "هولاكو",
+    "جنكيز خان",
+    "كتبغا",
+    "تيمورلنك"
+   ],
+   "k": 2296,
+   "src": "https://en.wikipedia.org/wiki/Hulagu_Khan"
+  },
+  {
+   "id": "q0996",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي بنت الجامع الأزهر؟",
+   "options": [
+    "الدولة الطولونية",
+    "الدولة المملوكية",
+    "الدولة الأيوبية",
+    "الدولة الفاطمية"
+   ],
+   "k": 2306,
+   "src": "https://en.wikipedia.org/wiki/Al-Azhar_Mosque"
+  },
+  {
+   "id": "q0997",
+   "difficulty": "متوسط",
+   "question": "ما الدولة التي حكمت مصر والشام بعد نور الدين زنكي وانتهت بقيام دولة المماليك؟",
+   "options": [
+    "الدولة الإخشيدية",
+    "الدولة الأيوبية",
+    "الدولة الفاطمية",
+    "الدولة السلجوقية"
+   ],
+   "k": 2311,
+   "src": "https://en.wikipedia.org/wiki/Ayyubid_dynasty"
+  },
+  {
+   "id": "q0998",
+   "difficulty": "صعب",
+   "question": "من السلطان المملوكي الذي انتزع أنطاكية من الصليبيين عام 1268م؟",
+   "options": [
+    "المنصور قلاوون",
+    "سيف الدين قطز",
+    "الأشرف خليل",
+    "الظاهر بيبرس"
+   ],
+   "k": 2320,
+   "src": "https://en.wikipedia.org/wiki/Baybars"
+  },
+  {
+   "id": "q0999",
+   "difficulty": "صعب",
+   "question": "من آخر سلاطين المماليك الذي شُنق على باب زويلة؟",
+   "options": [
+    "قانصوه الغوري",
+    "قطز",
+    "طومان باي",
+    "برقوق"
+   ],
+   "k": 2326,
+   "src": "https://en.wikipedia.org/wiki/Tuman_bay_II"
+  },
+  {
+   "id": "q1000",
+   "difficulty": "صعب",
+   "question": "ما الدولة التي أسسها الملثمون من صنهاجة في شمال غرب أفريقيا ثم ضمت الأندلس في القرن الخامس الهجري؟",
+   "options": [
+    "المرينيون",
+    "المرابطون",
+    "الحفصيون",
+    "الموحدون"
+   ],
+   "k": 2143,
+   "src": "https://en.wikipedia.org/wiki/Almoravid_dynasty"
+  },
+  {
+   "id": "q1001",
+   "difficulty": "صعب",
+   "question": "من قائد المسلمين في معركة الزلاقة عام 1086م؟",
+   "options": [
+    "طارق بن زياد",
+    "المنصور الموحدي",
+    "عبد المؤمن بن علي",
+    "يوسف بن تاشفين"
+   ],
+   "k": 2152,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Sagrajas"
+  },
+  {
+   "id": "q1002",
+   "difficulty": "صعب",
+   "question": "ما المعركة التي انتصر فيها الموحدون على القشتاليين عام 1195م؟",
+   "options": [
+    "بلاط الشهداء",
+    "الزلاقة",
+    "العقاب",
+    "الأرك"
+   ],
+   "k": 2159,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Alarcos"
+  },
+  {
+   "id": "q1003",
+   "difficulty": "صعب",
+   "question": "ما المعركة التي هُزم فيها الموحدون عام 1212م وكانت بداية انهيار الأندلس؟",
+   "options": [
+    "بلاط الشهداء",
+    "الزلاقة",
+    "الأرك",
+    "العقاب"
+   ],
+   "k": 2166,
+   "src": "https://en.wikipedia.org/wiki/Battle_of_Las_Navas_de_Tolosa"
+  },
+  {
+   "id": "q1004",
+   "difficulty": "متوسط",
+   "question": "من مؤسس الدولة العثمانية الذي سُميت باسمه؟",
+   "options": [
+    "عثمان الأول",
+    "أرطغرل",
+    "أورخان",
+    "محمد الفاتح"
+   ],
+   "k": 2170,
+   "src": "https://en.wikipedia.org/wiki/Osman_I"
+  },
+  {
+   "id": "q1005",
+   "difficulty": "صعب",
+   "question": "من العالم المسلم صاحب كتاب «المناظر» في علم البصريات؟",
+   "options": [
+    "الكندي",
+    "ابن سينا",
+    "ابن الهيثم",
+    "البيروني"
+   ],
+   "k": 2179,
+   "src": "https://en.wikipedia.org/wiki/Ibn_al-Haytham"
+  },
+  {
+   "id": "q1006",
+   "difficulty": "صعب",
+   "question": "من الطبيب المسلم الذي وصف الدورة الدموية الصغرى (الرئوية)؟",
+   "options": [
+    "ابن النفيس",
+    "ابن سينا",
+    "الرازي",
+    "الزهراوي"
+   ],
+   "k": 2184,
+   "src": "https://en.wikipedia.org/wiki/Ibn_al-Nafis"
+  },
+  {
+   "id": "q1007",
+   "difficulty": "صعب",
+   "question": "من الجغرافي المسلم الذي رسم خريطة العالم لملك صقلية روجر الثاني؟",
+   "options": [
+    "المسعودي",
+    "ابن بطوطة",
+    "الشريف الإدريسي",
+    "ياقوت الحموي"
+   ],
+   "k": 2193,
+   "src": "https://en.wikipedia.org/wiki/Muhammad_al-Idrisi"
+  },
+  {
+   "id": "q1008",
+   "difficulty": "متوسط",
+   "question": "من الإمام صاحب كتاب «الموطأ» في الحديث والفقه؟",
+   "options": [
+    "البخاري",
+    "أحمد بن حنبل",
+    "مالك بن أنس",
+    "الشافعي"
+   ],
+   "k": 2200,
+   "src": "https://en.wikipedia.org/wiki/Muwatta_Imam_Malik"
   }
  ]
 }
