@@ -112,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611081655"></script>
+<script src="../firebase-config.js?v=202611081704"></script>
 <script>
 (function () {
   "use strict";
@@ -395,12 +395,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 
       <section class="card me"><h2>✨ اسمك في الألعاب</h2><div id="me">${meCard()}</div></section>
 
-      <section class="card"><h2>🚀 لوحة الكلمات</h2>
-        <p class="small" style="margin:0 0 8px">انتقل لأي مستوى من 1 إلى 400 على هالجوال (بدال الرمز السري).</p>
-        <div class="row"><input id="lv" inputmode="numeric" maxlength="3" aria-label="رقم المستوى" placeholder="300"><button type="button" class="btn" data-a="jump">انتقل</button></div>
-        <p class="msg err" id="lmsg" role="status"></p>
-      </section>
-      <section class="card rules"><h2>🛠️ قواعد قاعدة البيانات</h2>${d.need ? `<p class="small" style="margin:0">فوق في أول الصفحة.</p>` : `<p class="small" style="margin:0 0 4px">✅ كل الأقسام شغالة. لو قلت لك «فيه قواعد جديدة»، اضغط هنا:</p>${rulesCard()}`}</section>
+      ${d.need ? "" : `<section class="card rules"><h2>🛠️ قواعد قاعدة البيانات</h2><p class="small" style="margin:0 0 4px">✅ كل الأقسام شغالة. لو قلت لك «فيه قواعد جديدة»، اضغط هنا:</p>${rulesCard()}</section>`}
       <a class="home" href="../">الصفحة الرئيسية</a>`;
     if (flash) { const m = $("nmsg"); m.textContent = flash; m.className = "msg ok"; flash = null; }
     rflash = null;
@@ -529,14 +524,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         if (off) data.hide[k] = true; else delete data.hide[k]; $("hide").innerHTML = hides(); }
       catch (err) { b.disabled = false; m.textContent = err === "denied" ? NEED : "ما قدرت. تأكد من النت."; }
     }
-    else if (a === "jump") {
-      const n = parseInt(digits($("lv").value), 10);
-      if (!(n >= 1 && n <= 400)) { $("lmsg").textContent = "اكتب رقم من 1 إلى 400."; return; }
-      try { localStorage.setItem("words-owner", "1"); } catch (err) {}
-      location.href = "../mind/words/#jump=" + n;
-    }
   });
-  document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "lv") { e.preventDefault(); const j = document.querySelector("[data-a=jump]"); if (j) j.click(); } });
 
   /* ---------- start ---------- */
   try {
