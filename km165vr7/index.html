@@ -112,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611081651"></script>
+<script src="../firebase-config.js?v=202611081655"></script>
 <script>
 (function () {
   "use strict";
@@ -319,8 +319,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     Object.entries(data.off || {}).forEach(([g, ks]) => Object.entries(ks || {}).forEach(([k, q]) => offs.push({ g, k, q })));
     return (items.length ? items.map(it => `<div class="rep"><p class="small" style="margin:0"><b>${esc(RG[it.g] || it.g)}</b> · ${it.n > 1 ? "بلّغ عنها " + unit(it.n, "مرة", "مرتين", "مرات", "مرة") + " · " : ""}${at(it.last)}</p>
         <p class="rq">${esc(it.q)}${it.a ? `<br><small>الجواب: ${esc(it.a)}</small>` : ""}</p>
-        <p class="small" style="margin:0">${Object.entries(it.why).map(([w, c]) => `🚩 ${esc(w)}${c > 1 ? " ×" + c : ""}`).join(" · ")}</p>
-        ${it.notes.length ? `<p class="small" style="margin:4px 0 0">💬 ${it.notes.map(esc).join(" · ")}</p>` : ""}
+        ${Object.keys(it.why).some(w => w !== "مشكلة") ? `<p class="small" style="margin:0">${Object.entries(it.why).filter(([w]) => w !== "مشكلة").map(([w, c]) => `🚩 ${esc(w)}${c > 1 ? " ×" + c : ""}`).join(" · ")}</p>` : ""}
+        ${it.notes.length ? it.notes.map(n => `<p class="small" style="margin:4px 0 0">💬 ${esc(n)}</p>`).join("") : ""}
         <div class="acts"><button type="button" class="mini red" data-a="repoff" data-g="${esc(it.g)}" data-k="${esc(it.k)}">🗑️ شيلها من اللعبة</button><button type="button" class="mini" data-a="repok" data-g="${esc(it.g)}" data-k="${esc(it.k)}">✅ سليمة</button></div></div>`).join("")
       : `<p class="small">ما فيه بلاغات 👌</p>`) +
       (offs.length ? `<p class="small" style="margin:12px 0 4px"><b>المشالة من الألعاب (${offs.length})</b></p>${offs.map(o => `<p class="small" style="margin:2px 0">${esc(RG[o.g] || o.g)}: ${esc(o.q)} <button type="button" class="mini" data-a="repback" data-g="${esc(o.g)}" data-k="${esc(o.k)}">رجّعها</button></p>`).join("")}` : "");
@@ -371,7 +371,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       </section>
 
       <section class="card"><h2>🚩 بلاغات</h2>
-        <p class="small" style="margin:0 0 6px">اللي ضغطوا «🚩 فيه غلط؟» في الألعاب. شيل السؤال من اللعبة، أو قل إنه سليم.</p>
+        <p class="small" style="margin:0 0 6px">اللي ضغطوا 🚩 في الألعاب وكتبوا مشكلة. شيل السؤال من اللعبة، أو قل إنه سليم.</p>
         <div id="reps">${repList()}</div>
       </section>
 
