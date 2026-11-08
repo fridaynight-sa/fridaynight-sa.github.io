@@ -112,8 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611081649"></script>
-<script src="../fnclean.js?v=202611081649"></script>
+<script src="../firebase-config.js?v=202611081651"></script>
 <script>
 (function () {
   "use strict";
@@ -326,13 +325,6 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       : `<p class="small">ما فيه بلاغات 👌</p>`) +
       (offs.length ? `<p class="small" style="margin:12px 0 4px"><b>المشالة من الألعاب (${offs.length})</b></p>${offs.map(o => `<p class="small" style="margin:2px 0">${esc(RG[o.g] || o.g)}: ${esc(o.q)} <button type="button" class="mini" data-a="repback" data-g="${esc(o.g)}" data-k="${esc(o.k)}">رجّعها</button></p>`).join("")}` : "");
   }
-  /* ---------- «🧹 تنظيف الغرف»: by itself once a day (fnclean.js), or now ---------- */
-  function cleanStatus(running) {
-    const l = self.FNCL && FNCL.last();
-    return `<p class="small" style="margin:0 0 8px">${running ? "🧹 لحظة… أنظّف الحين" : l ? `آخر تنظيف: ${at(l.at)} · ${l.done ? `انمسحت ${l.done} غرفة قديمة` : "ما كان فيه شي قديم"}${l.bad ? ` (وما قدرت أمسح ${l.bad})` : ""} · باقي ${Math.max(0, l.rooms - l.done)} غرفة` : "ما صار تنظيف للحين."}</p>
-      <button type="button" class="btn alt" data-a="cleannow" ${running ? "disabled" : ""}>🧹 نظّف الحين</button>`;
-  }
-  const paintClean = r => { const el = $("clean"); if (el) el.innerHTML = cleanStatus(r); };
   function learnedList() {
     const cs = Object.entries(data.jhw || {}).filter(([c, ws]) => JHC[c] && ws && Object.keys(ws).length);
     if (!cs.length) return `<p class="small">ما تعلّمت كلمات للحين.</p>`;
@@ -383,11 +375,6 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <div id="reps">${repList()}</div>
       </section>
 
-      <section class="card"><h2>🧹 تنظيف الغرف</h2>
-        <p class="small" style="margin:0 0 6px">جوالك يمسح الغرف اللي صار لها أكثر من يوم <b>لحاله، مرة كل يوم</b>، أول ما تفتح الموقع أو هالصفحة. الغرف الشغالة ما تنلمس.</p>
-        <div id="clean">${cleanStatus()}</div>
-      </section>
-
       <section class="card"><h2>🔤 كلمات تعلمتها «جماد حيوان إنسان»</h2>
         <p class="small" style="margin:0 0 6px">الكلمات اللي قبلتوها في «الحكم الجماعي» تنقبل لحالها بعدين. لو فيه كلمة ما تستاهل، شيلها.</p>
         <div id="jhw">${learnedList()}</div>
@@ -432,7 +419,6 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       // and mark it in the database too, so it stays the owner's even where this page's storage is not the games' storage
       if (myDev && data.tags[myDev] !== MARK && !data.tagsNo) call("tag/" + myDev, { method: "PUT", body: JSON.stringify(MARK) }).then(() => { data.tags[myDev] = MARK; paintWho(); }).catch(() => {});
       panel();
-      if (self.FNCL) { const p = FNCL.auto(() => user.getIdToken()); if (p) { paintClean(true); p.then(() => paintClean(false)); } }   // the day's cleaning, by itself
     } catch (e) { if (e === "denied") deniedView(); else errorView(); }
   }
 
@@ -496,7 +482,6 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         const el = $("reps"); if (el) el.innerHTML = repList();
       } catch (e) { b.disabled = false; alert(e === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
     }
-    else if (a === "cleannow") { paintClean(true); try { await FNCL.run(() => user.getIdToken()); } catch (e) {} paintClean(false); }
     else if (a === "jhwdel") {
       const c = b.dataset.c, k = b.dataset.k; if (!c || !k) return;
       try { await call("jhw/" + c + "/" + k, { method: "DELETE" }); if (data.jhw[c]) delete data.jhw[c][k]; const el = $("jhw"); if (el) el.innerHTML = learnedList(); } catch (e) { alert("ما انشالت. جرّب مرة ثانية."); }

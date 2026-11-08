@@ -250,12 +250,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202611081649"></script>
-<script src="fninstall.js?v=202611081649"></script>
+<script src="fnfx.js?v=202611081651"></script>
+<script src="fninstall.js?v=202611081651"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202611081649"></script>
-<script src="fnstats.js?v=202611081649"></script>
+<script src="firebase-config.js?v=202611081651"></script>
+<script src="fnstats.js?v=202611081651"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -331,12 +331,7 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
       keep(u, prof, av && av.i); if (user === u) paint(ls.get("fn-gname"));
       // only the owner's account may read the visitor count: if it can, this phone is the owner's
       const r = await call("stats/month/" + new Date(Date.now() + 3 * 36e5).toISOString().slice(0, 7)).then(() => true, () => false);
-      if (r) {
-        localStorage.setItem("fn-owner", "1"); localStorage.setItem("words-owner", "1");
-        // the owner's phone: once a day, delete the rooms nobody used for a day (fnclean.js), quietly
-        const go = () => self.FNCL && FNCL.auto(() => u.getIdToken());
-        if (self.FNCL) go(); else { const sc = document.createElement("script"); sc.src = "fnclean.js"; sc.onload = go; document.head.appendChild(sc); }
-      }
+      if (r) { localStorage.setItem("fn-owner", "1"); localStorage.setItem("words-owner", "1"); }
     } catch (e) {}
   }
   function start() {
