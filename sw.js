@@ -35,7 +35,7 @@ const MIND = "mind-v1";
 const MIND_FILES = ["mind/", "mind/mind.css", "mind/sync.js", "mind/lamha/", "mind/lamha/app.js", "mind/lamha/draw.js",
   "mind/dots/", "mind/dots/app.js", "mind/dots/levels.js", "mind/squares/", "mind/squares/app.js",
   "mind/words/", "mind/words/app.js", "mind/words/levels.js", "mind/search/", "mind/search/app.js", "mind/search/levels.js",
-  "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png",
+  "fnfx.js", "fnanim.js", "firebase-config.js", "favicon-32.png", "favicon-64.png", "notice-bg.jpg",
   "mind/search/paper.js", "mf/", "mf/app.js", "mf/questions.json", "fntheme.css",
   ...["mind", "lamha", "dots", "squares", "words", "search", "seenjeem", "outside", "sedq", "mf", "draw", "dafour", "jhi", "tv"].map(x => `icons/${x}.png`)];
 const MIND_MUST = 17;                    // the first seventeen files: without them the games can't open offline
@@ -54,7 +54,7 @@ self.addEventListener("message", e => {
 const fromCopy = req => caches.open(MIND).then(c => c.match(req, { ignoreVary: true }).then(m => m || c.match(req, { ignoreSearch: true, ignoreVary: true })));
 const mindPages = new Set();     // open Mind Games pages: only their requests are handled here, other games are left alone
 function shared(u) {
-  if (u.origin === self.location.origin) return /\/(fnfx|fnanim|firebase-config)\.js$/.test(u.pathname) || /\/fntheme\.css$/.test(u.pathname) || /\/icons\/[\w-]+\.png$/.test(u.pathname) || /\/favicon-\d+\.png$/.test(u.pathname);
+  if (u.origin === self.location.origin) return /\/(fnfx|fnanim|firebase-config)\.js$/.test(u.pathname) || /\/fntheme\.css$/.test(u.pathname) || /\/icons\/[\w-]+\.png$/.test(u.pathname) || /\/favicon-\d+\.png$/.test(u.pathname) || /\/notice-bg\.jpg$/.test(u.pathname);
   return u.href.startsWith("https://www.gstatic.com/firebasejs/") || u.hostname === "fonts.googleapis.com" || u.hostname === "fonts.gstatic.com";
 }
 const fromMind = e => mindPages.has(e.clientId) || /\/(mind|mf)\//.test(e.request.referrer || "");

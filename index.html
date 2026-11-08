@@ -99,8 +99,8 @@ h2.sec{font-family:var(--f-display);font-weight:800;font-size:22px;margin:32px 4
 /* the two kinds of games: للجمعات (together) and لحالك (on your own) */
 .lead{margin:-4px 4px 14px;color:var(--muted);font-weight:700}
 /* a message from the owner to everyone (from the owner's page) */
-.notice{max-width:520px;margin:18px auto 0;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;box-shadow:4px 4px 0 var(--gold);font-weight:800;animation:rise .5s both}
-.notice span{font-size:22px;flex:none}.notice p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.notice{max-width:520px;margin:18px auto 0;display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;gap:4px;min-height:130px;padding:18px 26px;background:#3a0f8f url(notice-bg.jpg) center/cover;color:#fff;border:3px solid #2b1745;border-radius:20px;box-shadow:0 5px 0 #2b1745;font-size:18px;font-weight:800;text-shadow:0 2px 0 #2b1745;animation:rise .5s both}
+.notice span{font-size:30px;flex:none}.notice p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
 /* «ادخل بحساب Google» (optional) */
 .acct{display:flex;justify-content:center;align-items:center;gap:8px;margin:16px auto 0;font-weight:800;font-size:15px}
 .acct button{display:inline-flex;align-items:center;gap:8px;background:var(--card);color:var(--ink);border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:999px;padding:6px 14px;font-weight:800;font-size:15px;cursor:pointer}
@@ -250,12 +250,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202611081704"></script>
-<script src="fninstall.js?v=202611081704"></script>
+<script src="fnfx.js?v=202611081717"></script>
+<script src="fninstall.js?v=202611081717"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202611081704"></script>
-<script src="fnstats.js?v=202611081704"></script>
+<script src="firebase-config.js?v=202611081717"></script>
+<script src="fnstats.js?v=202611081717"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).

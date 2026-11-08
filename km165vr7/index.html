@@ -57,8 +57,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 .btn.alt{background:#fff;color:var(--ink)}
 .btn.stop{background:#fff;color:var(--red);border-color:var(--red);box-shadow:3px 3px 0 var(--red)}
 .prev{margin:12px 0 0;font-size:13px;font-weight:800;color:var(--muted)}
-.banner{margin-top:6px;display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:16px;padding:10px 12px;box-shadow:4px 4px 0 var(--gold);font-weight:800}
-.banner span{font-size:22px;flex:none}.banner p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.banner{margin-top:6px;display:flex;align-items:center;flex-direction:column;justify-content:center;text-align:center;gap:4px;min-height:130px;padding:18px 26px;background:#3a0f8f url(../notice-bg.jpg) center/cover;color:#fff;border:3px solid #2b1745;border-radius:20px;box-shadow:0 5px 0 #2b1745;font-size:18px;font-weight:800;text-shadow:0 2px 0 #2b1745}
+.banner span{font-size:30px;flex:none}.banner p{margin:0;white-space:pre-line;overflow-wrap:anywhere}
 .banner.empty p{opacity:.6}
 .now{background:var(--bg);border:2px dashed var(--ink);border-radius:16px;padding:10px 12px 12px;margin-bottom:14px}
 .row{display:flex;gap:8px}.row input{flex:1;min-width:0;border:2px solid var(--ink);border-radius:14px;padding:8px;text-align:center;font:800 20px var(--f-display);background:var(--bg)}
@@ -112,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611081704"></script>
+<script src="../firebase-config.js?v=202611081717"></script>
 <script>
 (function () {
   "use strict";
