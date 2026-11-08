@@ -112,7 +112,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611081113"></script>
+<script src="../firebase-config.js?v=202611081649"></script>
+<script src="../fnclean.js?v=202611081649"></script>
 <script>
 (function () {
   "use strict";
@@ -325,50 +326,13 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       : `<p class="small">ما فيه بلاغات 👌</p>`) +
       (offs.length ? `<p class="small" style="margin:12px 0 4px"><b>المشالة من الألعاب (${offs.length})</b></p>${offs.map(o => `<p class="small" style="margin:2px 0">${esc(RG[o.g] || o.g)}: ${esc(o.q)} <button type="button" class="mini" data-a="repback" data-g="${esc(o.g)}" data-k="${esc(o.k)}">رجّعها</button></p>`).join("")}` : "");
   }
-  /* ---------- «🧹 تنظيف الغرف» ---------- */
-  const ROOMS = { rooms: "سين جيم", bs: "برا السالفة", sq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", df: "الدافور", jh: "جماد حيوان إنسان", night: "السهرة" };
-  const DAY = 864e5;
-  let scan = null;
-  // the newest time a room shows: in its state (at, t, t0, wt, ts) or when a player joined
-  function newest(...objs) {
-    let m = 0;
-    const look = o => { if (!o || typeof o !== "object") return; ["at", "t", "t0", "wt", "ts"].forEach(k => { if (typeof o[k] === "number" && o[k] > 1.5e12 && o[k] > m) m = o[k]; }); };
-    objs.forEach(o => { if (o && typeof o.j === "string") { try { look(JSON.parse(o.j)); } catch (e) {} } else look(o); });
-    return m;
+  /* ---------- «🧹 تنظيف الغرف»: by itself once a day (fnclean.js), or now ---------- */
+  function cleanStatus(running) {
+    const l = self.FNCL && FNCL.last();
+    return `<p class="small" style="margin:0 0 8px">${running ? "🧹 لحظة… أنظّف الحين" : l ? `آخر تنظيف: ${at(l.at)} · ${l.done ? `انمسحت ${l.done} غرفة قديمة` : "ما كان فيه شي قديم"}${l.bad ? ` (وما قدرت أمسح ${l.bad})` : ""} · باقي ${Math.max(0, l.rooms - l.done)} غرفة` : "ما صار تنظيف للحين."}</p>
+      <button type="button" class="btn alt" data-a="cleannow" ${running ? "disabled" : ""}>🧹 نظّف الحين</button>`;
   }
-  async function scanRooms() {
-    const out = [];
-    await Promise.all(Object.keys(ROOMS).map(async p => {
-      const codes = Object.keys((await call(p, {}, "&shallow=true").catch(() => null)) || {});
-      await Promise.all(codes.map(async c => {
-        let t = 0;
-        if (p === "rooms") t = newest(await call("rooms/" + c).catch(() => null));
-        else {
-          const [st, pl] = await Promise.all([call(p + "/" + c + "/state").catch(() => null), call(p + "/" + c + "/players").catch(() => null)]);
-          t = newest(st, ...Object.values(pl || {}));
-        }
-        out.push({ p, c, t });
-      }));
-    }));
-    return out;
-  }
-  // delete a room; where the rules only let each part go by itself, part by part
-  async function wipe(path, depth) {
-    try { await call(path, { method: "DELETE" }); }
-    catch (e) {
-      if (e !== "denied" || (depth || 0) > 2) throw e;
-      const ks = Object.keys((await call(path, {}, "&shallow=true")) || {});
-      for (const k of ks) await wipe(path + "/" + k, (depth || 0) + 1);
-    }
-  }
-  function cleanView(msg) {
-    const el = $("clean"); if (!el || !scan) return;
-    const now = Date.now(), old = scan.filter(r => !r.t || now - r.t > DAY), by = {};
-    old.forEach(r => by[r.p] = (by[r.p] || 0) + 1);
-    el.innerHTML = `<p class="small" style="margin:0 0 6px">فيه <b>${scan.length}</b> غرفة محفوظة، منها <b>${old.length}</b> قديمة (أكثر من يوم)${scan.length - old.length ? `، و${scan.length - old.length} جديدة ما تنلمس` : ""}.</p>
-      ${old.length ? `<p class="small" style="margin:0 0 8px">${Object.entries(by).map(([p, n]) => `${esc(ROOMS[p])}: ${n}`).join(" · ")}</p><button type="button" class="btn" data-a="wipe">🧹 امسح ${old.length} غرفة قديمة</button>` : `<p class="small">ما فيه شي ينمسح 👌</p>`}
-      <p class="msg ${msg && msg[1] ? "ok" : "err"}" role="status">${esc(msg ? msg[0] : "")}</p>`;
-  }
+  const paintClean = r => { const el = $("clean"); if (el) el.innerHTML = cleanStatus(r); };
   function learnedList() {
     const cs = Object.entries(data.jhw || {}).filter(([c, ws]) => JHC[c] && ws && Object.keys(ws).length);
     if (!cs.length) return `<p class="small">ما تعلّمت كلمات للحين.</p>`;
@@ -420,8 +384,8 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       </section>
 
       <section class="card"><h2>🧹 تنظيف الغرف</h2>
-        <p class="small" style="margin:0 0 6px">كل غرفة تنفتح تبقى محفوظة في قاعدة البيانات. هذا يمسح الغرف اللي صار لها أكثر من يوم، عشان تبقى خفيفة. الغرف الشغالة ما تنلمس.</p>
-        <div id="clean"><button type="button" class="btn alt" data-a="scan">🔍 افحص الغرف</button></div>
+        <p class="small" style="margin:0 0 6px">جوالك يمسح الغرف اللي صار لها أكثر من يوم <b>لحاله، مرة كل يوم</b>، أول ما تفتح الموقع أو هالصفحة. الغرف الشغالة ما تنلمس.</p>
+        <div id="clean">${cleanStatus()}</div>
       </section>
 
       <section class="card"><h2>🔤 كلمات تعلمتها «جماد حيوان إنسان»</h2>
@@ -468,6 +432,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       // and mark it in the database too, so it stays the owner's even where this page's storage is not the games' storage
       if (myDev && data.tags[myDev] !== MARK && !data.tagsNo) call("tag/" + myDev, { method: "PUT", body: JSON.stringify(MARK) }).then(() => { data.tags[myDev] = MARK; paintWho(); }).catch(() => {});
       panel();
+      if (self.FNCL) { const p = FNCL.auto(() => user.getIdToken()); if (p) { paintClean(true); p.then(() => paintClean(false)); } }   // the day's cleaning, by itself
     } catch (e) { if (e === "denied") deniedView(); else errorView(); }
   }
 
@@ -531,17 +496,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         const el = $("reps"); if (el) el.innerHTML = repList();
       } catch (e) { b.disabled = false; alert(e === "denied" ? NEED : "ما قدرت. تأكد من النت."); }
     }
-    else if (a === "scan") { b.disabled = true; b.textContent = "لحظة… أفحص"; try { scan = await scanRooms(); cleanView(); } catch (e) { b.disabled = false; b.textContent = "🔍 افحص الغرف"; alert("ما قدرت أفحص. تأكد من النت."); } }
-    else if (a === "wipe") {
-      if (!scan || !confirm("تمسح الغرف القديمة؟ الغرف الشغالة ما تنلمس.")) return;
-      b.disabled = true; const now = Date.now(), old = scan.filter(r => !r.t || now - r.t > DAY); let done = 0, bad = 0;
-      for (const r of old) {
-        try { await wipe(r.p + "/" + r.c); if (r.p === "rooms") await wipe("presence/sj-" + r.c.toLowerCase()).catch(() => {}); done++; } catch (e) { bad++; }
-        b.textContent = `لحظة… ${done + bad} من ${old.length}`;
-      }
-      scan = scan.filter(r => !old.includes(r) );
-      cleanView([`انمسحت ${done} غرفة${bad ? ` (وما قدرت أمسح ${bad})` : ""} ✅`, !bad]);
-    }
+    else if (a === "cleannow") { paintClean(true); try { await FNCL.run(() => user.getIdToken()); } catch (e) {} paintClean(false); }
     else if (a === "jhwdel") {
       const c = b.dataset.c, k = b.dataset.k; if (!c || !k) return;
       try { await call("jhw/" + c + "/" + k, { method: "DELETE" }); if (data.jhw[c]) delete data.jhw[c][k]; const el = $("jhw"); if (el) el.innerHTML = learnedList(); } catch (e) { alert("ما انشالت. جرّب مرة ثانية."); }
