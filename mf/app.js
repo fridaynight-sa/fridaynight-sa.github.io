@@ -173,7 +173,7 @@
   }
 
   /* ---------------- views ---------------- */
-  const short = t => String(t).replace(/^(مين فينا|من)\s+/, "").replace(/؟$/, "");
+  const short = t => String(t).replace(/^(مين فينا|من فينا|من)\s+/, "").replace(/؟$/, "");
   function standings(deltas) {
     const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0));
     return `<table><thead><tr><th>اللاعب</th>${deltas ? `<th class="n">هالجولة</th>` : ""}<th class="n">النقاط</th></tr></thead><tbody>${ids.map(id => `<tr><td>${esc(nameOf(id))}${id === ME.pid ? " (أنت)" : ""}</td>${deltas ? `<td class="n ${deltas[id] ? "plus" : ""}">${deltas[id] ? "+" + deltas[id] : "0"}</td>` : ""}<td class="n">${S.scores[id] || 0}</td></tr>`).join("")}</tbody></table>`;
@@ -379,7 +379,7 @@
       const pts = O.scores, order = O.names.map((_, i) => i).sort((a, b) => pts[b] - pts[a]), medal = ["🥇", "🥈", "🥉"];
       app.innerHTML = `<div class="card"><h2 class="center">النتيجة النهائية 🏆</h2><p class="note center">أكثر واحد توقّع مع الأغلبية</p>
         <div class="podium mt">${order.map((i, k) => `<div><span>${medal[k] || AR(k + 1) + "."} ${nm(i)}</span><span>${AR(pts[i])}</span></div>`).join("")}</div></div>
-        ${O.titles.length ? `<div class="card"><h2>الألقاب 👑</h2><ul class="titles">${O.titles.map(t => `<li><b>${t.w.map(nm).join(" و")}</b><span>${esc(t.q.replace(/^مين فينا\s*/, "").replace(/[؟?]$/, ""))}</span></li>`).join("")}</ul></div>` : ""}
+        ${O.titles.length ? `<div class="card"><h2>الألقاب 👑</h2><ul class="titles">${O.titles.map(t => `<li><b>${t.w.map(nm).join(" و")}</b><span>${esc(t.q.replace(/^(مين|من) فينا\s*/, "").replace(/[؟?]$/, ""))}</span></li>`).join("")}</ul></div>` : ""}
         <div class="card"><button type="button" class="btn" data-act="oagain">العبوا مرة ثانية</button><button type="button" class="btn alt mt" data-act="home">القائمة</button></div>`;
     }
   }
@@ -440,7 +440,7 @@
     }
   } catch (e) {}
   fetch("questions.json", { cache: "no-cache" }).then(r => r.json()).then(d => {
-    CATS = d.categories.map(c => Object.assign({}, c, { items: (c.items || []).filter(x => !(self.FNR && FNR.hidden("mf", x.q))) }));   // without what the owner took out
+    CATS = d.categories.map(c => Object.assign({}, c, { items: (c.items || []).filter(x => !(self.FNR && [x.q, x.q.replace(/^من فينا /, "مين فينا "), x.q.replace(/^من فينا أكثر /, "من أكثر ")].some(t => FNR.hidden("mf", t)))) }));   // without what the owner took out
     const h = (location.hash || "").replace("#", "").toUpperCase();
     // سهرة: the night's host opens this game's room (or comes back to it after a reload)
     if (self.FNN && FNN.host && FNN.room === h && db) db.ref("mf/" + h + "/state").get().then(s => { const o = s.exists() && dec(s.val()); return o && o.host === FNN.pid && o.nt === FNN.n ? joinRoom(h, FNN.name) : createRoom(FNN.name); }).catch(() => renderForm("join", h, "ما قدرت أتصل. تأكد من النت."));
