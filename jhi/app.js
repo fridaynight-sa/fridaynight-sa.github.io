@@ -67,13 +67,14 @@
   function check(cat, word, L, learned) {
     const w = String(word || "").trim().slice(0, 30), k = keyOf(w);
     if (!k) return { st: "none" };
+    if (k.length < 2) return { st: "bad", k, dk: k, why: "حرف واحد مو كلمة" };   // «ا» alone is not a word (and is never learned)
     const own = DICT[cat] || new Set(), lr = learned || new Set(), has = x => own.has(x) || lr.has(x);
     const ok = (x, fix) => ({ st: "ok", k: x, dk: dupKey(x), fix: fix || "" });
     if (has(k) && k[0] === L) return ok(k);
     const b = noAl(k) || k;
     if (b[0] !== L) return { st: "bad", k: b, dk: dupKey(b), why: "ما تبدأ بحرف " + LNAME[L] };
     if (has(b)) return ok(b);
-    if (b.length >= 4) {                                           // a small slip: one letter off (بطاطص → بطاطس)
+    if (b.length >= 5) {                                           // a small slip: one letter off (بطاطص → بطاطس); short words go to the vote (ارفه is not أرطة)
       const near = ((BYL[cat] || {})[L] || []).find(x => lev(b, x, 1) <= 1);
       if (near) return ok(near, (ORIG[cat] || {})[near] || near);
     }
@@ -228,7 +229,7 @@
     });
     items.forEach((it, i) => {
       (rows[it.c] || []).forEach(r => { if (r.st === "vote" && r.k === it.k) { r.st = verdict[i] ? "ok" : "bad"; r.vt = verdict[i] ? "+" : "-"; } });
-      if (verdict[i]) db.ref("jhw/" + it.c + "/" + it.k).set(String(it.w).slice(0, 30)).catch(() => {});   // learned for next time
+      if (verdict[i] && keyOf(it.w).length >= 2) db.ref("jhw/" + it.c + "/" + it.k).set(String(it.w).slice(0, 30)).catch(() => {});   // learned for next time
     });
     await writeState({ phase: "reveal", results: rows, vote: Object.assign({}, S.vote, { verdict }), res: finish(rows) });
   }
