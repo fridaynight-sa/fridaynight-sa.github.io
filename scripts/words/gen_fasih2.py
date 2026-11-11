@@ -81,17 +81,17 @@ def main(seed=7):
             def value(c):   # easy first; a base that brings classical words nobody has seen yet wins
                 new = sum(1 for x in c[3] if JUSE[x] == 0)
                 unused = sum(1 for x in formable(c[2]) if USES[x] == 0 and x not in J)
-                return c[0] * .5 + min(new, k) * 3 + min(unused, want) * .8
-            pool = sorted((c for c in cands[:400] if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
+                return c[0] * .5 + min(new, k) * 6 + min(unused, want) * .8
+            pool = sorted((c for c in cands if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
             # the best few bases; keep the first whose board really gets its classical words
             best = None
-            for c in pool[:10]:
+            for c in pool[:25]:
                 L = build(c[2], n, want, set(list(recent)[-60:]), rnd, k)
                 got = min(len(L["classical"]), k)
                 if not best or got > best[0]: best = (got, c, L)
                 if got >= k: break
             if best[0] == 0:   # still none: any base, even with a classical word seen a few times already
-                for c in pool[:30]:
+                for c in pool[:80]:
                     L = build(c[2], n, want, set(list(recent)[-60:]), rnd, max(1, k - 1))
                     if L["classical"]: best = (1, c, L); break
             _, c, L = best
