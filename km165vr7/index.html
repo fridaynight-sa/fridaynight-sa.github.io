@@ -112,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611111703"></script>
+<script src="../firebase-config.js?v=202611111720"></script>
 <script>
 (function () {
   "use strict";
@@ -156,14 +156,15 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
       call("stats/week/" + weekKey(now)), call("stats/month/" + today.slice(0, 7)), call("stats/game/" + today), call("notice")]);
     // the newer parts: until their rules are pasted they say so, and the rest of the page still works
     const soft = p => call(p).catch(e => e === "denied" ? NO : Promise.reject(e));
-    const [dev, names, bans, cfg0, tags, users, paper, avs, jhw, rep] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av"), soft("jhw"), soft("rep")]);
+    const [dev, names, bans, cfg0, tags, users, paper, avs, jhw, rep, errs] = await Promise.all([soft("dev"), soft("devname"), soft("ban"), soft("cfg"), soft("tag"), soft("users"), soft("paper/1"), soft("av"), soft("jhw"), soft("rep"),
+      call("err", {}, "&orderBy=%22$key%22&startAt=%22" + dayKey(now - 6 * 864e5) + "%22").catch(e => e === "denied" ? NO : null)]);   // err/: the site's error log, last 7 days
     const cfg = cfg0 === NO ? null : cfg0;
     const byDev = {};                                             // phone → the Google account signed in on it
     Object.entries(users && users !== NO ? users : {}).forEach(([uid, u]) => Object.keys((u && u.d) || {}).forEach(d => { if (!byDev[d] || (u.t || 0) > (byDev[d].t || 0)) byDev[d] = Object.assign({ uid }, u); }));
     data = { now, days: days || {}, week: week || 0, month: month || 0, games: games || {}, notice, dev, names: names === NO ? {} : names || {},
       bans: bans === NO ? {} : bans || {}, hide: (cfg && cfg.hide) || {}, me: (cfg && cfg.me) || {}, tags: tags === NO ? {} : tags || {}, tagsNo: tags === NO, byDev,
-      avs: avs === NO ? {} : avs || {}, jhw: jhw === NO ? {} : jhw || {}, rep: rep === NO ? {} : rep || {}, off: (cfg && cfg.off) || {},
-      need: [dev, names, bans, cfg0, tags, users, paper, avs, rep].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة; av/: «حسابي» pictures
+      avs: avs === NO ? {} : avs || {}, jhw: jhw === NO ? {} : jhw || {}, rep: rep === NO ? {} : rep || {}, errs: errs === NO ? {} : errs || {}, off: (cfg && cfg.off) || {},
+      need: [dev, names, bans, cfg0, tags, users, paper, avs, rep, errs].includes(NO) };   // paper/: «ترتيب العدد» in دوّر الكلمة; av/: «حسابي» pictures
   }
 
   /* ---------- screens ---------- */
@@ -306,7 +307,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   }
   const JHC = { insan: "إنسان", hayawan: "حيوان", nabat: "نبات", jamad: "جماد", bilad: "بلاد", akla: "أكلة", mihna: "مهنة", sayyara: "سيارة", musalsal: "مسلسل", laeb: "لاعب كرة", marka: "ماركة" };
   /* ---------- «🚩 بلاغات» ---------- */
-  const RG = { dafour: "الدافور", sedq: "صدق ولا كذب", mf: "مين فينا؟", outside: "برا السالفة", draw: "ارسم وخمّن" };
+  const RG = { site: "🔔", dafour: "الدافور", sedq: "صدق ولا كذب", mf: "مين فينا؟", outside: "برا السالفة", draw: "ارسم وخمّن" };
   function repList() {
     const items = [];
     Object.entries(data.rep || {}).forEach(([g, ks]) => Object.entries(ks || {}).forEach(([k, rs]) => {
@@ -318,13 +319,25 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
     const offs = [];
     Object.entries(data.off || {}).forEach(([g, ks]) => Object.entries(ks || {}).forEach(([k, q]) => offs.push({ g, k, q })));
     return (items.length ? items.map(it => `<div class="rep"><p class="small" style="margin:0"><b>${esc(RG[it.g] || it.g)}</b> · ${it.n > 1 ? "بلّغ عنها " + unit(it.n, "مرة", "مرتين", "مرات", "مرة") + " · " : ""}${at(it.last)}</p>
-        <p class="rq">${esc(it.q)}${it.a ? `<br><small>الجواب: ${esc(it.a)}</small>` : ""}</p>
-        ${Object.keys(it.why).some(w => w !== "مشكلة") ? `<p class="small" style="margin:0">${Object.entries(it.why).filter(([w]) => w !== "مشكلة").map(([w, c]) => `🚩 ${esc(w)}${c > 1 ? " ×" + c : ""}`).join(" · ")}</p>` : ""}
+        <p class="rq">${it.g === "site" ? "صفحة: " : ""}${esc(it.q)}${it.a && it.g !== "site" ? `<br><small>الجواب: ${esc(it.a)}</small>` : ""}</p>
+        ${it.g !== "site" && Object.keys(it.why).some(w => w !== "مشكلة") ? `<p class="small" style="margin:0">${Object.entries(it.why).filter(([w]) => w !== "مشكلة").map(([w, c]) => `🚩 ${esc(w)}${c > 1 ? " ×" + c : ""}`).join(" · ")}</p>` : ""}
         ${it.notes.length ? it.notes.map(n => `<p class="small" style="margin:4px 0 0">💬 ${esc(n)}</p>`).join("") : ""}
-        <div class="acts"><button type="button" class="mini red" data-a="repoff" data-g="${esc(it.g)}" data-k="${esc(it.k)}">🗑️ شيلها من اللعبة</button><button type="button" class="mini" data-a="repok" data-g="${esc(it.g)}" data-k="${esc(it.k)}">✅ سليمة</button></div></div>`).join("")
+        <div class="acts">${it.g === "site" ? "" : `<button type="button" class="mini red" data-a="repoff" data-g="${esc(it.g)}" data-k="${esc(it.k)}">🗑️ شيلها من اللعبة</button>`}<button type="button" class="mini" data-a="repok" data-g="${esc(it.g)}" data-k="${esc(it.k)}">${it.g === "site" ? "✅ قريتها" : "✅ سليمة"}</button></div></div>`).join("")
       : `<p class="small">ما فيه بلاغات 👌</p>`) +
       (offs.length ? `<p class="small" style="margin:12px 0 4px"><b>المشالة من الألعاب (${offs.length})</b></p>${offs.map(o => `<p class="small" style="margin:2px 0">${esc(RG[o.g] || o.g)}: ${esc(o.q)} <button type="button" class="mini" data-a="repback" data-g="${esc(o.g)}" data-k="${esc(o.k)}">رجّعها</button></p>`).join("")}` : "");
   }
+  function errList() {
+    const g = {};
+    Object.values(data.errs || {}).forEach(dd => Object.values(dd || {}).forEach(e => {
+      if (!e || !e.m) return; const k = e.m + "|" + (e.pg || "").split(" ")[0];
+      const x = g[k] = g[k] || { m: e.m, pg: (e.pg || "").split(" ")[0], ln: e.ln || "", n: 0, last: 0, ph: new Set() };
+      x.n++; x.last = Math.max(x.last, e.at || 0); if (e.d) x.ph.add(e.d);
+    }));
+    const l = Object.values(g).sort((a, b) => b.last - a.last);
+    return l.length ? l.slice(0, 30).map(x => `<div class="rep"><p class="small" style="margin:0"><b>${esc(GAMES[x.pg] || RGN[x.pg] || x.pg)}</b> · ${unit(x.n, "مرة", "مرتين", "مرات", "مرة")}${x.ph.size > 1 ? " · " + unit(x.ph.size, "جوال", "جوالين", "جوالات", "جوال") : ""} · ${at(x.last)}</p><p class="rq" dir="ltr" style="text-align:left;font-size:13px">${esc(x.m)}<br><small>${esc(x.ln)}</small></p></div>`).join("")
+      : `<p class="small">ما فيه أخطاء 👌</p>`;
+  }
+  const RGN = { home: "الصفحة الرئيسية", mind: "Mind Games", tv: "شاشة العرض" };
   function learnedList() {
     const cs = Object.entries(data.jhw || {}).filter(([c, ws]) => JHC[c] && ws && Object.keys(ws).length);
     if (!cs.length) return `<p class="small">ما تعلّمت كلمات للحين.</p>`;
@@ -370,9 +383,14 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
         <p class="msg err" id="hmsg" role="status"></p>
       </section>
 
-      <section class="card"><h2>🚩 بلاغات</h2>
-        <p class="small" style="margin:0 0 6px">اللي ضغطوا 🚩 في الألعاب وكتبوا مشكلة. شيل السؤال من اللعبة، أو قل إنه سليم.</p>
+      <section class="card"><h2>🔔 ملاحظات وبلاغات</h2>
+        <p class="small" style="margin:0 0 6px">اللي ضغطوا 🔔 في أي صفحة وكتبوا ملاحظة أو مشكلة (ومعها اسم الصفحة).</p>
         <div id="reps">${repList()}</div>
+      </section>
+
+      <section class="card"><h2>⚠️ أخطاء الموقع</h2>
+        <p class="small" style="margin:0 0 6px">أخطاء تقنية صارت في جوالات الناس آخر 7 أيام، تنكتب لحالها. ما تحتاج تسوي شي، أنا أشوفها وأصلّحها.</p>
+        <div id="errs">${errList()}</div>
       </section>
 
       <section class="card"><h2>🔤 كلمات تعلمتها «جماد حيوان إنسان»</h2>

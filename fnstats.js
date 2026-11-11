@@ -33,6 +33,9 @@
   const root = new URL(".", me.src).pathname;
   const segs = location.pathname.startsWith(root) ? location.pathname.slice(root.length).split("/").filter(s => s && !/\.html$/.test(s)) : [];
   const game = segs[0] === "mind" && segs[1] ? segs[1] : segs[0] || "home";
+  // 🔔 «ملاحظة أو بلاغ» and the error log on every page (fnbell.js, same version as this file)
+  self.FN_PAGE = game;
+  if (!document.querySelector('script[src*="fnbell.js"]')) { const b = document.createElement("script"); b.src = root + "fnbell.js" + (new URL(me.src).search || ""); b.async = true; document.head.appendChild(b); }
   if (!/^[a-z]{2,12}$/.test(game)) return;
   const MIND = ["lamha", "dots", "squares", "words", "search"];
 

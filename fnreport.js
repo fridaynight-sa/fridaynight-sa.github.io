@@ -12,7 +12,8 @@
   function key(t) { let h = 5381; for (const ch of clean(t)) h = ((h * 33) ^ ch.codePointAt(0)) >>> 0; return "k" + h.toString(36); }
   function off(game) { try { const c = JSON.parse(localStorage.getItem("fn-cfg") || "null") || {}; return (c.off && c.off[game]) || {}; } catch (e) { return {}; } }
   const hidden = (game, t) => !!off(game)[key(t)];
-  const button = (game, q, a) => DB ? `<button type="button" class="fnr-btn" data-fnr="${esc(game)}" data-q="${esc(clean(q))}" data-a="${esc(clean(a || ""))}" aria-label="فيه مشكلة؟ اكتبها" title="فيه مشكلة؟">🚩</button>` : "";
+  const button = (game, q, a) => false && DB ?   // the 🚩 on each question is gone (the owner's choice, Nov 2026): the 🔔 on every page replaces it
+    `<button type="button" class="fnr-btn" data-fnr="${esc(game)}" data-q="${esc(clean(q))}" data-a="${esc(clean(a || ""))}" aria-label="فيه مشكلة؟ اكتبها" title="فيه مشكلة؟">🚩</button>` : "";
   const sent = new Set();
   function sheet(b) {
     const g = b.dataset.fnr, q = b.dataset.q, a = b.dataset.a, k = key(q);

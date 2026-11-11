@@ -178,3 +178,9 @@
 4. Project settings ← Your apps ← أيقونة الويب `</>` ← انسخ `databaseURL` و `projectId` إلى `firebase-config.js`.
 
 إذا `firebase-config.js` على `null`، تشتغل سين جيم وبرا السالفة على جهاز واحد بس.
+
+## 🔔 ملاحظة أو بلاغ، وسجل الأخطاء (`fnbell.js`)
+- `fnstats.js` (in every page) loads `fnbell.js`: a bell in the corner of every page (not the owner's page, not the TV).
+  A note goes to `rep/site/<page key>` and shows in the owner's page under «🔔 ملاحظات وبلاغات». The 🚩 on each question is gone.
+- Script errors on any phone are written to `err/<Saudi day>/<id>` (at most 5 per page load) and show under «⚠️ أخطاء الموقع».
+  `err/` can be read by anyone (no names in it), so the daily check can read it; only the owner can delete it.

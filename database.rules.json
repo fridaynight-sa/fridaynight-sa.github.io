@@ -346,6 +346,23 @@
         ".write": "auth != null && auth.uid === $uid",
         ".validate": "newData.isString() && newData.val().matches(/^[A-HJ-NP-Z2-9]{8}$/)"
       }
+    },
+    "err": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'z3oEQYnA4UgwcWDvPwt1upKRSy52'",
+      "$day": {
+        "$id": {
+          ".write": "!data.exists()",
+          ".validate": "$day.matches(/^20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/) && newData.child('m').isString() && newData.child('m').val().length <= 300 && newData.child('at').isNumber()",
+          "m": { ".validate": true },
+          "at": { ".validate": true },
+          "pg": { ".validate": "newData.isString() && newData.val().length <= 80" },
+          "ln": { ".validate": "newData.isString() && newData.val().length <= 120" },
+          "ua": { ".validate": "newData.isString() && newData.val().length <= 160" },
+          "d": { ".validate": "newData.isString() && newData.val().length <= 16" },
+          "$other": { ".validate": false }
+        }
+      }
     }
   }
 }
