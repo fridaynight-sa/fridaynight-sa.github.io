@@ -1,0 +1,23 @@
+const H=require('./h.js');const OUT=__dirname+'/../jhs/';
+let fails=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined?' → '+JSON.stringify(x).slice(0,300):''));if(!c)fails++};
+const until=async(p,f,ms=20000)=>{const t=Date.now();while(Date.now()-t<ms){if(await p.evaluate(f).catch(()=>false))return true;await H.wait(150)}return false};
+(async()=>{const b=await H.launch(),errs=[];
+ const p1=await H.player(b,errs,'faisal'),p2=await H.player(b,errs,'saad'),tv=await H.player(b,errs,'tv');await tv.setViewportSize({width:1280,height:720});
+ await p1.goto(H.BASE+'jhi/');await p1.click('[data-act=ocreate]');await p1.fill('#fName','فيصل');await p1.click('[data-act=docreate]');await p1.waitForSelector('.code');
+ const code=await p1.textContent('.code');
+ await p2.goto(H.BASE+'jhi/#'+code);await p2.fill('#fName','سعد');await p2.click('[data-act=dojoin]');await H.wait(600);
+ await tv.goto(H.BASE+'tv/#'+code);await H.wait(1500);
+ ok('TV knows the game',(await tv.textContent('body')).includes('جماد حيوان إنسان'));
+ await tv.screenshot({path:OUT+'tv-lobby.png'});
+ await p1.click('[data-act=hstart]');
+ ok('TV wheel turns',await until(tv,()=>document.querySelector('#tvwheel.spinning'),5000));
+ ok('TV wheel lands',await until(tv,()=>{const q=document.getElementById('tvplq');return q&&!q.hidden},12000));
+ await tv.screenshot({path:OUT+'tv-wheel.png'});
+ ok('TV shows the writing',await until(tv,()=>!!document.querySelector('.jhlt'),8000));
+ await tv.screenshot({path:OUT+'tv-write.png'});
+ // the homepage: the card, and the room code box finds this game
+ const h=await H.player(b,errs,'home');await h.goto(H.BASE);await H.wait(800);
+ ok('homepage card',await h.isVisible('a.game[href="jhi/"]'));
+ await h.evaluate(()=>document.querySelector('a.game[href="jhi/"]').scrollIntoView({block:'center'}));await H.wait(400);await h.screenshot({path:OUT+'home-card.png'});
+ await h.fill('#code',code);await h.click('#jgo');await H.wait(1500);ok('code box opens the game',h.url().includes('jhi/#'+code),h.url());
+ console.log('errors',errs);console.log(fails?fails+' FAILED':'ALL PASS');await b.close()})();

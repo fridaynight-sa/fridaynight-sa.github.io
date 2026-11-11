@@ -1,0 +1,12 @@
+const H=require('./h.js');
+(async()=>{const b=await H.launch(),errs=[];const names=['فيصل','سعد'];const pgs=[];
+for(const n of names)pgs.push(await H.player(b,errs,n));const [h,p]=pgs;const tv=await H.player(b,errs,'tv');await tv.setViewportSize({width:1280,height:800});
+await h.goto(H.BASE+'draw/');await h.click('[data-act=ocreate]');await h.fill('#fName',names[0]);await h.click('[data-act=docreate]');await H.wait(800);
+const code=(await h.evaluate(()=>location.hash)).slice(1);
+await p.goto(H.BASE+'draw/#'+code);await p.waitForSelector('#fName');await p.fill('#fName',names[1]);await p.click('[data-act=dojoin]');
+await tv.goto(H.BASE+'tv/#'+code);await H.wait(1000);await h.click('[data-act=hstart]');await H.wait(1500);
+const d=(await h.locator('[data-word]').count())?h:p;const g=d===h?p:h;await d.locator('[data-word]').first().click();await H.wait(1200);
+const box=await d.locator('#cv').boundingBox();await d.mouse.move(box.x+60,box.y+60);await d.mouse.down();await d.mouse.move(box.x+260,box.y+180,{steps:15});await d.mouse.move(box.x+80,box.y+200,{steps:15});await d.mouse.up();
+await g.fill('#fGuess','قطوة');await g.press('#fGuess','Enter');await H.wait(1500);
+await tv.screenshot({path:process.env.S+'/tv-draw.png'});
+console.log('errors',errs);await b.close()})();

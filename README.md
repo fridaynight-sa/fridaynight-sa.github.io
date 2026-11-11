@@ -184,3 +184,9 @@
   A note goes to `rep/site/<page key>` and shows in the owner's page under «🔔 ملاحظات وبلاغات». The 🚩 on each question is gone.
 - Script errors on any phone are written to `err/<Saudi day>/<id>` (at most 5 per page load) and show under «⚠️ أخطاء الموقع».
   `err/` can be read by anyone (no names in it), so the daily check can read it; only the owner can delete it.
+
+## Tests before publishing (`tests/`, `.github/workflows/test-and-publish.yml`)
+- Changes are pushed to the working branch (`claude/…`). GitHub then runs `node tests/run.js`: about 27 browser tests that play
+  the games on a copy of the site with a fake Firebase (`tests/server.js`, which also checks writes against `database.rules.json`).
+- Every test green → the commit is pushed to `main` and the site is published. One red → nothing is published.
+- Run them on a computer: `cd tests && npm i playwright && npx playwright install chromium && node run.js` (or `node run.js df jtest` for a few).
