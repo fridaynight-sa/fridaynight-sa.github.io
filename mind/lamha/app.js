@@ -79,7 +79,7 @@
       <p class="small" style="margin:8px 0 0">🔁 جلسات التقوية تحافظ على النتيجة: الأولى بعد سنة (${f(y1)})، والثانية بعد 3 سنين (${f(y3)}).</p></div>`;
   }
   function introView() {
-    app.innerHTML = `<header class="hero"><img src="../../icons/lamha.png" alt=""><h1>لمحة</h1><p>تمرين سرعة الالتقاط</p></header>
+    app.innerHTML = `<a class="mback" href="../">→ ألعاب Mind Games</a><header class="hero"><img src="../../icons/lamha.png" alt=""><h1>لمحة</h1><p>تمرين سرعة الالتقاط</p></header>
       ${G.best ? `<div class="card record"><div><small>🏅 رقمك اللي تكسره</small><span class="muted small">أقصر وقت التقطت فيه الاثنين</span></div><div style="text-align:center"><b>${N(G.best)}</b><small>ملّي ثانية</small></div></div>`
         : `<div class="card record"><div><small>🏅 أول جلسة لك</small><span class="muted small">بعدها يطلع لك رقم، وكل مرة تحاول تكسره</span></div><b>🎯</b></div>`}
       <button type="button" class="btn" data-act="start">ابدأ الجلسة (3 دقايق)</button>

@@ -102,7 +102,7 @@
   }
   function introView() {
     const lvl = Math.min(G.level, N);
-    app.innerHTML = `<header class="hero"><img src="../../icons/words.png" alt=""><h1>لوحة الكلمات</h1><p>تمرين المفردات</p></header>
+    app.innerHTML = `<a class="mback" href="../">→ ألعاب Mind Games</a><header class="hero"><img src="../../icons/words.png" alt=""><h1>لوحة الكلمات</h1><p>تمرين المفردات</p></header>
       <div class="card record"><div data-act="lvtap"><small>${allDone() ? "خلّصت" : G.level > 1 ? "وصلت" : "تبدأ من"}</small><b>${allDone() ? "🏆 كل المستويات" : "المستوى " + lvl}</b><small class="of">من ${N}</small></div><div><small>نجومك</small><b>⭐ ${G.stars}</b><small class="of">💡 = ${HINT} ⭐</small></div></div>
       ${allDone() ? `<p class="note">🏆 خلّصت الـ${N} مستوى كلها! تقدر تعيدها من الأول، ونجومك وأرقامك تبقى معك.</p><button type="button" class="btn" data-act="again">العب من المستوى 1 من جديد</button>`
         : `<button type="button" class="btn" data-act="start">${G.level > 1 || G.cur ? "كمّل من المستوى " + lvl : "ابدأ المستوى 1"} ←</button>`}

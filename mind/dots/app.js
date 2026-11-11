@@ -79,7 +79,7 @@
   }
   function introView() {
     const n = sizeOf(lvlNow());
-    app.innerHTML = `<header class="hero"><img src="../../icons/dots.png" alt=""><h1>توصيل النقاط</h1><p>تمرين التخطيط</p></header>
+    app.innerHTML = `<a class="mback" href="../">→ ألعاب Mind Games</a><header class="hero"><img src="../../icons/dots.png" alt=""><h1>توصيل النقاط</h1><p>تمرين التخطيط</p></header>
       <div class="card record"><div><small>🏅 أفضل نتيجة</small><b>${G.best ? N(G.best) : "–"}</b></div><div><small>📶 المستوى</small><b>${G.level > TOTAL ? TOTAL : G.level}<span class="of">/${TOTAL}</span></b></div></div>
       <button type="button" class="btn" data-act="start">${G.level > TOTAL ? "العب (خلّصت كل المستويات 🎓)" : `ابدأ الجلسة: لغزين (شبكة ${n}×${n})`}</button>
       <p class="tip">⏱️ عندك 10 دقايق للغزين. وكل ما حليت أسرع، أخذت نقاط أكثر.</p>

@@ -74,7 +74,7 @@
   }
   function introView() {
     const m = G.mode, best = G.best[m];
-    app.innerHTML = `<header class="hero"><img src="../../icons/squares.png" alt=""><h1>تذكّر المربعات</h1><p>تمرين ذاكرة الأماكن والترتيب</p></header>
+    app.innerHTML = `<a class="mback" href="../">→ ألعاب Mind Games</a><header class="hero"><img src="../../icons/squares.png" alt=""><h1>تذكّر المربعات</h1><p>تمرين ذاكرة الأماكن والترتيب</p></header>
       <div class="card record"><div><small>🏅 رقمك اللي تكسره (${MODES[m]})</small><span class="muted small">أطول ترتيب جبته صح</span></div><b>${best ? best + " مربعات" : "🎯"}</b></div>
       <div class="seg" role="radiogroup" aria-label="طريقة اللعب">
         <button type="button" data-mode="one" class="${m === "one" ? "on" : ""}" aria-pressed="${m === "one"}">بنفس الترتيب<small>من الأول للأخير</small></button>
