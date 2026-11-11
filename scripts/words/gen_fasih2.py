@@ -22,10 +22,10 @@ def need(lv):   # how many classical words a level has (Nov 2026: more of them)
     if lv <= 330: return 3 if lv % 2 == 0 else 2
     return 3
 
-JUSE = collections.Counter()
+JUSE = collections.Counter(); JLAST = {}; CUR = [0]   # a classical word: twice at most, 120 levels apart
 def build(base, n, want, used, rnd, k, tries=60, cap=True):
     f = formable(base)
-    js = [w for w in f if w in J and JUSE[w] < (1 if cap else 99)]   # a classical word: in 3 levels at most (6 letters: 4, 7 letters: 5)
+    js = [w for w in f if w in J and JUSE[w] < (2 if cap else 99) and CUR[0] - JLAST.get(w, -999) >= 120]   # a classical word: in 3 levels at most (6 letters: 4, 7 letters: 5)
     if base in J: k = max(0, k - 1)
     k = min(k, len(js))
     def pri(w): return math.log(F[w] + 1) + KIND[w] - (1.0 if w in used else 0) - 3 * USES[w] + rnd.random() * .6
@@ -76,10 +76,10 @@ def main(seed=7):
         print(n, "tier:", count, "levels,", len(cands), "bases with classical words", file=sys.stderr)
         for i in range(count):
             lv = start + i
-            k = need(lv)
+            k = need(lv); CUR[0] = lv
             want = round(wmin + (wmax - wmin) * ((lv - a) / max(1, b - a)) ** .8)
             def value(c):   # easy first; a base that brings classical words nobody has seen yet wins
-                new = sum(1 for x in c[3] if JUSE[x] == 0)
+                new = sum(1 for x in c[3] if JUSE[x] < 2 and lv - JLAST.get(x, -999) >= 120)
                 unused = sum(1 for x in formable(c[2]) if USES[x] == 0 and x not in J)
                 return c[0] * .5 + min(new, k) * 6 + min(unused, want) * .8
             pool = sorted((c for c in cands if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
@@ -100,7 +100,7 @@ def main(seed=7):
             L["n"] = lv; L["letters"] = shuffled(base, rnd)
             for w, *_ in L["words"]:
                 recent.append(w); USES[w] += 1
-                if w in J: JUSE[w] += 1
+                if w in J: JUSE[w] += 1; JLAST[w] = lv
             levels.append(L)
     return levels
 
