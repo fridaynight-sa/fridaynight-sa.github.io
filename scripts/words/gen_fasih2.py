@@ -25,7 +25,7 @@ def need(lv):   # how many classical words a level has (Nov 2026: more of them, 
 JUSE = collections.Counter(); JLAST = {}; CUR = [0]   # a classical word: twice at most, 60 levels apart
 def build(base, n, want, used, rnd, k, tries=60, cap=True):
     f = formable(base)
-    js = [w for w in f if w in J and ((JUSE[w] < 2 and CUR[0] - JLAST.get(w, -999) >= 60) if cap else (JUSE[w] < 3 and CUR[0] - JLAST.get(w, -999) >= 30))]   # a classical word: in 3 levels at most (6 letters: 4, 7 letters: 5)
+    js = [w for w in f if w in J and ((JUSE[w] < 2 and CUR[0] - JLAST.get(w, -999) >= 60) if cap is True else (JUSE[w] < 3 and CUR[0] - JLAST.get(w, -999) >= 30) if cap is False else JUSE[w] < 4)]   # a classical word: in 3 levels at most (6 letters: 4, 7 letters: 5)
     if base in J: k = max(0, k - 1)
     k = min(k, len(js))
     def pri(w): return math.log(F[w] + 1) + KIND[w] - (1.0 if w in used else 0) - 3 * USES[w] + rnd.random() * .6
@@ -93,6 +93,10 @@ def main(seed=7):
             if best[0] == 0:   # still none: any base, even with a classical word seen a few times already
                 for c in pool[:80]:
                     L = build(c[2], n, want, set(list(recent)[-60:]), rnd, max(1, k - 1), cap=False)
+                    if L["classical"]: best = (1, c, L); break
+            if best[0] == 0:   # the very last boards: any classical word, even one seen three times
+                for c in pool[:80]:
+                    L = build(c[2], n, want, set(list(recent)[-60:]), rnd, 1, cap=None)
                     if L["classical"]: best = (1, c, L); break
             _, c, L = best
             used_sets.add("".join(sorted(c[2]))); cands.remove(c)
