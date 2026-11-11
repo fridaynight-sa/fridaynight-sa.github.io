@@ -34,7 +34,8 @@ def build(base, n, want, used, rnd, k, tries=60, cap=True):
         # short classical words first (easier to guess), ones not seen much before
         jj = sorted(js, key=lambda w: JUSE[w] * 10 + len(w) * .5 + rnd.random() * 2)[: k + 2]
         pick = jj[:k]
-        others = [w for w in sorted(f, key=pri, reverse=True) if w not in J][: want + 6]   # classical words only when picked
+        fresh = [w for w in sorted(f, key=pri, reverse=True) if w not in J and USES[w] == 0]   # a word already on another board is not used again
+        others = (fresh if len(fresh) >= want - 2 else fresh + [w for w in sorted(f, key=pri, reverse=True) if w not in J and USES[w] > 0])[: want + 6]
         rnd.shuffle(others); others.sort(key=lambda w: -len(w) - rnd.random() * 1.5)
         order = [base] + pick + others
         placed, grid, (h, wd), off = layout(order, want, CAP[n], rnd)
@@ -77,20 +78,21 @@ def main(seed=7):
             lv = start + i
             k = need(lv)
             def value(c):   # easy first; a base that brings classical words nobody has seen yet wins
-                new = sum(1 for x in c[3] if JUSE[x] == 0); ok = sum(1 for x in c[3] if JUSE[x] < 1)
-                return c[0] + min(new, k) * 1.6 + min(ok, k) * .6
+                new = sum(1 for x in c[3] if JUSE[x] == 0)
+                unused = sum(1 for x in formable(c[2]) if USES[x] == 0 and x not in J)
+                return c[0] * .5 + min(new, k) * 3 + min(unused, want) * .8
             pool = sorted((c for c in cands[:400] if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
             want = round(wmin + (wmax - wmin) * ((lv - a) / max(1, b - a)) ** .8)
             # the best few bases; keep the first whose board really gets its classical words
             best = None
-            for c in pool[:6]:
+            for c in pool[:10]:
                 L = build(c[2], n, want, set(list(recent)[-60:]), rnd, k)
                 got = min(len(L["classical"]), k)
                 if not best or got > best[0]: best = (got, c, L)
                 if got >= k: break
             if best[0] == 0:   # still none: any base, even with a classical word seen a few times already
                 for c in pool[:30]:
-                    L = build(c[2], n, want, set(list(recent)[-60:]), rnd, max(1, k - 1), cap=False)
+                    L = build(c[2], n, want, set(list(recent)[-60:]), rnd, max(1, k - 1))
                     if L["classical"]: best = (1, c, L); break
             _, c, L = best
             used_sets.add("".join(sorted(c[2]))); cands.remove(c)
