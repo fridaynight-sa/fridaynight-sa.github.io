@@ -37,3 +37,9 @@ No verbs at all, and no foreign or non-standard words, on a board (the owner's c
 («قال، نام، أصبح، اجتمع…»، «تلفزيون، بلاستيك، أكتوبر…»، «ضغوطات، تواجد»). Words that are also nouns stay («علم، عمل، تعاون»).
 `fix_words.py <data dir>` (with the list as `bad.txt`) rebuilt the 192 levels that had one, with classical words in their place; the
 107 «كلمة ومعناها» that left the board were rewritten (end of `mean/extra_mean.txt`). They were also taken out of `grid_words.json`.
+
+More classical words and fewer repeats (the owner's request, Nov 2026): `gen_fasih2.py <data dir> levels.json out.json` rebuilds
+101–400 like `gen_fasih.py`, but: every verb in the list is kept off the boards (`board_block.txt`, about 1,150 words), a word
+already on a board is not put on another when the letters allow, and a classical word comes back at most once, 60 levels later
+(a few of the last 7-letter boards take one a third time). `clues.json` now has the meaning of 479 classical words, and each
+level's «كلمة ومعناها» is one of its classical words.
