@@ -17,9 +17,9 @@ USES = gen.USES
 for l in keep:
     for w, *_ in l["words"]: USES[w] += 1
 
-def need(lv):   # how many classical words a level has (Nov 2026: more of them)
-    if lv <= 170: return 2
-    if lv <= 330: return 3 if lv % 2 == 0 else 2
+def need(lv):   # how many classical words a level has (Nov 2026: more of them, kept for the last levels too)
+    if lv <= 200: return 1
+    if lv <= 330: return 2
     return 3
 
 JUSE = collections.Counter(); JLAST = {}; CUR = [0]   # a classical word: twice at most, 120 levels apart
@@ -81,7 +81,7 @@ def main(seed=7):
             def value(c):   # easy first; a base that brings classical words nobody has seen yet wins
                 new = sum(1 for x in c[3] if JUSE[x] < 2 and lv - JLAST.get(x, -999) >= 120)
                 unused = sum(1 for x in formable(c[2]) if USES[x] == 0 and x not in J)
-                return c[0] * .5 + min(new, k) * 6 + min(unused, want) * .8
+                return c[0] * .5 + min(new, k) * 4 + min(unused, want) * 1.2
             pool = sorted((c for c in cands if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
             # the best few bases; keep the first whose board really gets its classical words
             best = None
