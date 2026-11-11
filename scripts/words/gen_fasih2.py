@@ -77,12 +77,12 @@ def main(seed=7):
         for i in range(count):
             lv = start + i
             k = need(lv)
+            want = round(wmin + (wmax - wmin) * ((lv - a) / max(1, b - a)) ** .8)
             def value(c):   # easy first; a base that brings classical words nobody has seen yet wins
                 new = sum(1 for x in c[3] if JUSE[x] == 0)
                 unused = sum(1 for x in formable(c[2]) if USES[x] == 0 and x not in J)
                 return c[0] * .5 + min(new, k) * 3 + min(unused, want) * .8
             pool = sorted((c for c in cands[:400] if "".join(sorted(c[2])) not in used_sets), key=value, reverse=True)
-            want = round(wmin + (wmax - wmin) * ((lv - a) / max(1, b - a)) ** .8)
             # the best few bases; keep the first whose board really gets its classical words
             best = None
             for c in pool[:10]:
