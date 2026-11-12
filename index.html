@@ -250,12 +250,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202611111735"></script>
-<script src="fninstall.js?v=202611111735"></script>
+<script src="fnfx.js?v=202611121547"></script>
+<script src="fninstall.js?v=202611121547"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202611111735"></script>
-<script src="fnstats.js?v=202611111735"></script>
+<script src="firebase-config.js?v=202611121547"></script>
+<script src="fnstats.js?v=202611121547"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -415,6 +415,16 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     say("");
     if (!auth) { say("لحظة، جرّب بعد ثواني."); return; }
     if (b.dataset.g === "in") {
+      // inside an app (the site's icon on an iPhone home screen, or Instagram/Facebook/TikTok…) Google's window stays blank:
+      // it can't hand the sign-in back. Say so, and copy the link for Safari.
+      const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      const inApp = (ios && (navigator.standalone === true || matchMedia("(display-mode: standalone)").matches)) || /FBAN|FBAV|Instagram|Line\/|Snapchat|TikTok|musical_ly|Twitter/i.test(navigator.userAgent);
+      if (inApp) {
+        const link = location.origin + location.pathname;
+        try { await navigator.clipboard.writeText(link); say("تسجيل الدخول ما يشتغل من داخل التطبيق. نسخت لك رابط الموقع: افتح Safari والصقه، وسجّل من هناك."); }
+        catch (err) { say("تسجيل الدخول ما يشتغل من داخل التطبيق. افتح Safari واكتب: " + link.replace(/^https?:\/\//, "")); }
+        return;
+      }
       try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
       catch (err) { if (!/popup-closed|cancelled-popup/.test((err && err.code) || "")) say("ما ضبط الدخول. افتح الموقع في Safari أو Chrome نفسه وجرّب مرة ثانية."); }
     } else if (b.dataset.g === "me") { if (user) sheet(); else say("لحظة، جرّب بعد ثواني."); }
