@@ -9,7 +9,7 @@ await h.click('[data-act=hstart]');await H.wait(1200);
 const tv=await H.player(b,errs,'tv');await tv.setViewportSize({width:1280,height:720});await tv.goto(H.BASE+'tv/#'+C);await H.wait(1500);
 const ids=[];let hidMax=0;
 for(let r=0;r<25;r++){const d=await H.dump();const s=JSON.parse(d.df[C].state.j);ids.push(s.q.text);hidMax=Math.max(hidMax,d.df[C].hidden.j.length);
- if(r===0){console.log('host head:',await h.locator('.note.center').first().innerText(),'| player has finish btn?',await p.isVisible('[data-act=hfinish]'),'| host?',await h.isVisible('[data-act=hfinish]'),'| tv:',await tv.locator('.tvsub').first().innerText());await h.screenshot({path:'dfinf-q.png'})}
+ if(r===0){console.log('host head:',await h.locator('.note.center').first().innerText(),'| player has finish btn?',await p.isVisible('[data-act=hfinish]'),'| host?',await h.isVisible('[data-act=hfinish]'),'| tv:',await tv.locator('.dfs-top').first().innerText());await h.screenshot({path:'dfinf-q.png'})}
  await h.click('.opts4 button[data-opt="0"]');await p.click('.opts4 button[data-opt="1"]');await H.wait(1300);
  if(r===24){await h.click('[data-act=hfinish]');break}
  await h.click('[data-act=hnext]');await H.wait(500);}

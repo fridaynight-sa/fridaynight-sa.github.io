@@ -25,12 +25,12 @@
   let STROKES = {}, board = null, frame = "";
   // سهرة كاملة: the TV follows the night from game to game
   let NIGHT = null, NS = null, nsub = null;
-  const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw", dafour: "df" };
-  const NNAME = { seenjeem: "سين جيم", outside: "برا السالفة", sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور" };
+  const NGAME = { outside: "bs", sedq: "sq", mf: "mf", draw: "draw", dafour: "df", jhi: "jh" };
+  const NNAME = { seenjeem: "سين جيم", outside: "برا السالفة", sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن", dafour: "الدافور", jhi: "جماد حيوان إنسان" };
 
   function qrImg(text) { try { const d = document.createElement("div"); new QRCode(d, { text, width: 260, height: 260, colorDark: "#2b1745", colorLight: "#ffffff" }); const c = d.querySelector("canvas"); return c ? `<img class="qr" src="${c.toDataURL()}" alt="">` : ""; } catch (e) { return ""; } }
   function sideHTML() {
-    const join = NIGHT ? base + "night/#" + NIGHT : base + GAMES[game].dir + "#" + code;
+    const join = base + GAMES[game].dir + "#" + code;   // in a سهرة the room has the night's code
     return `<aside class="card side center"><span class="lbl">${NIGHT ? "🌙 رمز السهرة" : "ادخلوا من جوالاتكم"}</span><div class="code">${esc(NIGHT || code)}</div>${qrImg(join)}<p class="note" dir="ltr">${esc(join.replace(/^https?:\/\//, "").replace(/#.*/, ""))}</p></aside>`;
   }
   const nameOf = id => (P[id] && P[id].name) || (S && S.names && S.names[id]) || "؟";
@@ -175,6 +175,16 @@
     if (game === "jh" && S.phase !== "spin") jhSpun = "";
     const bg = game === "bs" && S.catInfo && S.catInfo.image && S.phase !== "lobby" ? "../outside/" + S.catInfo.image : null;
     document.body.classList.toggle("catbg", !!bg); document.body.style.setProperty("--catbg", bg ? `url("${bg}")` : "none");
+    // الدافور: the quiz-show stage (show-df.js) is built once and only its live parts change, so nothing restarts
+    if (game === "df" && self.DFShow) {
+      clearInterval(tick);
+      let st = document.getElementById("dfshow");
+      if (!st) { app.innerHTML = `<div class="tvgrid"><div id="dfshow"></div>${sideHTML()}</div>`; st = document.getElementById("dfshow"); }
+      DFShow.update(st, { S, P, nameOf, stepStart });
+      frame = key; board = null;
+      return;
+    }
+    if (self.DFShow) DFShow.stop();
     const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
@@ -196,7 +206,7 @@
     if (game === "draw" && S.phase === "reveal") FA.once(k + "rv" + S.tid, () => { FA.play("reveal"); FA.slam("الكلمة كانت: " + (S.word || ""), null, "#ff7a1a"); });
     if (S.phase === "end" && game !== "bs") FA.once(k + "end" + (S.game || ""), top);
   }
-  function stopGame() { subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
+  function stopGame() { if (self.DFShow) DFShow.stop(); subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
   function watchNight(c) {
     NIGHT = c; NS = null;
     const r = db.ref("night/" + c + "/state"), h = sn => { NS = dec(sn.val()); nightStep(); };
@@ -234,8 +244,17 @@
         : `<p class="tvsub">ننتظر صاحب السهرة يختار ${pl.length ? "اللعبة الجاية" : "أول لعبة"}…</p>`;
       main = `<div class="card"><p class="tvtitle">🌙 سهرة كاملة</p>${now}${pl.length ? "" : `<ul class="plist bigplist">${rows.map(r => `<li>${esc(r[0])}</li>`).join("")}</ul>`}</div>${pl.length ? `<div class="card"><p class="tvsub">🏆 ترتيب السهرة بعد ${games(pl.length)}</p>${table}</div>` : ""}`;
     }
-    app.innerHTML = `<div class="tvgrid"><div>${main}</div><aside class="card side center"><span class="lbl">🌙 رمز السهرة</span><div class="code">${esc(NIGHT)}</div>${qrImg(base + "night/#" + NIGHT)}<p class="note">ادخلوا السهرة مرة وحدة، والشاشة تمشي معكم</p></aside></div>`;
-    const sj = document.getElementById("tvSJ"); if (sj) sj.onclick = () => openSJ(NS.cur.room);
+    app.innerHTML = `<div class="tvgrid"><div>${main}</div><aside class="card side center"><span class="lbl">🌙 رمز السهرة</span><div class="code">${esc(NIGHT)}</div>${qrImg(base)}<p class="note">ادخلوا السهرة مرة وحدة، والشاشة تمشي معكم</p></aside></div>`;
+    const sj = document.getElementById("tvSJ"); if (sj) sj.onclick = () => openSJ(NS.cur.room, NIGHT);
+    const cur = NS.phase !== "end" && NS.cur;
+    if (!(cur && cur.g === "seenjeem" && cur.room)) { clearTimeout(sjT); sjK = ""; }
+    if (cur && cur.g === "seenjeem" && cur.room) {
+      const k = NIGHT + ":" + cur.n, check = () => db.ref("rooms/" + cur.room).get().then(s => {
+        const o = dec(s.val()); if (!NS || !NS.cur || NS.cur.n !== cur.n || NS.cur.g !== "seenjeem") return;
+        if (o && (o.nt || 0) === cur.n) openSJ(cur.room, NIGHT); else sjT = setTimeout(check, 1500);
+      }).catch(() => { sjT = setTimeout(check, 3000); });
+      if (sjK !== k) { sjK = k; clearTimeout(sjT); check(); }
+    }
   }
   function watch(g, c) {
     game = g; code = c; S = null; P = {};
@@ -246,11 +265,18 @@
     on(r.child("players"), v => { P = {}; Object.entries(v || {}).forEach(([k, x]) => { const d = dec(x); if (d) P[k] = d; }); render(); });
     STROKES = {}; frame = "";
     if (g === "draw") on(r.child("strokes"), v => { STROKES = v || {}; if (board) board.set(DrawBoard.parse(STROKES, dec)); });
-    if (!NIGHT) history.replaceState(null, "", "#" + c);
+    if (!NIGHT) {
+      history.replaceState(null, "", "#" + c);
+      // someone pressed «🔄 بدّل اللعبة» in this room: it became a سهرة, so follow the night from now on
+      on(db.ref("night/" + c + "/state"), v => { const n = dec(v); if (n && n.phase !== "end" && n.cur && !NIGHT && game === g && code === c) { stopGame(); watchNight(c); } });
+    }
   }
   // سين جيم: open its own display screen
-  function openSJ(c) {
+  let sjT = null, sjK = "";
+  function openSJ(c, night) {
     try { localStorage.setItem("seenjeem-remote-v1", JSON.stringify({ code: c, name: "", role: "display", team: null })); } catch (e) {}
+    // from a سهرة: سين جيم's screen comes back to the TV when the night moves to another game (fnnight.js)
+    try { if (night) localStorage.setItem("fn-tv-night", JSON.stringify(night)); else localStorage.removeItem("fn-tv-night"); } catch (e) {}
     location.href = base + "seenjeem/#" + c;
   }
   async function connect(c, msgEl) {
@@ -272,7 +298,22 @@
       watch(best, c);
     } catch (e) { msgEl.textContent = "ما قدرت أتصل. تأكد من النت."; }
   }
+  // the whole screen always fits: when a game's page is taller than the TV, it is shrunk to fit (never scrolls)
+  // (a transform does not change offsetHeight, so the real height is always known and the scale never jumps around)
+  let fitK = 1;
+  function fit() {
+    const h = app.offsetHeight; if (!h) return;
+    const top = app.getBoundingClientRect().top + scrollY, below = (parseFloat(getComputedStyle(document.body).paddingBottom) || 0) + 6;
+    const k = Math.max(0.45, Math.min(1, Math.floor((innerHeight - top - below) / h * 100) / 100));
+    if (k === fitK) return;
+    fitK = k;
+    app.style.transformOrigin = "top center";
+    app.style.transform = k < 1 ? `scale(${k})` : "";
+    app.style.marginBottom = k < 1 ? `${-Math.ceil(h * (1 - k))}px` : "";
+  }
+  setInterval(fit, 400); addEventListener("resize", fit);
   function home(msg) {
+    clearTimeout(sjT); sjK = "";
     subs.forEach(f => f()); subs = []; game = null; clearInterval(tick); chip.hidden = true; newBtn.hidden = true;
     if (nsub) nsub(); nsub = null; NIGHT = null; NS = null;
     document.body.classList.remove("catbg");

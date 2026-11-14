@@ -18,8 +18,9 @@
     mf: { name: "مين فينا؟", icon: "mf", color: "#ffb21e", path: "mf", mk: "mf-me-v1" },
     draw: { name: "ارسم وخمّن", icon: "draw", color: "#ff7a1a", path: "draw", mk: "draw-me-v1" },
     dafour: { name: "الدافور", icon: "dafour", color: "#1c7ed6", path: "df", mk: "df-me-v1" },
+    jhi: { name: "جماد حيوان إنسان", icon: "jhi", color: "#e8590c", path: "jh", mk: "jh-me-v1" },
   };
-  const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour"];
+  const ORDER = ["seenjeem", "outside", "sedq", "mf", "draw", "dafour", "jhi"];
   const MEDAL = ["🥇", "🥈", "🥉"];
   const SJ_KEY = "seenjeem-series-v8", SJ_RKEY = "seenjeem-remote-v1";
   const BUSY_MS = 3 * 3600e3;                     // a room someone else used in the last 3 hours is not ours to reuse
@@ -76,12 +77,32 @@
   self.FNIGHT = { LSK, GAMES, ORDER, MEDAL, place, placeTeams, addResult, ranking, rankOf, medalsText, games };
 
   /* ================= on a game page ================= */
-  const gm = location.pathname.match(/\/(seenjeem|outside|sedq|mf|draw|dafour)\/(index\.html)?$/);
+  const gm = location.pathname.match(/\/(seenjeem|outside|sedq|mf|draw|dafour|jhi)\/(index\.html)?$/);
   if (!gm) return;
   const g = gm[1], G = GAMES[g];
   const qs = new URLSearchParams(location.search);
   const hash = () => (location.hash || "").replace("#", "").toUpperCase();
   const okCode = c => /^[A-Z]{4}$/.test(c || "");
+
+  // سين جيم's big screen opened by the TV during a سهرة: back to the TV when the night moves on (or ends)
+  if (g === "seenjeem") {
+    const R0 = LS.get(SJ_RKEY, null), TN = LS.get("fn-tv-night", null);
+    if (R0 && R0.role === "display" && okCode(R0.code) && TN === R0.code && hash() === R0.code) {
+      let first = null;
+      const back = setInterval(() => {
+        const d = db(); if (!d) return; clearInterval(back);
+        d.ref("night/" + R0.code + "/state").on("value", sn => {
+          const st = dec(sn.val()); if (!st) return;
+          const cur = st.cur || {};
+          if (first === null) first = cur.n || 0;
+          if (st.phase === "end" || cur.g !== "seenjeem" || (cur.n || 0) !== first) {
+            try { localStorage.removeItem("fn-tv-night"); } catch (e) {}
+            location.href = location.pathname.replace(/seenjeem\/(index\.html)?$/, "") + "tv/#" + R0.code;
+          }
+        });
+      }, 500);
+    }
+  }
 
   // arriving from a switch: tell the game which room and id to use (before the game's own script runs)
   const N = (qs.get("night") || "").toUpperCase(), me0 = LS.get(LSK, null);
