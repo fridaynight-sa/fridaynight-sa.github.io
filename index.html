@@ -250,12 +250,12 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
 
   <footer>Friday Night 🎉 ليالي الجمعة أحلى مع الشلة</footer>
 </div>
-<script src="fnfx.js?v=202611121622"></script>
-<script src="fninstall.js?v=202611121622"></script>
+<script src="fnfx.js?v=202611141053"></script>
+<script src="fninstall.js?v=202611141053"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="firebase-config.js?v=202611121622"></script>
-<script src="fnstats.js?v=202611121622"></script>
+<script src="firebase-config.js?v=202611141053"></script>
+<script src="fnstats.js?v=202611141053"></script>
 <script>
 /* quick join: a code goes to the game that owns it.
    4 letters → the game of the night with that code, or whichever game has a room with it (newest wins).
@@ -309,6 +309,8 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
     ? `<button type="button" class="me" data-g="me">${face("av", name, ls.get("fn-avi"))}حسابي · ${esc(name)}</button><button type="button" class="out" data-g="out">اطلع</button>`
     : `<button type="button" data-g="in"><span class="g" aria-hidden="true">G</span>ادخل بحساب Google</button>`; };
   paint(ls.get("fn-gname"));                                       // last known, until the account answers
+  const GCLIENT = "754006086778-39pl5sbbnk704gen4ve1en179u906jao.apps.googleusercontent.com";   // the project's public Google sign-in id (not a secret)
+  const GREADY = false;   // true once the owner adds the site's address to the Google sign-in id's «Authorized redirect URIs» (until then Google answers redirect_uri_mismatch)
   let auth = null, user = null, prof = {};
   const call = async (path, method, body) => {
     const tok = await user.getIdToken(), r = await fetch(DB + "/" + path + ".json?auth=" + encodeURIComponent(tok), method ? { method, body: body === undefined ? undefined : JSON.stringify(body) } : undefined);
@@ -336,6 +338,13 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
   }
   function start() {
     try { auth = firebase.auth(); } catch (e) { return; }
+    // back from Google (the home-screen app on an iPhone signs in by going to Google and coming back, see below)
+    const back = /[#&]id_token=([^&]+)/.exec(location.hash || "");
+    if (back) {
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+      auth.signInWithCredential(firebase.auth.GoogleAuthProvider.credential(decodeURIComponent(back[1])))
+        .catch(() => say("ما ضبط الدخول. جرّب مرة ثانية."));
+    } else if (/[#&]error=/.test(location.hash || "")) { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
     auth.onAuthStateChanged(u => {
       user = u || null;
       if (u) { if (!ls.get("fn-gname")) ls.set("fn-gname", first(u)); paint(ls.get("fn-gname")); linked(u); }
@@ -418,8 +427,14 @@ footer{text-align:center;color:var(--muted);font-size:14px;font-weight:700;margi
       // inside an app (the site's icon on an iPhone home screen, or Instagram/Facebook/TikTok…) Google's window stays blank:
       // it can't hand the sign-in back. Say so, and copy the link for Safari.
       const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      const inApp = (ios && (navigator.standalone === true || matchMedia("(display-mode: standalone)").matches)) || /FBAN|FBAV|Instagram|Line\/|Snapchat|TikTok|musical_ly|Twitter/i.test(navigator.userAgent);
-      if (inApp) {
+      const home = ios && (navigator.standalone === true || matchMedia("(display-mode: standalone)").matches);
+      if (home && GREADY) {   // the site's icon on the home screen: Google's little window stays blank there, so go to Google and come back
+        const nonce = Array.from(crypto.getRandomValues(new Uint8Array(16)), x => x.toString(16).padStart(2, "0")).join("");
+        location.href = "https://accounts.google.com/o/oauth2/v2/auth?response_type=id_token&client_id=" + GCLIENT +
+          "&redirect_uri=" + encodeURIComponent(location.origin + new URL(".", location.href).pathname) + "&scope=" + encodeURIComponent("openid email profile") + "&nonce=" + nonce + "&prompt=select_account";
+        return;
+      }
+      if (home || /FBAN|FBAV|Instagram|Line\/|Snapchat|TikTok|musical_ly|Twitter/i.test(navigator.userAgent)) {   // inside another app Google refuses to sign in at all
         const link = location.origin + location.pathname;
         try { await navigator.clipboard.writeText(link); say("تسجيل الدخول ما يشتغل من داخل التطبيق. نسخت لك رابط الموقع: افتح Safari والصقه، وسجّل من هناك."); }
         catch (err) { say("تسجيل الدخول ما يشتغل من داخل التطبيق. افتح Safari واكتب: " + link.replace(/^https?:\/\//, "")); }
