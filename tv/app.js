@@ -135,8 +135,8 @@
     if (S.phase === "pick") info = `<p class="tvtitle">${tag(S.turn)} يختار حرف</p>${S.last && S.last.ok ? `<p class="tvsub">✅ آخر جواب: ${esc(S.last.a || "")}</p>` : S.last && S.last.skip ? `<p class="tvsub">⏭️ الجواب كان: ${esc(S.last.a || "")}</p>` : ""}`;
     else if ((S.phase === "q" || S.phase === "buzz") && S.q) {
       const locked = S.locked || [];
-      info = `<div class="hrq"><span class="hrl">${esc(letter(S.q.l))}</span><p class="tvq">${esc(S.q.text)}</p></div>` +
-        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b>${tag(teamOf(S.buzz))}</div>`
+      info = `<div class="hrpanel hrqp"><span class="hrl">${esc(letter(S.q.l))}</span><div><small>السؤال</small><p class="tvq">${esc(S.q.text)}</p></div></div>` +
+        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><div><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس!</em>${tag(teamOf(S.buzz))}</div></div>`
           : `<p class="tvsub">${locked.length >= 2 ? "الفريقين غلطوا 😅" : locked.length ? `❌ غلط… الفرصة لـ${tag(locked.includes(1) ? 2 : 1)}` : "🔔 أسرع واحد يضغط الجرس من جواله"}</p>`);
     } else if (S.phase === "won" || S.phase === "end") {
       const t = S.win ? S.win.t : 1;
@@ -144,7 +144,7 @@
       if (self.FA) FA.once("tvhr-" + code + "-" + S.game + "-" + S.round, () => { FA.play("party"); FA.confetti(); });
     }
     const board = self.HRB ? HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, big: true }) : "";
-    return `<div class="card hrstage">${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div></div>`;
+    return `<div class="card hrstage"><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div></div>`;
   }
   /* ---------- جماد حيوان إنسان ---------- */
   const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };
@@ -213,6 +213,7 @@
       return;
     }
     if (self.DFShow) DFShow.stop();
+    document.body.classList.toggle("hrshow", game === "hr");
     const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : game === "hr" ? renderHR() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
@@ -234,7 +235,7 @@
     if (game === "draw" && S.phase === "reveal") FA.once(k + "rv" + S.tid, () => { FA.play("reveal"); FA.slam("الكلمة كانت: " + (S.word || ""), null, "#ff7a1a"); });
     if (S.phase === "end" && game !== "bs") FA.once(k + "end" + (S.game || ""), top);
   }
-  function stopGame() { if (self.DFShow) DFShow.stop(); subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
+  function stopGame() { document.body.classList.remove("hrshow"); if (self.DFShow) DFShow.stop(); subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
   function watchNight(c) {
     NIGHT = c; NS = null;
     const r = db.ref("night/" + c + "/state"), h = sn => { NS = dec(sn.val()); nightStep(); };

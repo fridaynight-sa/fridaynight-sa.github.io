@@ -240,10 +240,10 @@
       if (S.phase === "buzz") {
         const t = teamOf(S.buzz);
         body = `<div class="buzzed t${t}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b>${teamTag(t)}</div>
-          ${host ? `<div class="ans">الجواب: <b>${esc(curAnswer())}</b></div><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div>`
+          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div>`
             : `<p class="note center">${S.buzz === ME.pid ? "جاوب بصوت عالي 🎤" : "يجاوب الحين…"}</p>`}`;
       } else if (host) {
-        body = `<div class="ans">الجواب: <b>${esc(curAnswer())}</b></div>
+        body = `<div class="ans"><b>${esc(curAnswer())}</b></div>
           ${locked.length >= 2 ? `<p class="note center">الفريقين غلطوا 😅</p>` : `<p class="note center">ننتظر أحد يضغط 🔔… أو احكم مباشرة:</p><div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
           <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div>`;
       } else {

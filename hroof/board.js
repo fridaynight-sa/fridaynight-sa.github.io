@@ -5,10 +5,10 @@
 (function () {
   "use strict";
   const N = 5, R3 = Math.sqrt(3);
-  const COL = { 0: "#ffffff", 1: "#12a874", 2: "#ff7a1a" };
+  const COL = { 0: "url(#hrbC0)", 1: "url(#hrbC1)", 2: "url(#hrbC2)" };
   const EDGE = { 1: "#12a874", 2: "#ff7a1a" };
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  // the 26 letters a board picks from (ة and ء have no questions; ى is ي)
+  // the 28 letters a board picks from (ة, ء and ى are not letters of their own here)
   const LETTERS = ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "ه", "و", "ي"];
   function neighbors(i) {
     const r = Math.floor(i / N), c = i % N, odd = r % 2 === 1, out = [];
@@ -44,7 +44,12 @@
     o = o || {};
     const own = B.own || [], L = B.L || [], win = new Set((o.win || []));
     const W = R3 * (N + 0.5) + 1.2, H = 1.5 * (N - 1) + 2 + 1.2;
-    let s = `<svg class="hrb${o.big ? " big" : ""}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="لوحة الحروف" direction="ltr">`;
+    let s = `<svg class="hrb${o.big ? " big" : ""}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="لوحة الحروف" direction="ltr">
+<defs><linearGradient id="hrbC0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#f3dfb4"/></linearGradient>
+<linearGradient id="hrbC1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ee0a6"/><stop offset="1" stop-color="#0c8a5c"/></linearGradient>
+<linearGradient id="hrbC2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb05a"/><stop offset="1" stop-color="#e2560a"/></linearGradient>
+<linearGradient id="hrbCS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#f08c00"/></linearGradient></defs>
+<rect x="0.25" y="0.25" width="${(W - 0.5).toFixed(2)}" height="${(H - 0.5).toFixed(2)}" rx="0.6" fill="#2e1065" stroke="#f5b72f" stroke-width="0.12"/>`;
     // the edges each team has to join: green top and bottom, orange left and right
     s += `<rect x="0" y="0" width="${W.toFixed(2)}" height="0.5" rx="0.25" fill="${EDGE[1]}"/><rect x="0" y="${(H - 0.5).toFixed(2)}" width="${W.toFixed(2)}" height="0.5" rx="0.25" fill="${EDGE[1]}"/>`;
     s += `<rect x="0" y="0.35" width="0.5" height="${(H - 0.7).toFixed(2)}" rx="0.25" fill="${EDGE[2]}"/><rect x="${(W - 0.5).toFixed(2)}" y="0.35" width="0.5" height="${(H - 0.7).toFixed(2)}" rx="0.25" fill="${EDGE[2]}"/>`;
@@ -52,20 +57,21 @@
       const [x, y] = center(i), t = own[i] || 0, sel = o.sel === i, free = !t;
       const cls = ["cell", "t" + t, sel ? "sel" : "", win.has(i) ? "win" : "", o.tap && free ? "tap" : ""].filter(Boolean).join(" ");
       s += `<g class="${cls}" ${o.tap && free ? `data-cell="${i}" role="button" tabindex="0" aria-label="${esc(L[i])}"` : ""}>`;
-      s += `<polygon points="${hexPts(x, y, 0.96)}" fill="${COL[t]}" stroke="#2b1745" stroke-width="0.07"/>`;
-      s += `<text x="${x.toFixed(3)}" y="${(y + 0.02).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.95" font-weight="800" fill="${t ? "#fff" : "#2b1745"}" font-family="Almarai,Tajawal,sans-serif">${esc(L[i] || "")}</text></g>`;
+      s += `<polygon points="${hexPts(x, y + 0.08, 0.93)}" fill="#1e0645" opacity=".55"/>`;
+      s += `<polygon class="hx" points="${hexPts(x, y, 0.93)}" fill="${sel ? "url(#hrbCS)" : COL[t]}" stroke="${t === 1 ? "#0b6b47" : t === 2 ? "#b0430a" : "#d9a441"}" stroke-width="0.09"/>`;
+      s += `<text x="${x.toFixed(3)}" y="${(y + 0.02).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.95" font-weight="800" fill="${t ? "#fff" : "#3b0f7a"}" font-family="Almarai,Tajawal,sans-serif">${esc(L[i] || "")}</text></g>`;
     }
     return s + "</svg>";
   }
   const css = `.hrb{display:block;width:100%;height:auto;max-height:62vh;margin:0 auto;user-select:none;-webkit-user-select:none}
 .hrb .cell polygon{transition:fill .35s}
-.hrb .cell.tap{cursor:pointer}.hrb .cell.tap:hover polygon{fill:#f3e8ff}
-.hrb .cell.sel polygon{fill:#ffd166;animation:hrbsel 1s ease-in-out infinite alternate}
-.hrb .cell.sel text{fill:#2b1745}
-.hrb .cell.win polygon{stroke:#ffd166;stroke-width:.16}
-.hrb .cell.t1 polygon,.hrb .cell.t2 polygon{animation:hrbpop .45s cubic-bezier(.2,1.6,.4,1)}
+.hrb .cell.tap{cursor:pointer}.hrb .cell.tap:hover .hx{fill:#fff}
+.hrb .cell.sel .hx{stroke:#fff;stroke-width:.14;filter:drop-shadow(0 0 .35px #ffd166);animation:hrbsel .9s ease-in-out infinite alternate}
+.hrb .cell.sel text{fill:#3b0f7a}
+.hrb .cell.win .hx{stroke:#fff3a8;stroke-width:.18;filter:drop-shadow(0 0 .3px #fff3a8)}
+.hrb .cell.t1 .hx,.hrb .cell.t2 .hx{animation:hrbpop .45s cubic-bezier(.2,1.6,.4,1)}
 .hrb .cell{transform-box:fill-box;transform-origin:center}
-@keyframes hrbsel{to{fill:#ffb21e}}
+@keyframes hrbsel{to{stroke:#ffb21e}}
 @keyframes hrbpop{0%{opacity:.4}100%{opacity:1}}`;
   if (typeof document !== "undefined" && !document.getElementById("hrb-css")) { const st = document.createElement("style"); st.id = "hrb-css"; st.textContent = css; document.head.appendChild(st); }
   // a new board: 25 different letters, only ones that still have questions
