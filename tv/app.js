@@ -18,6 +18,7 @@
     draw: { dir: "draw/", label: "ارسم وخمّن", icon: "draw" },
     df: { dir: "dafour/", label: "الدافور", icon: "dafour" },
     jh: { dir: "jhi/", label: "جماد حيوان إنسان", icon: "jhi" },
+    hr: { dir: "hroof/", label: "خلية الحروف", icon: "hroof" },
   };
   // each game's own picture (icons/) instead of an emoji
   const gic = (name, cls) => `<img class="${cls || "gic"}" src="../icons/${name}.png" alt="">`;
@@ -118,6 +119,33 @@
     if (S.phase === "end") { const ids = Object.keys(S.scores || {}).sort((a, b) => (S.scores[b] || 0) - (S.scores[a] || 0)); const m = ["🥇", "🥈", "🥉"]; return `<div class="card"><p class="tvtitle">دافور الشلة 🤓: ${esc(ids.length ? nameOf(ids[0]) : "")}</p></div><div class="card"><h2>النتيجة النهائية 🏆</h2><div class="podium">${ids.map((id, i) => `<div><span>${m[i] || i + 1 + "."} ${esc(nameOf(id))}</span><span>${S.scores[id] || 0}</span></div>`).join("")}</div></div>`; }
     return "";
   }
+  /* ---------- خلية الحروف ---------- */
+  const HRT = { 1: ["الأخضر", "🟢", "#12a874"], 2: ["البرتقالي", "🟠", "#ff7a1a"] };
+  function renderHR() {
+    const tag = t => t ? `<span class="hrtag" style="background:${HRT[t][2]}">${HRT[t][1]} ${HRT[t][0]}</span>` : "";
+    const ids = Object.keys(P).filter(id => id !== S.host);
+    if (S.phase === "lobby" || !S.board) {
+      const col = t => `<div class="hrcol" style="--c:${HRT[t][2]}"><p class="tvtitle">${HRT[t][1]} ${HRT[t][0]}</p>${plist(ids.filter(id => (P[id].team || 0) === t))}</div>`;
+      return `<div class="card"><p class="tvtitle">${gname("hr")}</p><p class="tvsub">🎙️ المقدّم: ${esc(nameOf(S.host))} · اختاروا فريقكم من جوالاتكم</p><div class="hrcols">${col(1)}${col(2)}</div></div>`;
+    }
+    const w = S.wins || { 1: 0, 2: 0 }, teamOf = id => (S.teams || {})[id] || 0;
+    const score = `<div class="hrscore"><div style="--c:${HRT[1][2]}"><b>${w[1] || 0}</b><span>${HRT[1][1]} ${HRT[1][0]}</span><i>فوق ↕ تحت</i></div><div class="mid">الجولة ${S.round || 1}</div><div style="--c:${HRT[2][2]}"><b>${w[2] || 0}</b><span>${HRT[2][1]} ${HRT[2][0]}</span><i>يمين ↔ يسار</i></div></div>`;
+    let info = "";
+    const letter = l => l === "ا" ? "أ" : l;
+    if (S.phase === "pick") info = `<p class="tvtitle">${tag(S.turn)} يختار حرف</p>${S.last && S.last.ok ? `<p class="tvsub">✅ آخر جواب: ${esc(S.last.a || "")}</p>` : S.last && S.last.skip ? `<p class="tvsub">⏭️ الجواب كان: ${esc(S.last.a || "")}</p>` : ""}`;
+    else if ((S.phase === "q" || S.phase === "buzz") && S.q) {
+      const locked = S.locked || [];
+      info = `<div class="hrq"><span class="hrl">${esc(letter(S.q.l))}</span><p class="tvq">${esc(S.q.text)}</p></div>` +
+        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b>${tag(teamOf(S.buzz))}</div>`
+          : `<p class="tvsub">${locked.length >= 2 ? "الفريقين غلطوا 😅" : locked.length ? `❌ غلط… الفرصة لـ${tag(locked.includes(1) ? 2 : 1)}` : "🔔 أسرع واحد يضغط الجرس من جواله"}</p>`);
+    } else if (S.phase === "won" || S.phase === "end") {
+      const t = S.win ? S.win.t : 1;
+      info = `<p class="tvtitle hrwin">${S.phase === "end" ? "🏆" : "🎉"} ${tag(t)} ${S.phase === "end" ? "فاز باللعبة!" : "فاز بالجولة!"}</p><p class="tvsub">${esc(Object.keys(S.teams || {}).filter(id => S.teams[id] === t).map(nameOf).join("، "))}</p>`;
+      if (self.FA) FA.once("tvhr-" + code + "-" + S.game + "-" + S.round, () => { FA.play("party"); FA.confetti(); });
+    }
+    const board = self.HRB ? HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, big: true }) : "";
+    return `<div class="card hrstage">${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div></div>`;
+  }
   /* ---------- جماد حيوان إنسان ---------- */
   const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };
   const JHL = { ا: "الألف", ب: "الباء", ت: "التاء", ث: "الثاء", ج: "الجيم", ح: "الحاء", خ: "الخاء", د: "الدال", ذ: "الذال", ر: "الراء", ز: "الزاي", س: "السين", ش: "الشين", ص: "الصاد", ض: "الضاد", ط: "الطاء", ظ: "الظاء", ع: "العين", غ: "الغين", ف: "الفاء", ق: "القاف", ك: "الكاف", ل: "اللام", م: "الميم", ن: "النون", ه: "الهاء", و: "الواو", ي: "الياء" };
@@ -185,7 +213,7 @@
       return;
     }
     if (self.DFShow) DFShow.stop();
-    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : renderBS();
+    const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : game === "hr" ? renderHR() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
     moments();

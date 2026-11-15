@@ -156,6 +156,21 @@
         }
       }
     },
+    "hr": {
+      "$code": {
+        ".read": true,
+        "state": {
+          ".write": true,
+          ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 100000"
+        },
+        "players": {
+          "$pid": {
+            ".write": true,
+            ".validate": "!newData.exists() || newData.child('j').isString() && newData.child('j').val().length < 8000"
+          }
+        }
+      }
+    },
     "jhw": {
       ".read": true,
       "$cat": {

@@ -11,7 +11,7 @@
   const PAGE = self.FN_PAGE || "home";
   const NAMES = { home: "الصفحة الرئيسية", seenjeem: "سين جيم", outside: "برا السالفة", sedq: "صدق ولا كذب", mf: "مين فينا؟", draw: "ارسم وخمّن",
     dafour: "الدافور", jhi: "جماد حيوان إنسان", tv: "شاشة العرض", mind: "Mind Games", lamha: "لمحة", dots: "توصيل النقاط", squares: "تذكّر المربعات",
-    words: "لوحة الكلمات", search: "دوّر الكلمة", pick: "صور سين جيم", case: "القضية" };
+    words: "لوحة الكلمات", search: "دوّر الكلمة", pick: "صور سين جيم", case: "القضية", hroof: "خلية الحروف" };
   const dev = () => { try { const d = (JSON.parse(localStorage.getItem("fn-dev") || "null") || {}).id || ""; return /^[a-z0-9]{16}$/.test(d) ? d : ""; } catch (e) { return ""; } };
   const day = () => new Date(Date.now() + 3 * 36e5).toISOString().slice(0, 10);
   const post = (path, body) => fetch(DB + "/" + path + ".json", { method: "POST", body: JSON.stringify(body), keepalive: true });
