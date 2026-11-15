@@ -53,36 +53,41 @@
   }
   const center = i => { const r = Math.floor(i / N), c = i % N; return [R3 * (c + (r % 2 ? 1 : 0.5)) + 0.6, 1.5 * r + 1 + 0.6]; };
   const hexPts = (x, y, s) => Array.from({ length: 6 }, (_, k) => { const a = Math.PI / 180 * (60 * k - 30); return (x + s * Math.cos(a)).toFixed(3) + "," + (y + s * Math.sin(a)).toFixed(3); }).join(" ");
+  // the look: raised glossy tiles (a darker side under a lit face), rounded corners, glowing selected cell and winning path
+  const SK = { 0: ["#fffaf2", "#efe2cc", "#c7b391", "#3b0f7a"], 1: ["#5be3a8", "#13a06a", "#0a6845", "#fff"], 2: ["#ffb262", "#f2650f", "#a8430a", "#fff"], s: ["#fff4b0", "#ffbe1a", "#b7791f", "#3b0f7a"] };
   function svg(B, o) {
     o = o || {};
-    const own = B.own || [], L = B.L || [], win = new Set((o.win || []));
-    const W = R3 * (N + 0.5) + 1.2, H = 1.5 * (N - 1) + 2 + 1.2;
-    let s = `<svg class="hrb${o.big ? " big" : ""}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="لوحة الحروف" direction="ltr">
-<defs><linearGradient id="hrbC0" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#f3dfb4"/></linearGradient>
-<linearGradient id="hrbC1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ee0a6"/><stop offset="1" stop-color="#0c8a5c"/></linearGradient>
-<linearGradient id="hrbC2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb05a"/><stop offset="1" stop-color="#e2560a"/></linearGradient>
-<linearGradient id="hrbCS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd166"/><stop offset="1" stop-color="#f08c00"/></linearGradient></defs>
-<rect x="0.25" y="0.25" width="${(W - 0.5).toFixed(2)}" height="${(H - 0.5).toFixed(2)}" rx="0.6" fill="#2e1065" stroke="#f5b72f" stroke-width="0.12"/>`;
-    // the edges each team has to join: green top and bottom, orange left and right
-    s += `<rect x="0" y="0" width="${W.toFixed(2)}" height="0.5" rx="0.25" fill="${EDGE[1]}"/><rect x="0" y="${(H - 0.5).toFixed(2)}" width="${W.toFixed(2)}" height="0.5" rx="0.25" fill="${EDGE[1]}"/>`;
-    s += `<rect x="0" y="0.35" width="0.5" height="${(H - 0.7).toFixed(2)}" rx="0.25" fill="${EDGE[2]}"/><rect x="${(W - 0.5).toFixed(2)}" y="0.35" width="0.5" height="${(H - 0.7).toFixed(2)}" rx="0.25" fill="${EDGE[2]}"/>`;
+    const own = B.own || [], L = B.L || [], winList = o.win || [], win = new Set(winList), uid = "h" + Math.random().toString(36).slice(2, 7);
+    const W = R3 * (N + 0.5) + 1.6, H = 1.5 * (N - 1) + 2 + 1.6, P = 0.2;   // P: shift the tiles inside the frame
+    const g = (id, a, b) => `<linearGradient id="${uid}${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
+    let s = `<svg class="hrb${o.big ? " big" : ""}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="لوحة الحروف" direction="ltr"><defs>` +
+      Object.keys(SK).map(k => g("f" + k, SK[k][0], SK[k][1])).join("") +
+      `<radialGradient id="${uid}bg" cx="50%" cy="45%" r="70%"><stop offset="0" stop-color="#5b21b6"/><stop offset="1" stop-color="#1e0645"/></radialGradient>
+<filter id="${uid}glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<rect x="0.3" y="0.3" width="${(W - 0.6).toFixed(2)}" height="${(H - 0.6).toFixed(2)}" rx="0.7" fill="url(#${uid}bg)"/>`;
+    // the edges each team has to join: soft glowing rails, green top and bottom, orange left and right
+    const rail = (x, y, w, h, c) => `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${(Math.min(w, h) / 2).toFixed(2)}" fill="${c}" filter="url(#${uid}glow)"/>`;
+    s += rail(1, 0.08, W - 2, 0.32, EDGE[1]) + rail(1, H - 0.4, W - 2, 0.32, EDGE[1]) + rail(0.08, 1, 0.32, H - 2, EDGE[2]) + rail(W - 0.4, 1, 0.32, H - 2, EDGE[2]);
+    const at = i => { const [x, y] = center(i); return [x + P, y + P]; };
+    // the winning path: a line of light that shines between its cells
+    if (winList.length > 1) s += `<polyline points="${winList.map(i => at(i).map(v => v.toFixed(2)).join(",")).join(" ")}" fill="none" stroke="#fff6c2" stroke-width=".22" stroke-linecap="round" stroke-linejoin="round" filter="url(#${uid}glow)" pointer-events="none"/>`;
     for (let i = 0; i < N * N; i++) {
-      const [x, y] = center(i), t = own[i] || 0, sel = o.sel === i, free = !t;
+      const [x, y] = at(i), t = own[i] || 0, sel = o.sel === i, free = !t, k = sel ? "s" : t, c = SK[k];
       const cls = ["cell", "t" + t, sel ? "sel" : "", win.has(i) ? "win" : "", o.tap && free ? "tap" : ""].filter(Boolean).join(" ");
       s += `<g class="${cls}" ${o.tap && free ? `data-cell="${i}" role="button" tabindex="0" aria-label="${esc(L[i])}"` : ""}>`;
-      s += `<polygon points="${hexPts(x, y + 0.08, 0.93)}" fill="#1e0645" opacity=".55"/>`;
-      s += `<polygon class="hx" points="${hexPts(x, y, 0.93)}" fill="${sel ? "url(#hrbCS)" : COL[t]}" stroke="${t === 1 ? "#0b6b47" : t === 2 ? "#b0430a" : "#d9a441"}" stroke-width="0.09"/>`;
-      s += `<text x="${x.toFixed(3)}" y="${(y + 0.02).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.95" font-weight="800" fill="${t ? "#fff" : "#3b0f7a"}" font-family="Almarai,Tajawal,sans-serif">${esc(L[i] || "")}</text></g>`;
+      if (sel || win.has(i)) s += `<polygon points="${hexPts(x, y, 0.98)}" fill="#ffd166" opacity=".95" filter="url(#${uid}glow)" stroke="#ffd166" stroke-width=".25" stroke-linejoin="round"/>`;
+      s += `<polygon points="${hexPts(x, y + 0.12, 0.84)}" fill="${c[2]}" stroke="${c[2]}" stroke-width=".16" stroke-linejoin="round"/>`;
+      s += `<polygon class="hx" points="${hexPts(x, y, 0.84)}" fill="url(#${uid}f${k})" stroke="${win.has(i) ? "#ffe27a" : `url(#${uid}f${k})`}" stroke-width="${win.has(i) ? ".2" : ".16"}" stroke-linejoin="round"/>`;
+      s += `<polygon points="${hexPts(x, y - 0.05, 0.62)}" fill="none" stroke="#fff" stroke-opacity="${t ? ".22" : ".55"}" stroke-width=".05" stroke-linejoin="round"/>`;
+      s += `<text x="${x.toFixed(3)}" y="${(y + 0.02).toFixed(3)}" text-anchor="middle" dominant-baseline="central" font-size="0.92" font-weight="800" fill="${c[3]}" font-family="Almarai,Tajawal,sans-serif"${t ? ` style="paint-order:stroke" stroke="rgba(0,0,0,.18)" stroke-width=".06"` : ""}>${esc(L[i] || "")}</text></g>`;
     }
     return s + "</svg>";
   }
   const css = `.hrb{display:block;width:100%;height:auto;max-height:62vh;margin:0 auto;user-select:none;-webkit-user-select:none}
-.hrb .cell polygon{transition:fill .35s}
-.hrb .cell.tap{cursor:pointer}.hrb .cell.tap:hover .hx{fill:#fff}
-.hrb .cell.sel .hx{stroke:#fff;stroke-width:.14;filter:drop-shadow(0 0 .35px #ffd166);animation:hrbsel .9s ease-in-out infinite alternate}
-.hrb .cell.sel text{fill:#3b0f7a}
-.hrb .cell.win .hx{stroke:#fff3a8;stroke-width:.18;filter:drop-shadow(0 0 .3px #fff3a8)}
-.hrb .cell.t1 .hx,.hrb .cell.t2 .hx{animation:hrbpop .45s cubic-bezier(.2,1.6,.4,1)}
+.hrb .cell.tap{cursor:pointer}.hrb .cell.tap:hover{filter:brightness(1.06)}
+.hrb .cell.tap:active{transform:translateY(.06px)}
+.hrb .cell.sel{animation:hrbsel 1s ease-in-out infinite alternate}
+.hrb .cell.t1,.hrb .cell.t2{animation:hrbpop .45s cubic-bezier(.2,1.6,.4,1)}
 .hrb .cell{transform-box:fill-box;transform-origin:center}
 .hrlogo{display:flex;flex-direction:column;align-items:center;line-height:1;font-family:Almarai,Tajawal,sans-serif;font-weight:800;margin:0 auto 8px;transform:rotate(-3deg);user-select:none}
 .hrlogo b,.hrlogo em{font-style:normal;paint-order:stroke fill;-webkit-text-stroke:.14em #2b1745;text-shadow:0 .09em 0 #2b1745;letter-spacing:.01em}
@@ -90,8 +95,8 @@
 .hrlogo i{font-style:normal;font-size:1em;color:#fff;background:#e03131;border:.12em solid #2b1745;border-radius:999px;padding:.05em .7em .12em;margin:-.15em 0 .05em;transform:rotate(5deg);box-shadow:0 .12em 0 #2b1745;position:relative;z-index:1}
 .hrlogo em{font-size:2.3em;color:#ff8fab;max-width:100%;white-space:nowrap}
 .hrlogo.sm{font-size:12px}.hrlogo.md{font-size:18px}.hrlogo.lg{font-size:clamp(20px,2.2vw,30px)}
-@keyframes hrbsel{to{stroke:#ffb21e}}
-@keyframes hrbpop{0%{opacity:.4}100%{opacity:1}}`;
+@keyframes hrbsel{to{filter:brightness(1.12) drop-shadow(0 0 .2px #ffd166)}}
+@keyframes hrbpop{0%{transform:scale(.85);opacity:.5}100%{transform:none;opacity:1}}`;
   if (typeof document !== "undefined" && !document.getElementById("hrb-css")) { const st = document.createElement("style"); st.id = "hrb-css"; st.textContent = css; document.head.appendChild(st); }
   // a new board: 25 different letters, only ones that still have questions
   function newBoard(have, rnd) {
