@@ -31,7 +31,7 @@ const until=async(p,f,ms=20000)=>{const t=Date.now();while(Date.now()-t<ms){if(a
  await p1.screenshot({path:OUT+'4-write.png'});
  const fill=async(p,v)=>{for(const [c,w] of Object.entries(v)){await p.fill('#f_'+c,w)}await H.wait(600)};
  const cats=await p1.evaluate(()=>JH.S.cats);
- const v1={},v2={},v3={};cats.forEach(c=>{v1[c]=W[c][0];v2[c]=(W[c][1]||W[c][0]);v3[c]=''});
+ const v1={},v2={},v3={};cats.forEach(c=>{v1[c]=W[c][0];{const k=w=>w.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/^ال/,'');v2[c]=W[c].find(w=>k(w)!==k(W[c][0]))||W[c][0];}v3[c]=''});
  v2.hayawan=W.hayawan[0];                               // the same animal as فيصل
  v3.insan=L+'زقلوط';                                     // a word nobody knows → the vote
  v3.nabat='ززز';                                         // wrong letter (unless the letter is ز)
