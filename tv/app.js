@@ -136,7 +136,7 @@
     else if ((S.phase === "q" || S.phase === "buzz") && S.q) {
       const locked = S.locked || [];
       info = `<div class="hrpanel hrqp"><span class="hrl">${esc(letter(S.q.l))}</span><div><small>السؤال</small><p class="tvq">${esc(S.q.text)}</p></div></div>` +
-        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><div><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس!</em>${tag(teamOf(S.buzz))}</div></div>`
+        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><div><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${tag(teamOf(S.buzz))}</div></div>`
           : `<p class="tvsub">${locked.length >= 2 ? "الفريقين غلطوا 😅" : locked.length ? `❌ غلط… الفرصة لـ${tag(locked.includes(1) ? 2 : 1)}` : "🔔 أسرع واحد يضغط الجرس من جواله"}</p>`);
     } else if (S.phase === "won" || S.phase === "end") {
       const t = S.win ? S.win.t : 1;
@@ -144,7 +144,8 @@
       if (self.FA) FA.once("tvhr-" + code + "-" + S.game + "-" + S.round, () => { FA.play("party"); FA.confetti(); });
     }
     const board = self.HRB ? HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, big: true }) : "";
-    return `<div class="card hrstage"><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div></div>`;
+    const strip = S.phase === "won" || S.phase === "end" ? "" : `<p class="hrhint">${esc(HRB.hint(S.board.own))}</p>`;
+    return `<div class="card hrstage"><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div>${strip}</div>`;
   }
   /* ---------- جماد حيوان إنسان ---------- */
   const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };

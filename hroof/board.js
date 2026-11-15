@@ -34,6 +34,19 @@
     }
     return null;
   }
+  // how many more cells team t needs to join its two edges (its own cells cost 0, free ones 1, the other team's block); Infinity if blocked
+  function need(own, t) {
+    const dist = Array(N * N).fill(Infinity), q = [];
+    const cost = i => own[i] === t ? 0 : own[i] ? Infinity : 1;
+    for (let k = 0; k < N; k++) { const i = t === 1 ? k : k * N, c = cost(i); if (c < Infinity) { dist[i] = c; q.push(i); } }
+    while (q.length) {
+      q.sort((a, b) => dist[a] - dist[b]); const i = q.shift();
+      neighbors(i).forEach(j => { const c = cost(j); if (c < Infinity && dist[i] + c < dist[j]) { dist[j] = dist[i] + c; q.push(j); } });
+    }
+    let best = Infinity;
+    for (let k = 0; k < N; k++) { const i = t === 1 ? (N - 1) * N + k : k * N + N - 1; best = Math.min(best, dist[i]); }
+    return best;
+  }
   function winner(own) {
     for (const t of [1, 2]) { const p = chain(own, t); if (p) return { t, path: p }; }
     return null;
@@ -81,5 +94,17 @@
     while (out.length < N * N && pool.length) out.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
     return { L: out, own: Array(N * N).fill(0) };
   }
-  self.HRB = { N, LETTERS, neighbors, chain, winner, svg, newBoard, COL };
+    // a line for the gold strip under the board: who is close to joining
+  function hint(own) {
+    if (!own || !own.some(x => x)) return "اختاروا حروفكم بذكاء: كل خلية تقرّبكم من الضفة الثانية 🎯";
+    const T = { 1: "🟢 الأخضر", 2: "🟠 البرتقالي" }, n = { 1: need(own, 1), 2: need(own, 2) };
+    const word = k => k === 1 ? "خلية وحدة" : k === 2 ? "خليتين" : k + " خلايا";
+    const close = [1, 2].filter(t => n[t] <= 2).sort((a, b) => n[a] - n[b]);
+    if (close.length === 2 && n[1] === n[2]) return `🔥 الفريقين على الحافة! كل واحد باقي له ${word(n[1])}`;
+    if (close.length) return `🔥 ${T[close[0]]} باقي له ${word(n[close[0]])} ويفوز!`;
+    if (n[1] === Infinity) return `🧱 ${T[2]} سكّر الطريق على ${T[1]}!`;
+    if (n[2] === Infinity) return `🧱 ${T[1]} سكّر الطريق على ${T[2]}!`;
+    return n[1] < n[2] ? `${T[1]} أقرب للفوز: باقي له ${word(n[1])}` : n[2] < n[1] ? `${T[2]} أقرب للفوز: باقي له ${word(n[2])}` : `تعادل! كل فريق باقي له ${word(n[1])}`;
+  }
+  self.HRB = { N, LETTERS, neighbors, chain, winner, need, hint, svg, newBoard, COL };
 })();

@@ -192,7 +192,7 @@
       <div class="sbm">الجولة ${S.round || 1}<small>${need > 1 ? `اللي يفوز بـ${need} يكسب` : "جولة وحدة"}</small></div>
       <div class="sb t2"><b>${w[2] || 0}</b><span>${TEAM[2].ic} ${TEAM[2].name}</span><i>يمين ↔ يسار</i></div></div>`;
   }
-  const boardHTML = tap => `<div class="bwrap">${HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, tap })}</div>`;
+  const boardHTML = tap => `<div class="bwrap">${HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, tap })}</div>${S.phase === "won" || S.phase === "end" ? "" : `<p class="hint">${esc(HRB.hint(S.board.own))}</p>`}`;
   function render() {
     if (view !== "room") return;
     if (!S) { app.innerHTML = `<div class="card center"><p class="big-msg">جاري الاتصال…</p></div>`; return; }
@@ -206,7 +206,7 @@
       const waiting = S.phase !== "lobby", ids = players();
       let qr = "";
       try { if (typeof QRCode !== "undefined") { const d = document.createElement("div"); new QRCode(d, { text: joinURL(ME.code), width: 240, height: 240, colorDark: "#2b1745", colorLight: "#ffffff" }); const c = d.querySelector("canvas"); qr = c ? c.toDataURL() : ""; } } catch (e) {}
-      const col = t => `<div class="tcol t${t}"><h3>${TEAM[t].ic} ${TEAM[t].name}</h3><ul class="plist">${ids.filter(id => (P[id].team || 0) === t).map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${host && !waiting ? ` <button type="button" data-move="${id}" aria-label="انقل">⇄</button><button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("") || `<li class="empty">ما أحد للحين</li>`}</ul>
+      const col = t => `<div class="tcol t${t}"><h3>${TEAM[t].ic} ${TEAM[t].name}</h3><ul class="plist">${ids.filter(id => (P[id].team || 0) === t).map(id => `<li class="${id === ME.pid ? "me" : ""}">${esc(P[id].name)}${host && !waiting ? ` <button type="button" data-move="${id}" aria-label="انقل">⇄</button><button type="button" data-kick="${id}" aria-label="شيل">✕</button>` : ""}</li>`).join("")}${Array.from({ length: Math.max(0, 2 - ids.filter(id => (P[id].team || 0) === t).length) }, () => `<li class="empty">بانتظار لاعب…</li>`).join("")}</ul>
         ${!host && !waiting && myT !== t ? `<button type="button" class="btn small" data-team="${t}">انضم ${TEAM[t].ic}</button>` : ""}</div>`;
       const none = ids.filter(id => !(P[id].team));
       app.innerHTML = `${waiting ? `<div class="card center"><p class="big-msg">اللعبة شغالة، تدخل معهم في اللعبة الجاية ⏳</p></div>` : ""}
@@ -239,11 +239,11 @@
       let body = "";
       if (S.phase === "buzz") {
         const t = teamOf(S.buzz);
-        body = `<div class="buzzed t${t}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b>${teamTag(t)}</div>
-          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div>`
+        body = `<div class="buzzed t${t}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${teamTag(t)}</div>
+          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div>`
             : `<p class="note center">${S.buzz === ME.pid ? "جاوب بصوت عالي 🎤" : "يجاوب الحين…"}</p>`}`;
       } else if (host) {
-        body = `<div class="ans"><b>${esc(curAnswer())}</b></div>
+        body = `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p>
           ${locked.length >= 2 ? `<p class="note center">الفريقين غلطوا 😅</p>` : `<p class="note center">ننتظر أحد يضغط 🔔… أو احكم مباشرة:</p><div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
           <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div>`;
       } else {
