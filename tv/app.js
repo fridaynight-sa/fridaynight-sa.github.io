@@ -136,7 +136,7 @@
     else if ((S.phase === "q" || S.phase === "buzz") && S.q) {
       const locked = S.locked || [];
       info = `<div class="hrpanel hrqp"><span class="hrl">${esc(letter(S.q.l))}</span><div><small>السؤال</small><p class="tvq">${esc(S.q.text)}</p></div></div>` +
-        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span>🔔</span><div><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${tag(teamOf(S.buzz))}</div></div>`
+        (S.phase === "buzz" ? `<div class="hrbuzz" style="--c:${HRT[teamOf(S.buzz)] ? HRT[teamOf(S.buzz)][2] : "#7c3aed"}"><span class="hrbell"><svg viewBox="0 0 24 24" fill="none" stroke="#ffd166" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a1.5 1.5 0 0 1 1.5 1.5v.6a6 6 0 0 1 4.5 5.8v3.6l1.6 2.5a.9.9 0 0 1-.8 1.4H5.2a.9.9 0 0 1-.8-1.4L6 14.5v-3.6a6 6 0 0 1 4.5-5.8v-.6A1.5 1.5 0 0 1 12 3z" fill="#ffd166" fill-opacity=".25"/><path d="M9.8 19.2a2.3 2.3 0 0 0 4.4 0"/></svg></span><div><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${tag(teamOf(S.buzz))}</div></div>`
           : `<p class="tvsub">${locked.length >= 2 ? "الفريقين غلطوا 😅" : locked.length ? `❌ غلط… الفرصة لـ${tag(locked.includes(1) ? 2 : 1)}` : "🔔 أسرع واحد يضغط الجرس من جواله"}</p>`);
     } else if (S.phase === "won" || S.phase === "end") {
       const t = S.win ? S.win.t : 1;

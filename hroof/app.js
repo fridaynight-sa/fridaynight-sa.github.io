@@ -16,6 +16,8 @@
   const LS = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
   const play = (k, v) => { if (self.FX) FX.play(k, v); };
 
+  const BELL = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a1.5 1.5 0 0 1 1.5 1.5v.6a6 6 0 0 1 4.5 5.8v3.6l1.6 2.5a.9.9 0 0 1-.8 1.4H5.2a.9.9 0 0 1-.8-1.4L6 14.5v-3.6a6 6 0 0 1 4.5-5.8v-.6A1.5 1.5 0 0 1 12 3z" fill="#fff" fill-opacity=".15"/><path d="M9.8 19.2a2.3 2.3 0 0 0 4.4 0"/></svg>';
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   const TEAM = { 1: { name: "الأخضر", ic: "🟢", c: "#12a874" }, 2: { name: "البرتقالي", ic: "🟠", c: "#ff7a1a" } };
   const LEVEL = { 0: "منوّع", 1: "سهل", 2: "متوسط", 3: "صعب" };
   const other = t => (t === 1 ? 2 : 1);
@@ -241,7 +243,7 @@
       let body = "";
       if (S.phase === "buzz") {
         const t = teamOf(S.buzz);
-        body = `<div class="buzzed t${t}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${teamTag(t)}</div>
+        body = `<div class="buzzed t${t}"><span class="bell">${BELL}</span><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${teamTag(t)}</div>
           ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="dock"><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div></div>`
             : `<p class="note center">${S.buzz === ME.pid ? "جاوب بصوت عالي 🎤" : "يجاوب الحين…"}</p>`}`;
       } else if (host) {
@@ -250,7 +252,7 @@
           <div class="dock">${locked.length >= 2 ? "" : `<div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
           <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div></div>`;
       } else {
-        body = canBuzz ? `<button type="button" class="buzzer" data-act="buzz" ${mine ? "disabled" : ""}>🔔<span>${mine ? "ضغطت!" : "اضغط إذا تعرف"}</span></button>`
+        body = canBuzz ? `<div class="buzzwrap"><button type="button" class="buzzer" data-act="buzz" aria-label="الجرس" ${mine ? "disabled" : ""}><span class="cap">${mine ? CHECK : BELL}</span></button><p class="blabel">${mine ? "ضغطت! ننتظر…" : "اضغط إذا تعرف الجواب"}</p></div>`
           : `<p class="big-msg">${!myT ? "تتفرج 👀" : locked.includes(myT) ? "فريقك غلط، الفرصة للفريق الثاني ⏳" : "…"}</p>`;
       }
       app.innerHTML = `${scoreBar()}<div class="card">${qcard}${lastMiss}${body}<div class="mini">${boardHTML(false)}</div></div>${leave}`;

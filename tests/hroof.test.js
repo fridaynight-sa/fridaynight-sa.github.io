@@ -20,7 +20,7 @@ const ans=await h.locator('.ans b').innerText();ok(ans.length>0,'presenter sees 
 ok(await a.locator('.ans').count()===0&&!(await a.content()).includes(ans),'players do not see it');
 await a.screenshot({path:S+'/hr-q.png',fullPage:true});await a.screenshot({path:S+'/hr-q-vp.png'});
 // 🔔: نورة (team 2) first, then سعد
-await c.click('[data-act=buzz]');await H.wait(150);await a.click('[data-act=buzz]').catch(()=>{});await H.wait(1200);
+await c.click('[data-act=buzz]');await H.wait(150);await c.screenshot({path:S+'/hr-pressed.png'});await a.click('[data-act=buzz]').catch(()=>{});await H.wait(1200);
 s=await st();ok(s.phase==='buzz'&&s.buzz&&s.buzz===(await c.evaluate(()=>HR.ME.pid)),'first buzz wins: '+s.buzz);
 await h.screenshot({path:S+'/hr-buzz-host.png',fullPage:true});await h.screenshot({path:S+'/hr-host-vp.png'});await tv.screenshot({path:S+'/hr-tv-buzz.png'});
 await h.click('[data-act=wrong]');await H.wait(1000);s=await st();ok(s.phase==='q'&&(s.locked||[]).includes(2),'wrong → team 2 locked');

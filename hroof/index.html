@@ -185,10 +185,6 @@ td.plus{color:var(--good)}
 .btn.small{padding:8px 12px;font-size:15px;margin-top:6px;width:100%}
 .qcard{position:relative;text-align:center}
 .ql{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--game);color:#fff;font-family:var(--f-display);font-weight:800;font-size:38px;box-shadow:3px 3px 0 var(--ink);margin-bottom:4px}
-.buzzer{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:min(260px,80vw);aspect-ratio:1;margin:14px auto 4px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8a8a,#e03131 60%,#a51111);color:#fff;font-size:72px;border:4px solid var(--ink);box-shadow:0 10px 0 var(--ink);transition:transform .08s}
-.buzzer span{font-size:18px;font-weight:800}
-.buzzer:active:not(:disabled){transform:translateY(8px);box-shadow:0 2px 0 var(--ink)}
-.buzzer:disabled{filter:grayscale(.5);opacity:.75}
 .buzzed{display:flex;flex-direction:column;align-items:center;gap:6px;margin:12px 0;padding:14px;border-radius:18px;background:var(--soft);animation:fnpop .45s cubic-bezier(.2,1.6,.4,1)}
 .buzzed>span:first-child{font-size:46px;animation:hrring .5s ease-in-out 3}.buzzed .tt{font-size:16px}.buzzed b{font-family:var(--f-display);font-size:26px}
 @keyframes hrring{25%{transform:rotate(-18deg)}75%{transform:rotate(18deg)}}
@@ -196,6 +192,19 @@ td.plus{color:var(--good)}
 .judge{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}.judge>*{flex:1;min-width:120px}
 .btn.ok{background:#12a874}.btn.no{background:#e03131}.btn.t1{background:#12a874}.btn.t2{background:#ff7a1a}
 .bwrap{margin:6px 0}
+/* 🔔 the buzzer: a modern arcade button (base ring, glossy cap, line bell) */
+.buzzwrap{display:flex;flex-direction:column;align-items:center;margin:16px 0 6px}
+.buzzer{position:relative;width:min(188px,48vw);aspect-ratio:1;border-radius:50%;padding:0;border:0;background:radial-gradient(circle at 50% 60%,#1e0645 60%,#120328 100%);box-shadow:0 0 0 3px rgba(255,209,102,.9),0 0 0 9px rgba(255,209,102,.12),0 18px 40px rgba(0,0,0,.45);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.buzzer .cap{position:absolute;inset:9%;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#ff8a8a 0%,#ff3b47 38%,#d0142a 72%,#9e0b1f 100%);box-shadow:inset 0 -10px 18px rgba(0,0,0,.28),inset 0 6px 10px rgba(255,255,255,.35),0 10px 0 #6d0716,0 12px 18px rgba(0,0,0,.4);transform:translateY(-6px);transition:transform .08s ease,box-shadow .08s ease}
+.buzzer .cap::before{content:"";position:absolute;top:9%;left:22%;right:22%;height:28%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0));pointer-events:none}
+.buzzer svg{width:44%;height:44%;filter:drop-shadow(0 2px 0 rgba(110,7,22,.6))}
+.buzzer:not(:disabled){animation:hrglow 1.8s ease-in-out infinite}
+@keyframes hrglow{50%{box-shadow:0 0 0 3px #ffd166,0 0 0 14px rgba(255,209,102,.18),0 0 46px rgba(255,59,71,.55),0 18px 40px rgba(0,0,0,.45)}}
+.buzzer:active:not(:disabled) .cap{transform:translateY(2px);box-shadow:inset 0 -6px 12px rgba(0,0,0,.3),inset 0 4px 8px rgba(255,255,255,.3),0 2px 0 #6d0716}
+.buzzer:disabled{cursor:default}
+.buzzer:disabled .cap{transform:translateY(2px);background:radial-gradient(circle at 50% 30%,#7ef0bd 0%,#22c584 45%,#0c8a5c 100%);box-shadow:inset 0 -8px 14px rgba(0,0,0,.25),0 2px 0 #064e35}
+.blabel{margin:12px 0 0;padding:6px 16px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,209,102,.5);color:#fff;font-weight:800;font-size:15px;letter-spacing:.2px}
+.buzzed .bell{display:block;width:46px;height:46px;animation:hrring .5s ease-in-out 3}.buzzed .bell svg{width:100%;height:100%}
 .showrow{display:flex;gap:8px}.showrow .inp{flex:1}.showrow .btn.small{width:auto;margin:0}
 /* the studio look: purple stage, lights, gold frames */
 html{background:#2e1065}
@@ -237,10 +246,6 @@ header .brand{color:#ffd166;text-shadow:0 3px 0 #b45309,0 0 18px rgba(255,209,10
 .ans{background:linear-gradient(180deg,#fffaf0,#f3dfb4);color:#3b0f7a;border:3px solid #f5b72f;position:relative;padding-top:18px}
 .ans::before{content:"الجواب الصحيح · للمقدّم فقط";white-space:nowrap;position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#ffd166;color:#3b0f7a;border-radius:999px;padding:0 12px;font-size:13px;font-weight:800;border:2px solid #b45309}
 .ans b{font-size:30px}
-.buzzer{position:relative;background:radial-gradient(circle at 35% 28%,#ffb3b3 0,#ff4d4d 22%,#d61f1f 55%,#8f0d0d 100%);border:6px solid #ffd166;box-shadow:0 10px 0 #7f1d1d,0 0 0 8px rgba(255,209,102,.25),0 0 40px rgba(255,77,77,.6)}
-.buzzer::before,.buzzer::after{content:"";position:absolute;inset:-26px;border-radius:50%;border:5px solid transparent;border-left-color:#ffd166;border-right-color:#ffd166;opacity:.85;animation:hrwave 1.4s ease-out infinite}
-.buzzer::after{inset:-44px;animation-delay:.35s}
-.buzzer:disabled::before,.buzzer:disabled::after{display:none}
 @keyframes hrwave{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.08);opacity:0}}
 .buzzed{background:linear-gradient(180deg,#be123c,#881337);border:3px solid #ffd166;color:#fff}
 .buzzed b{color:#fff}.buzzed em{font-style:normal;font-weight:800;color:#ffd166;font-size:15px;text-align:center}
@@ -262,8 +267,6 @@ body.hrplay .sbar{margin:2px 0 8px}body.hrplay .sb{padding:4px 8px}body.hrplay .
 body.hrplay .card{padding:12px}
 body.hrplay .qcard{padding:8px 10px}body.hrplay .ql{width:48px;height:48px;font-size:28px;border-radius:14px}
 body.hrplay .stmt{font-size:clamp(19px,5.2vw,24px);margin:4px 0}
-body.hrplay .buzzer{width:min(170px,44vw);font-size:50px;margin:18px auto 22px}
-body.hrplay .buzzer span{font-size:15px}
 body.hrplay .buzzed{margin:8px 0;padding:8px}body.hrplay .buzzed>span:first-child{font-size:34px}
 body.hrplay .mini{margin-top:8px}body.hrplay .mini .hrb{max-height:27vh}
 body.hrplay .bwrap .hrb{max-height:46vh}
