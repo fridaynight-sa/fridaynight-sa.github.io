@@ -201,6 +201,8 @@
     if (!P[ME.pid] && Object.keys(P).length) { app.innerHTML = `<div class="card center"><p class="big-msg">انشلت من الغرفة</p></div>`; return; }
     const leave = `<button type="button" class="btn alt mt" data-act="leave">اطلع من الغرفة</button>`;
     const inGame = host || (S.teams && S.teams[ME.pid]);
+    document.body.classList.toggle("hrplay", S.phase !== "lobby" && !!inGame);
+    document.body.classList.toggle("hrdock", false);
 
     if (S.phase === "lobby" || !inGame) {
       const waiting = S.phase !== "lobby", ids = players();
@@ -240,17 +242,19 @@
       if (S.phase === "buzz") {
         const t = teamOf(S.buzz);
         body = `<div class="buzzed t${t}"><span>🔔</span><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${teamTag(t)}</div>
-          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div>`
+          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="dock"><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div></div>`
             : `<p class="note center">${S.buzz === ME.pid ? "جاوب بصوت عالي 🎤" : "يجاوب الحين…"}</p>`}`;
       } else if (host) {
         body = `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p>
-          ${locked.length >= 2 ? `<p class="note center">الفريقين غلطوا 😅</p>` : `<p class="note center">ننتظر أحد يضغط 🔔… أو احكم مباشرة:</p><div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
-          <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div>`;
+          ${locked.length >= 2 ? `<p class="note center">الفريقين غلطوا 😅</p>` : `<p class="note center">ننتظر أحد يضغط 🔔… أو احكم مباشرة من تحت 👇</p>`}
+          <div class="dock">${locked.length >= 2 ? "" : `<div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
+          <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div></div>`;
       } else {
         body = canBuzz ? `<button type="button" class="buzzer" data-act="buzz" ${mine ? "disabled" : ""}>🔔<span>${mine ? "ضغطت!" : "اضغط إذا تعرف"}</span></button>`
           : `<p class="big-msg">${!myT ? "تتفرج 👀" : locked.includes(myT) ? "فريقك غلط، الفرصة للفريق الثاني ⏳" : "…"}</p>`;
       }
-      app.innerHTML = `${scoreBar()}<div class="card">${qcard}${lastMiss}${body}</div><div class="card">${boardHTML(false)}</div>${leave}`;
+      app.innerHTML = `${scoreBar()}<div class="card">${qcard}${lastMiss}${body}<div class="mini">${boardHTML(false)}</div></div>${leave}`;
+      document.body.classList.toggle("hrdock", !!app.querySelector(".dock"));
       if (S.phase === "buzz" && self.FA) FA.once("hr-bz-" + S.q.id + "-" + S.buzz + "-" + locked.length, () => play(S.buzz === ME.pid ? "right" : "whoosh", [40]));
       return;
     }
@@ -294,7 +298,7 @@
   }
 
   /* ---------------- home ---------------- */
-  function goHome() { view = "home"; chip.hidden = true; renderHome(); }
+  function goHome() { view = "home"; chip.hidden = true; document.body.classList.remove("hrplay", "hrdock"); renderHome(); }
   function renderHome() {
     const per = haveCount(), min = Math.min(...Object.values(per));
     app.innerHTML = `<div class="hero"><h1>خلية الحروف 🔤</h1><p>فريقين، لوحة حروف، وجرس… مين يوصّل أول؟</p></div>

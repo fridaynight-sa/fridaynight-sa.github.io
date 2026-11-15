@@ -145,7 +145,7 @@
     }
     const board = self.HRB ? HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, big: true }) : "";
     const strip = S.phase === "won" || S.phase === "end" ? "" : `<p class="hrhint">${esc(HRB.hint(S.board.own))}</p>`;
-    return `<div class="card hrstage"><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div>${strip}</div>`;
+    return `<div class="card hrstage"><span class="hrcode">رمز الغرفة<b dir="ltr">${esc(code)}</b></span><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div>${strip}</div>`;
   }
   /* ---------- جماد حيوان إنسان ---------- */
   const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };
@@ -215,6 +215,7 @@
     }
     if (self.DFShow) DFShow.stop();
     document.body.classList.toggle("hrshow", game === "hr");
+    document.body.classList.toggle("hrplaying", game === "hr" && !!S.board && S.phase !== "lobby");
     const main = game === "sq" ? renderSQ() : game === "mf" ? renderMF() : game === "draw" ? renderDraw() : game === "df" ? renderDF() : game === "jh" ? renderJH() : game === "hr" ? renderHR() : renderBS();
     app.innerHTML = `<div class="tvgrid"><div>${main}</div>${sideHTML()}</div>`;
     frame = key; board = null;
@@ -236,7 +237,7 @@
     if (game === "draw" && S.phase === "reveal") FA.once(k + "rv" + S.tid, () => { FA.play("reveal"); FA.slam("الكلمة كانت: " + (S.word || ""), null, "#ff7a1a"); });
     if (S.phase === "end" && game !== "bs") FA.once(k + "end" + (S.game || ""), top);
   }
-  function stopGame() { document.body.classList.remove("hrshow"); if (self.DFShow) DFShow.stop(); subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
+  function stopGame() { document.body.classList.remove("hrshow", "hrplaying"); if (self.DFShow) DFShow.stop(); subs.forEach(f => f()); subs = []; game = null; S = null; clearInterval(tick); lastStep = ""; document.body.classList.remove("catbg"); }
   function watchNight(c) {
     NIGHT = c; NS = null;
     const r = db.ref("night/" + c + "/state"), h = sn => { NS = dec(sn.val()); nightStep(); };
