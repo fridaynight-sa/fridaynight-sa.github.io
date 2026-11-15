@@ -302,7 +302,7 @@
   function goHome() { view = "home"; chip.hidden = true; document.body.classList.remove("hrplay", "hrdock"); renderHome(); }
   function renderHome() {
     const per = haveCount(), min = Math.min(...Object.values(per));
-    app.innerHTML = `<div class="hero"><h1>خلية الحروف 🔤</h1><p>فريقين، لوحة حروف، وجرس… مين يوصّل أول؟</p></div>
+    app.innerHTML = `<div class="hero"><img class="hero-ic" src="../icons/hroof.png" alt=""><h1>خلية الحروف</h1><p>فريقين، لوحة حروف، وجرس… مين يوصّل أول؟</p></div>
       <div class="hero-board">${HRB.svg(HRB.newBoard(per, rnd), {})}</div>
       <div class="modes">
         <button type="button" class="mode" data-act="ocreate"><span class="ic">🎙️</span><span><b>افتح غرفة (أنت المقدّم)</b><span>تشوف الأجوبة وتحكم، والباقين فريقين</span></span></button>
