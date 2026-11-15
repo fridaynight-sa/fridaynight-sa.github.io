@@ -126,7 +126,7 @@
     const ids = Object.keys(P).filter(id => id !== S.host);
     if (S.phase === "lobby" || !S.board) {
       const col = t => `<div class="hrcol" style="--c:${HRT[t][2]}"><p class="tvtitle">${HRT[t][1]} ${HRT[t][0]}</p>${plist(ids.filter(id => (P[id].team || 0) === t))}</div>`;
-      return `<div class="card"><p class="tvtitle">${gname("hr")}</p><p class="tvsub">🎙️ المقدّم: ${esc(nameOf(S.host))} · اختاروا فريقكم من جوالاتكم</p><div class="hrcols">${col(1)}${col(2)}</div></div>`;
+      return `<div class="card hrstage">${self.HRB ? HRB.logo(S.show, "lg") : ""}<p class="tvsub">🎙️ المقدّم: ${esc(nameOf(S.host))} · اختاروا فريقكم من جوالاتكم</p><div class="hrcols">${col(1)}${col(2)}</div></div>`;
     }
     const w = S.wins || { 1: 0, 2: 0 }, teamOf = id => (S.teams || {})[id] || 0;
     const score = `<div class="hrscore"><div style="--c:${HRT[1][2]}"><b>${w[1] || 0}</b><span>${HRT[1][1]} ${HRT[1][0]}</span><i>فوق ↕ تحت</i></div><div class="mid">الجولة ${S.round || 1}</div><div style="--c:${HRT[2][2]}"><b>${w[2] || 0}</b><span>${HRT[2][1]} ${HRT[2][0]}</span><i>يمين ↔ يسار</i></div></div>`;
@@ -145,7 +145,7 @@
     }
     const board = self.HRB ? HRB.svg(S.board, { sel: S.sel, win: S.win && S.win.path, big: true }) : "";
     const strip = S.phase === "won" || S.phase === "end" ? "" : `<p class="hrhint">${esc(HRB.hint(S.board.own))}</p>`;
-    return `<div class="card hrstage"><span class="hrcode">رمز الغرفة<b dir="ltr">${esc(code)}</b></span><h2 class="hrtitle">خلية الحروف</h2>${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div>${strip}</div>`;
+    return `<div class="card hrstage"><span class="hrcode">رمز الغرفة<b dir="ltr">${esc(code)}</b></span>${self.HRB ? HRB.logo(S.show, "lg") : ""}${score}<div class="hrgrid"><div class="hrboard">${board}</div><div class="hrinfo">${info}</div></div>${strip}</div>`;
   }
   /* ---------- جماد حيوان إنسان ---------- */
   const JHC = { insan: ["إنسان", "#f03e7a"], hayawan: ["حيوان", "#f08c00"], nabat: ["نبات", "#12a874"], jamad: ["جماد", "#1c7ed6"], bilad: ["بلاد", "#7c3aed"], akla: ["أكلة", "#e8590c"], mihna: ["مهنة", "#0c8599"], sayyara: ["سيارة", "#495057"], musalsal: ["مسلسل", "#ae3ec9"], laeb: ["لاعب كرة", "#2b8a3e"], marka: ["ماركة", "#c2255c"] };

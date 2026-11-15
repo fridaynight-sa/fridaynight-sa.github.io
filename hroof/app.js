@@ -94,7 +94,7 @@
     if (self.FNN && FNN.room) code = FNN.room;
     else for (let i = 0; i < 5; i++) { const s = await db.ref("hr/" + code + "/state").get(); if (!s.exists()) break; code = genCode(); }
     ME = { pid: (self.FNN && FNN.pid) || "p" + rid(8), name, code }; LS.set(MKEY, ME);
-    S = { v: 1, host: ME.pid, phase: "lobby", target: 2, level: 0, names: {}, wins: { 1: 0, 2: 0 }, used: [], at: Date.now() };
+    S = { v: 1, host: ME.pid, phase: "lobby", show: name.slice(0, 16), target: 2, level: 0, names: {}, wins: { 1: 0, 2: 0 }, used: [], at: Date.now() };
     if (self.FNN) S.nt = FNN.n;
     await ref("state").set(enc(S));
     await writeMe({ name, at: Date.now(), team: 0 });
@@ -188,7 +188,7 @@
   const teamTag = t => t ? `<span class="tt t${t}">${TEAM[t].ic} ${TEAM[t].name}</span>` : "";
   function scoreBar() {
     const w = S.wins || { 1: 0, 2: 0 }, need = S.target || 2;
-    return `<div class="sbar"><div class="sb t1"><b>${w[1] || 0}</b><span>${TEAM[1].ic} ${TEAM[1].name}</span><i>فوق ↕ تحت</i></div>
+    return `${HRB.logo(S.show, "sm")}<div class="sbar"><div class="sb t1"><b>${w[1] || 0}</b><span>${TEAM[1].ic} ${TEAM[1].name}</span><i>فوق ↕ تحت</i></div>
       <div class="sbm">الجولة ${S.round || 1}<small>${need > 1 ? `اللي يفوز بـ${need} يكسب` : "جولة وحدة"}</small></div>
       <div class="sb t2"><b>${w[2] || 0}</b><span>${TEAM[2].ic} ${TEAM[2].name}</span><i>يمين ↔ يسار</i></div></div>`;
   }
@@ -212,13 +212,13 @@
         ${!host && !waiting && myT !== t ? `<button type="button" class="btn small" data-team="${t}">انضم ${TEAM[t].ic}</button>` : ""}</div>`;
       const none = ids.filter(id => !(P[id].team));
       app.innerHTML = `${waiting ? `<div class="card center"><p class="big-msg">اللعبة شغالة، تدخل معهم في اللعبة الجاية ⏳</p></div>` : ""}
-        <div class="card center"><span class="lbl">رمز الغرفة</span><div class="code">${esc(ME.code)}</div>${qr ? `<img class="qr" src="${qr}" alt="باركود الدخول">` : ""}
+        <div class="card center">${HRB.logo(S.show, "md")}<span class="lbl">رمز الغرفة</span><div class="code">${esc(ME.code)}</div>${qr ? `<img class="qr" src="${qr}" alt="باركود الدخول">` : ""}
           <p class="note">خلّ البقية يصوّرون الباركود أو يدخلون الرمز.</p><button type="button" class="ghost mt" data-act="copy">انسخ رابط الدخول</button>
           <p class="note">📺 اعرضوها على التلفزيون: <b dir="ltr">${esc(tvURL().replace(/^https?:\/\//, ""))}</b></p></div>
         <div class="card"><h2>الفريقين</h2><p class="note">🎙️ المقدّم: <b>${esc(nameOf(S.host))}</b>، يشوف الأجوبة ويحكم.</p>
           <div class="teams">${col(1)}${col(2)}</div>
           ${none.length ? `<p class="note">ما اختاروا فريق: ${none.map(id => esc(P[id].name)).join("، ")}</p>` : ""}</div>
-        ${waiting ? "" : host ? `<div class="card"><div class="field"><span class="lbl">المستوى</span><div class="seg">${[0, 1, 2, 3].map(n => `<button type="button" data-level="${n}" class="${(S.level || 0) === n ? "on" : ""}">${LEVEL[n]}</button>`).join("")}</div></div>
+        ${waiting ? "" : host ? `<div class="card"><div class="field"><label class="lbl" for="fShow">اسم المقدّم (يطلع «حروف مع …»)</label><div class="showrow"><input id="fShow" class="inp" maxlength="16" value="${esc(S.show || "")}" placeholder="مثلاً: فيصل"><button type="button" class="btn small" data-act="show">حفظ</button></div></div><div class="field"><span class="lbl">المستوى</span><div class="seg">${[0, 1, 2, 3].map(n => `<button type="button" data-level="${n}" class="${(S.level || 0) === n ? "on" : ""}">${LEVEL[n]}</button>`).join("")}</div></div>
           <div class="field"><span class="lbl">الجولات</span><div class="seg">${[[1, "جولة وحدة"], [2, "الأفضل من 3"], [3, "الأفضل من 5"]].map(([n, t]) => `<button type="button" data-target="${n}" class="${S.target === n ? "on" : ""}">${t}</button>`).join("")}</div></div>
           <p class="err" id="herr"></p><button type="button" class="btn" data-act="hstart">ابدأ اللعبة</button></div>`
           : `<div class="card center"><p class="note">${myT ? `أنت في ${teamTag(myT)}. ` : "اختار فريقك 👆 "}ننتظر 🎙️ ${esc(nameOf(S.host))} يبدأ…</p></div>`}
@@ -285,6 +285,7 @@
       if (el.dataset.kick) { await ref("players/" + el.dataset.kick).remove(); return; }
       if (el.dataset.move) { const id = el.dataset.move, p = P[id]; await ref("players/" + id).set(enc(Object.assign({}, p, { team: p.team === 1 ? 2 : 1 }))); return; }
       if (el.dataset.level) { await writeState({ level: +el.dataset.level }); return; }
+      if (a === "show") { const v = (document.getElementById("fShow").value || "").trim().slice(0, 16); await writeState({ show: v }); el.textContent = "انحفظ ✓"; return; }
       if (el.dataset.target) { await writeState({ target: +el.dataset.target }); return; }
       if (a === "hstart") { el.disabled = true; const m = await hostStart(); if (m) { document.getElementById("herr").textContent = m; el.disabled = false; } return; }
       if (a === "right") { el.disabled = true; await hostJudge(true); return; }

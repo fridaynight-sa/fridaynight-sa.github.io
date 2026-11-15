@@ -84,6 +84,12 @@
 .hrb .cell.win .hx{stroke:#fff3a8;stroke-width:.18;filter:drop-shadow(0 0 .3px #fff3a8)}
 .hrb .cell.t1 .hx,.hrb .cell.t2 .hx{animation:hrbpop .45s cubic-bezier(.2,1.6,.4,1)}
 .hrb .cell{transform-box:fill-box;transform-origin:center}
+.hrlogo{display:flex;flex-direction:column;align-items:center;line-height:1;font-family:Almarai,Tajawal,sans-serif;font-weight:800;margin:0 auto 8px;transform:rotate(-3deg);user-select:none}
+.hrlogo b,.hrlogo em{font-style:normal;paint-order:stroke fill;-webkit-text-stroke:.14em #2b1745;text-shadow:0 .09em 0 #2b1745;letter-spacing:.01em}
+.hrlogo b{font-size:2.5em;color:#ffd166}
+.hrlogo i{font-style:normal;font-size:1em;color:#fff;background:#e03131;border:.12em solid #2b1745;border-radius:999px;padding:.05em .7em .12em;margin:-.15em 0 .05em;transform:rotate(5deg);box-shadow:0 .12em 0 #2b1745;position:relative;z-index:1}
+.hrlogo em{font-size:2.3em;color:#ff8fab;max-width:100%;white-space:nowrap}
+.hrlogo.sm{font-size:12px}.hrlogo.md{font-size:18px}.hrlogo.lg{font-size:clamp(20px,2.2vw,30px)}
 @keyframes hrbsel{to{stroke:#ffb21e}}
 @keyframes hrbpop{0%{opacity:.4}100%{opacity:1}}`;
   if (typeof document !== "undefined" && !document.getElementById("hrb-css")) { const st = document.createElement("style"); st.id = "hrb-css"; st.textContent = css; document.head.appendChild(st); }
@@ -94,7 +100,12 @@
     while (out.length < N * N && pool.length) out.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0]);
     return { L: out, own: Array(N * N).fill(0) };
   }
-    // a line for the gold strip under the board: who is close to joining
+    // the show's name: «حروف مع فلان» (the presenter's name), or «خلية الحروف» without one
+  function logo(name, cls) {
+    name = String(name || "").trim().slice(0, 16);
+    return name ? `<div class="hrlogo ${cls || ""}"><b>حروف</b><i>مع</i><em>${esc(name)}</em></div>` : `<div class="hrlogo ${cls || ""}"><b>خلية</b><em>الحروف</em></div>`;
+  }
+  // a line for the gold strip under the board: who is close to joining
   function hint(own) {
     if (!own || !own.some(x => x)) return "اختاروا حروفكم بذكاء: كل خلية تقرّبكم من الضفة الثانية 🎯";
     const T = { 1: "🟢 الأخضر", 2: "🟠 البرتقالي" }, n = { 1: need(own, 1), 2: need(own, 2) };
@@ -106,5 +117,5 @@
     if (n[2] === Infinity) return `🧱 ${T[1]} سكّر الطريق على ${T[2]}!`;
     return n[1] < n[2] ? `${T[1]} أقرب للفوز: باقي له ${word(n[1])}` : n[2] < n[1] ? `${T[2]} أقرب للفوز: باقي له ${word(n[2])}` : `تعادل! كل فريق باقي له ${word(n[1])}`;
   }
-  self.HRB = { N, LETTERS, neighbors, chain, winner, need, hint, svg, newBoard, COL };
+  self.HRB = { N, LETTERS, neighbors, chain, winner, need, hint, logo, svg, newBoard, COL };
 })();
