@@ -112,7 +112,7 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
 <main class="wrap" id="app"><div class="card c"><div class="big">⏳</div><p>لحظة…</p></div></main>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="../firebase-config.js?v=202611171342"></script>
+<script src="../firebase-config.js?v=202611171442"></script>
 <script>
 (function () {
   "use strict";
@@ -249,6 +249,18 @@ textarea:focus{outline:none;background:#fff;border-color:var(--purple)}
   async function applyRules(b) {
     const m = $("rmsg"), say = (t, ok) => { m.innerHTML = t; m.className = "msg " + (ok ? "ok" : "err"); };
     b.disabled = true; say("لحظة…", true);
+    // the games sign every phone in anonymously (fnauth.js) and the rules expect it: with it switched off they would
+    // lock every room, so check first (on a side app, so the owner stays signed in here)
+    try {
+      const pa = firebase.apps.find(a => a.name === "probe") || firebase.initializeApp(firebase.app().options, "probe");
+      await pa.auth().signInAnonymously(); pa.auth().signOut().catch(() => {});
+    } catch (e) {
+      if (e && e.code === "auth/operation-not-allowed") {
+        b.disabled = false;
+        say(`⚠️ قبل لا تطبّق القواعد: فعّل «الدخول المجهول» مرة وحدة. افتح <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">Firebase</a> ← مشروعك ← Authentication ← Sign-in method ← Anonymous ← Enable ← Save. وبعدها ارجع اضغط الزر مرة ثانية.`);
+        return;
+      }
+    }
     try {
       const p = new firebase.auth.GoogleAuthProvider();
       p.addScope("https://www.googleapis.com/auth/firebase.database"); p.addScope("https://www.googleapis.com/auth/userinfo.email");

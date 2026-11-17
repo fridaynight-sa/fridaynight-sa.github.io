@@ -25,17 +25,20 @@ function allowed(p,v,auth){const ks=parts(p);let node=RULES,vars={},write=false;
    if(cn===undefined)continue;const r=cn['.validate'];if(r!==undefined&&!evalRule(r,nv,val[k],undefined,auth)){console.log('INVALID child',k);return false}if(!walk(cn,val[k],nv))return false}return true}
  return walk(node,v,vars)}
 function evalRule(ex,vars,v,cur,auth){if(ex===true||ex===false)return ex;let js=ex.replace(/\$(\w+)\.matches\((\/(?:\\.|[^\/])*\/)\)/g,(m,n,re)=>re+'.test('+JSON.stringify(vars['$'+n])+')')
+ .replace(/root\.child\(((?:[^()]|\([^()]*\))*)\)\.val\(\)/g,'(getAt($1)??null)').replace(/!root\.child\(((?:[^()]|\([^()]*\))*)\)\.exists\(\)/g,'(getAt($1)==null)')
+ .replace(/!data\.child\('(\w+)'\)\.exists\(\)/g,"(cur==null||cur['$1']==null)").replace(/data\.child\('(\w+)'\)\.exists\(\)/g,"(cur!=null&&cur['$1']!=null)")
+ .replace(/(^|[^w])data\.child\('(\w+)'\)\.val\(\)/g,"$1(cur&&cur['$2'])").replace(/\bnow\b/g,'NOWT')
  .replace(/!newData\.exists\(\)/g,'(v==null)').replace(/newData\.exists\(\)/g,'(v!=null)').replace(/!data\.exists\(\)/g,'(cur==null)').replace(/data\.exists\(\)/g,'(cur!=null)')
  .replace(/newData\.child\('(\w+)'\)\.isString\(\)/g,"(v!=null&&typeof v['$1']==='string')").replace(/newData\.child\('(\w+)'\)\.val\(\)/g,"(v&&v['$1'])")
  .replace(/newData\.isString\(\)/g,"(typeof v==='string')").replace(/newData\.val\(\)/g,'v').replace(/\.matches\(/g,'.match(')
  .replace(/\$(\w+)/g,(m,n)=>JSON.stringify(vars['$'+n]));
- try{return !!Function('v','cur','auth','return ('+js+')')(v,cur,auth||null)}catch(e){console.log('rule eval fail',ex,js,e.message);return false}}
+ try{return !!Function('v','cur','auth','getAt','NOWT','return ('+js+')')(v,cur,auth||null,getAt,global.NOWT||Date.now())}catch(e){console.log('rule eval fail',ex,js,e.message);return false}}
 http.createServer((q,r)=>{const u=new URL(q.url,'http://x');
  if(u.pathname==='/__fb/stream'){const id=u.searchParams.get('id');r.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache'});r.write(':ok\n\n');streams.set(id,r);q.on('close',()=>{streams.delete(id);for(const s of [...subs])if(s.id===id)subs.delete(s)});return}
  if(u.pathname==='/__fb/watch'){let b='';q.on('data',d=>b+=d);q.on('end',()=>{const {id,sid,p,off}=JSON.parse(b);if(off){for(const s of [...subs])if(s.id===id&&s.sid===sid)subs.delete(s);r.end('ok');return}const st=streams.get(id);const s={id,sid,p,r:{write:x=>{const t=streams.get(id);t&&t.write(x)}},mux:true};subs.add(s);s.r.write('data: '+JSON.stringify({sid,v:getAt(p)??null})+'\n\n');r.end('ok')});return}
  if(u.pathname==='/__fb/sub'){const p=u.searchParams.get('p');r.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-cache'});const s={p,r};subs.add(s);r.write('data: '+JSON.stringify(getAt(p)??null)+'\n\n');q.on('close',()=>subs.delete(s));return}
  if(u.pathname==='/__fb/get'){r.writeHead(200,{'Content-Type':'application/json'});r.end(JSON.stringify(getAt(u.searchParams.get('p'))??null));return}
- if(u.pathname==='/__fb/set'){let b='';q.on('data',d=>b+=d);q.on('end',()=>{const {p,v,auth}=JSON.parse(b);const T=Date.now();const fix=x=>{if(x&&typeof x==='object'){if(x['.sv']==='timestamp')return T;for(const k in x)x[k]=fix(x[k])}return x};const nv=clean(fix(v));if(!allowed(p,nv,auth)){console.log('DENIED',p);r.statusCode=403;r.end('denied');return}setAt(p,nv);tree=tree||{};for(const s of subs)if(rel(s.p,p))s.r.write('data: '+JSON.stringify(s.mux?{sid:s.sid,v:getAt(s.p)??null}:getAt(s.p)??null)+'\n\n');r.end('ok')});return}
+ if(u.pathname==='/__fb/set'){let b='';q.on('data',d=>b+=d);q.on('end',()=>{const {p,v,auth}=JSON.parse(b);const T=Date.now();const fix=x=>{if(x&&typeof x==='object'){if(x['.sv']==='timestamp')return T;for(const k in x)x[k]=fix(x[k])}return x};const nv=clean(fix(v));global.NOWT=T;if(!allowed(p,nv,auth)){console.log('DENIED',p);r.statusCode=403;r.end('denied');return}setAt(p,nv);tree=tree||{};for(const s of subs)if(rel(s.p,p))s.r.write('data: '+JSON.stringify(s.mux?{sid:s.sid,v:getAt(s.p)??null}:getAt(s.p)??null)+'\n\n');r.end('ok')});return}
  if(u.pathname==='/__fb/dump'){r.end(JSON.stringify(tree));return}
  let f=path.join(ROOT,decodeURIComponent(u.pathname));if(fs.existsSync(f)&&fs.statSync(f).isDirectory())f=path.join(f,'index.html');
  if(!fs.existsSync(f)){r.writeHead(404);r.end();return}r.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});fs.createReadStream(f).pipe(r)}).listen(PORT);

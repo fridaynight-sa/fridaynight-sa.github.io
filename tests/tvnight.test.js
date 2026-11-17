@@ -18,10 +18,10 @@ ok(Object.keys(d.jh[C].players||{}).length===2,'both players in the jhi room');
 await tv.screenshot({path:process.env.S+'/tvn-jh.png'});
 await sw('seenjeem');await H.wait(1000);
 ok(/tv\//.test(tv.url()),'tv waits for the سين جيم room');
-// the host's سين جيم room opens (as fnnight sees it: rooms/<code> with this step's nt)
-await tv.evaluate(c=>firebase.database().ref('rooms/'+c).set({j:JSON.stringify({nt:3,at:Date.now()})}),C);await H.wait(3500);
+// the host's سين جيم room opens (as fnnight sees it: rooms/<code> with this step's nt) (written from the host's phone: only the host may)
+await h.evaluate(c=>firebase.database().ref('rooms/'+c).set({j:JSON.stringify({nt:3,at:Date.now()})}),C);await H.wait(3500);
 ok(/seenjeem\/#/.test(tv.url()),'tv opened سين جيم\'s own screen: '+tv.url().replace(H.BASE,''));
 // the night moves on: سين جيم's screen goes back to the TV, which follows
-await tv.evaluate(c=>firebase.database().ref('night/'+c+'/state').get().then(s=>{const o=JSON.parse(s.val().j);o.seq=4;o.cur={g:'dafour',room:c,n:4,at:Date.now()};return firebase.database().ref('night/'+c+'/state').set({j:JSON.stringify(o)})}),C);
+await h.evaluate(c=>firebase.database().ref('night/'+c+'/state').get().then(s=>{const o=JSON.parse(s.val().j);o.seq=4;o.cur={g:'dafour',room:c,n:4,at:Date.now()};return firebase.database().ref('night/'+c+'/state').set({j:JSON.stringify(o)})}),C);
 await H.wait(4000);ok(/tv\/#/.test(tv.url()),'سين جيم screen came back to the TV: '+tv.url().replace(H.BASE,''));
 console.log('errors',errs.filter(e=>!/vibrate|dialog|Failed to load/.test(e)));await b.close()})();

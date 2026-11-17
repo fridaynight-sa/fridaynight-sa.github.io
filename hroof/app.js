@@ -287,7 +287,7 @@
       if (a === "leave") { leaveRoom(); return; }
       if (!isHost()) return;
       if (el.dataset.kick) { await ref("players/" + el.dataset.kick).remove(); return; }
-      if (el.dataset.move) { const id = el.dataset.move, p = P[id]; await ref("players/" + id).set(enc(Object.assign({}, p, { team: p.team === 1 ? 2 : 1 }))); return; }
+      if (el.dataset.move) { const id = el.dataset.move, p = P[id], raw = (await ref("players/" + id).get()).val() || {}; await ref("players/" + id).set(Object.assign({}, raw.u ? { u: raw.u } : {}, enc(Object.assign({}, p, { team: p.team === 1 ? 2 : 1 })))); return; }   // keeps the player's own u (fnauth.js)
       if (el.dataset.level) { await writeState({ level: +el.dataset.level }); return; }
       if (a === "show") { const v = (document.getElementById("fShow").value || "").trim().slice(0, 16); await writeState({ show: v }); el.textContent = "انحفظ ✓"; return; }
       if (el.dataset.target) { await writeState({ target: +el.dataset.target }); return; }
