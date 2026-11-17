@@ -33,6 +33,6 @@ s=await st();ok(s.phase==='won'&&s.win&&s.win.t===1&&s.wins[1]===1,'green joined
 await H.wait(800);await tv.screenshot({path:S+'/hr-tv-won.png'});await a.screenshot({path:S+'/hr-won.png',fullPage:true});
 await h.click('[data-act=nextround]');await H.wait(1000);s=await st();ok(s.phase==='pick'&&s.round===2&&s.turn===2&&s.board.own.every(x=>!x),'round 2: new board, the losers pick first');
 // the answers are not readable in questions.json
-const raw=await (await fetch(H.BASE+'hroof/questions.json')).text();ok(!raw.includes('"a"')&&!raw.includes('امرؤ القيس'),'answers hidden in questions.json');
-const dec=await h.evaluate(()=>HR.QS.slice(0,3).map(q=>HR.answerOf(q)));ok(dec[0]==='الأحساء','answers open on the phone: '+dec.join(' / '));
+const raw=await (await fetch(H.BASE+'hroof/questions.json')).text();ok(!raw.includes('"a"')&&!raw.includes('بنزيما'),'answers hidden in questions.json');
+const dec=await h.evaluate(()=>HR.QS.slice(0,3).map(q=>HR.answerOf(q)));ok(dec.every(Boolean)&&dec[0]==='الأخضر','answers open on the phone: '+dec.join(' / '));
 console.log('errors',errs.filter(e=>!/vibrate|dialog/.test(e)));await b.close()})();

@@ -8,7 +8,7 @@ def hide(i, a):
     b = a.encode("utf-8"); k = key(i)
     return base64.b64encode(bytes(x ^ k[n % 64] for n, x in enumerate(b))).decode()
 rows = []
-for f in sorted(glob.glob(str(ROOT / "scripts/hroof/q*.txt"))):
+for f in sorted(glob.glob(str(ROOT / "scripts/hroof/p*.txt"))):
     for l in open(f, encoding="utf-8"):
         l = l.strip()
         if not l or l.startswith("#"): continue
