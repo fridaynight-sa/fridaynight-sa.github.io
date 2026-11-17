@@ -150,7 +150,8 @@
   }
   const tiles = () => [...$("sq").children];
   function paintTop() {
-    $("hearts").textContent = "❤️".repeat(S.hearts) + "🤍".repeat(HEARTS - S.hearts);
+    const h = Math.max(0, Math.min(HEARTS, S.hearts));
+    $("hearts").textContent = "❤️".repeat(h) + "🤍".repeat(HEARTS - h);
     $("len").textContent = S.len + " مربعات";
   }
   function trial() {
@@ -242,6 +243,7 @@
     const o = document.getElementById("ov"); if (o) o.remove();
     if (!S) return;
     S.hidden += Date.now() - hiddenAt; S.paused = false;
+    if (S.hearts <= 0) { finish(false); return; }   // paused while the last heart's right order was showing: the session is over
     trial();
   }
 
