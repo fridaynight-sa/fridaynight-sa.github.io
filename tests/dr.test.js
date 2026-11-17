@@ -19,7 +19,7 @@ const g=pgs.filter((_,i)=>i!==di);
 console.log('guesser hint:',(await g[0].locator('#topw').innerText()).replace(/\s/g,'·'));
 await g[0].fill('#fGuess','غلط');await g[0].press('#fGuess','Enter');await H.wait(900);
 // close guess: change one letter if long enough
-const close=word.length>=4?word.slice(0,-1)+'ز':'xx';await g[1].fill('#fGuess',close);await g[1].press('#fGuess','Enter');await H.wait(900);
+const close=word.length>=4?word.slice(0,-1)+(word.endsWith('ز')?'ر':'ز'):'xx';   // never the word itself (a word ending in ز made this test fail by chance)await g[1].fill('#fGuess',close);await g[1].press('#fGuess','Enter');await H.wait(900);
 console.log('chat seen by guesser2:',(await g[1].locator('.chat').innerText()).replace(/\n/g,' / '));
 await g[0].fill('#fGuess',word);await g[0].press('#fGuess','Enter');await H.wait(1200);
 console.log('g0 msg:',await g[0].locator('#gmsg').innerText(),'| word leaked to chat?',(await g[1].locator('.chat').innerText()).includes(word));
