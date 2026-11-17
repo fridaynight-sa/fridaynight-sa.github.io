@@ -58,7 +58,7 @@
   function svg(B, o) {
     o = o || {};
     const own = B.own || [], L = B.L || [], winList = o.win || [], win = new Set(winList), uid = "h" + Math.random().toString(36).slice(2, 7);
-    const W = R3 * (N + 0.5) + 1.6, H = 1.5 * (N - 1) + 2 + 1.6, P = 0.2;   // P: shift the tiles inside the frame
+    const Q = 0.65, W = R3 * (N + 0.5) + 1.6 + 2 * Q, H = 1.5 * (N - 1) + 2 + 1.6 + 2 * Q, P = 0.2 + Q;   // P: shift the tiles inside the frame, Q: room for the labelled rails
     const g = (id, a, b) => `<linearGradient id="${uid}${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>`;
     let s = `<svg class="hrb${o.big ? " big" : ""}" viewBox="0 0 ${W.toFixed(2)} ${H.toFixed(2)}" role="img" aria-label="لوحة الحروف" direction="ltr"><defs>` +
       Object.keys(SK).map(k => g("f" + k, SK[k][0], SK[k][1])).join("") +
@@ -66,8 +66,12 @@
 <filter id="${uid}glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="0.18" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
 <rect x="0.3" y="0.3" width="${(W - 0.6).toFixed(2)}" height="${(H - 0.6).toFixed(2)}" rx="0.7" fill="url(#${uid}bg)"/>`;
     // the edges each team has to join: soft glowing rails, green top and bottom, orange left and right
-    const rail = (x, y, w, h, c) => `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${(Math.min(w, h) / 2).toFixed(2)}" fill="${c}" filter="url(#${uid}glow)"/>`;
-    s += rail(1, 0.08, W - 2, 0.32, EDGE[1]) + rail(1, H - 0.4, W - 2, 0.32, EDGE[1]) + rail(0.08, 1, 0.32, H - 2, EDGE[2]) + rail(W - 0.4, 1, 0.32, H - 2, EDGE[2]);
+    const rail = (x, y, w, h, c) => `<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${w.toFixed(2)}" height="${h.toFixed(2)}" rx="${(Math.min(w, h) / 2).toFixed(2)}" fill="${c}"/>`;
+    const RW = 0.74, lab = (x, y, rot, t) => `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" transform="rotate(${rot} ${x.toFixed(2)} ${y.toFixed(2)})" text-anchor="middle" dominant-baseline="central" font-size="0.46" font-weight="800" fill="#fff" font-family="Almarai,Tajawal,sans-serif" direction="rtl">${t}</text>`;
+    s += rail(1.1, 0.1, W - 2.2, RW, EDGE[1]) + rail(1.1, H - 0.1 - RW, W - 2.2, RW, EDGE[1]) + rail(0.1, 1.1, RW, H - 2.2, EDGE[2]) + rail(W - 0.1 - RW, 1.1, RW, H - 2.2, EDGE[2]);
+    // the direction written on the rails themselves, all game long
+    const tG = "🟢 الأخضر يوصّل من فوق لين تحت", tO = "🟠 البرتقالي يوصّل من اليمين لين اليسار";
+    s += lab(W / 2, 0.1 + RW / 2, 0, tG) + lab(W / 2, H - 0.1 - RW / 2, 0, tG) + lab(0.1 + RW / 2, H / 2, -90, tO) + lab(W - 0.1 - RW / 2, H / 2, 90, tO);
     const at = i => { const [x, y] = center(i); return [x + P, y + P]; };
     // the winning path: a line of light that shines between its cells
     if (winList.length > 1) s += `<polyline points="${winList.map(i => at(i).map(v => v.toFixed(2)).join(",")).join(" ")}" fill="none" stroke="#fff6c2" stroke-width=".22" stroke-linecap="round" stroke-linejoin="round" filter="url(#${uid}glow)" pointer-events="none"/>`;
