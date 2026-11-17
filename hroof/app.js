@@ -163,6 +163,8 @@
     const loser = S.win ? other(S.win.t) : 1 + rint(2);
     await writeState({ phase: "pick", round: (S.round || 1) + 1, board: HRB.newBoard(haveCount(), rnd), turn: loser, sel: null, q: null, buzz: null, locked: [], win: null, last: null, pickAt: Date.now() });
   }
+  // «ال» is not counted: shown faded so the presenter sees the letter that counts
+  const ansHTML = a => { const m = /^ال(?=..)/.test(a) && !(S.q && S.q.l === "ا" && !/^ال[اأإآ]/.test(a)) ? 2 : 0; return m ? `<span class="al">ال</span>${esc(a.slice(2))}` : esc(a); };
   const curAnswer = () => { const q = S && S.q && QS.find(x => x.id === S.q.id); return q ? answerOf(q) : ""; };
   let ticking = false;
   async function hostTick() {
@@ -239,15 +241,15 @@
       const locked = S.locked || [], canBuzz = !host && myT && !locked.includes(myT) && S.phase === "q";
       const mine = P[ME.pid] && P[ME.pid].buzz && S.q && P[ME.pid].buzz.q === S.q.id;
       const lastMiss = S.last && S.last.ok === false ? `<p class="note center">❌ ${esc(nameOf(S.last.pid))} غلط${locked.length < 2 ? `، الفرصة لـ${teamTag(other(S.last.t))}` : ""}</p>` : "";
-      const qcard = `<div class="qcard"><span class="ql">${esc(S.q.l === "ا" ? "أ" : S.q.l)}</span><p class="stmt">${esc(S.q.text)}</p><p class="note center">جوابه يبدأ بحرف «${esc(S.q.l === "ا" ? "أ" : S.q.l)}»${S.q.d ? " · " + LEVEL[S.q.d] : ""}</p></div>`;
+      const qcard = `<div class="qcard"><span class="ql">${esc(S.q.l === "ا" ? "أ" : S.q.l)}</span><p class="stmt">${esc(S.q.text)}</p><p class="note center">جوابه يبدأ بحرف «${esc(S.q.l === "ا" ? "أ" : S.q.l)}» (ما نحسب «ال»)${S.q.d ? " · " + LEVEL[S.q.d] : ""}</p></div>`;
       let body = "";
       if (S.phase === "buzz") {
         const t = teamOf(S.buzz);
         body = `<div class="buzzed t${t}"><span class="bell">${BELL}</span><b>${esc(nameOf(S.buzz))}</b><em>ضغط الجرس! أسرع لاعب، يجاوب الحين</em>${teamTag(t)}</div>
-          ${host ? `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="dock"><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div></div>`
+          ${host ? `<div class="ans"><b>${ansHTML(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p><div class="dock"><div class="judge"><button type="button" class="btn ok" data-act="right">✅ صح</button><button type="button" class="btn no" data-act="wrong">❌ غلط</button></div></div>`
             : `<p class="note center">${S.buzz === ME.pid ? "جاوب بصوت عالي 🎤" : "يجاوب الحين…"}</p>`}`;
       } else if (host) {
-        body = `<div class="ans"><b>${esc(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p>
+        body = `<div class="ans"><b>${ansHTML(curAnswer())}</b></div><p class="private">🤫 لا تعرض شاشتك للاعبين</p>
           ${locked.length >= 2 ? `<p class="note center">الفريقين غلطوا 😅</p>` : `<p class="note center">ننتظر أحد يضغط 🔔… أو احكم مباشرة من تحت 👇</p>`}
           <div class="dock">${locked.length >= 2 ? "" : `<div class="judge">${[1, 2].filter(t => !locked.includes(t)).map(t => `<button type="button" class="btn t${t}" data-act="give" data-t="${t}">✅ صح لـ${TEAM[t].name}</button>`).join("")}</div>`}
           <div class="judge"><button type="button" class="ghost" data-act="another">🔄 سؤال ثاني</button><button type="button" class="ghost" data-act="skip">⏭️ تخطّي</button></div></div>`;
